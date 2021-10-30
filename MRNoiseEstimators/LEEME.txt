@@ -1,0 +1,11 @@
+% MAGNETIC RESONANCE NOISE ESTIMATION METHODS
+%
+% Main methods to estimate noise out of MR data from different authors
+% All cited in
+%
+% Santiago Aja-Fernández, Antonio Tristán-Vega, Carlos Alberola-López
+% Noise estimation in single- and multiple-coil magnetic resonance 
+% data based on statistical models, Magnetic Resonance Imaging, 
+% Volume 27, Issue 10, Pages 1397-1409
+%
+
