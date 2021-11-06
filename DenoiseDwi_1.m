@@ -3,20 +3,31 @@ format long g;
 addpath('functions','LMMSEDWI','MRNoiseEstimators','MRNoiseEstimators/localstat','DTIEstimation');
 
 
-dataPath = 'F:/Data/Segmentation/DWI_&_More/Brav3/Madrid/data_K/';
-dwiName = 'dwi_medium_iso2.nrrd';                        % this must be a .nrrd 
-mskName = 'medium_iso2_labels.seg.nrrd';
+dataPath = 'F:\DTI_konstas\data\sampleLE_MI1\';
+dwiName = 'dwiT.nrrd';                        % this must be a .nrrd 
+mskName = 'segLabel.nrrd';
 outputName = 'dwi_denoised.nrrd';
+
 
 % Read original DWI image
 dwi  = ReadNrrd(append(dataPath, dwiName));
-DWInoisy = double(dwi.pixelData);
-DWInoisy = permute(DWInoisy,[3,2,4,1]);
+dwi = checkLPSOrientation(dwi);
 
 % Read mask
 mask = ReadNrrd(append(dataPath, mskName));
+mask = checkLPSOrientation(mask);
+
+
+checkSpaceOriDir(mask, dwi);
+
+
+
+DWInoisy = double(dwi.pixelData);
+DWInoisy = permute(DWInoisy,[3,2,4,1]);
+
 maskImage = logical(mask.pixelData);
 maskImage = permute(maskImage,[2,1,3]);
+
 
 % Extract gradients
 grads = ExtractDwiGrads(dwi.metaData);

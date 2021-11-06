@@ -72,36 +72,64 @@ fprintf(fid,'endian: %s\n',img.metaData.endian);
 fprintf(fid,'encoding: %s\n',img.metaData.encoding);
 fprintf(fid,'space origin: %s\n',img.metaData.space_origin);
 fprintf(fid,'measurement frame: %s\n',img.metaData.measurement_frame);
-fprintf(fid,'DICOM_0008_0060_Modality:=%s\n',img.metaData.DICOM_0008_0060_Modality);
-fprintf(fid,'DICOM_0008_0070_Manufacturer:=%s\n',img.metaData.DICOM_0008_0070_Manufacturer);
-fprintf(fid,'DICOM_0008_1090_ManufacturerModelName:=%s\n',img.metaData.DICOM_0008_1090_ManufacturerModelName);
-fprintf(fid,'DICOM_0018_0022_ScanOptions:=%s\n',img.metaData.DICOM_0018_0022_ScanOptions);
-fprintf(fid,'DICOM_0018_0023_MRAcquisitionType:=%s\n',img.metaData.DICOM_0018_0023_MRAcquisitionType);
-fprintf(fid,'DICOM_0018_0080_RepetitionTime:=%s\n',img.metaData.DICOM_0018_0080_RepetitionTime);
-fprintf(fid,'DICOM_0018_0081_EchoTime:=%s\n',img.metaData.DICOM_0018_0081_EchoTime);
-fprintf(fid,'DICOM_0018_0083_NumberOfAverages:=%s\n',img.metaData.DICOM_0018_0083_NumberOfAverages);
-fprintf(fid,'DICOM_0018_0087_MagneticFieldStrength:=%s\n',img.metaData.DICOM_0018_0087_MagneticFieldStrength);
-fprintf(fid,'DICOM_0018_1020_SoftwareVersions:=%s\n',img.metaData.DICOM_0018_1020_SoftwareVersions);
-fprintf(fid,'DICOM_0018_1314_FlipAngle:=%s\n',img.metaData.DICOM_0018_1314_FlipAngle);
-fprintf(fid,'DWMRI_b-value:=%s\n',img.metaData.DWMRI_b_value);
 
-fprintf(fid,'DWMRI_gradient_0000:=%s\n',img.metaData.DWMRI_gradient_0000);
-fprintf(fid,'DWMRI_gradient_0001:=%s\n',img.metaData.DWMRI_gradient_0001);
-fprintf(fid,'DWMRI_gradient_0002:=%s\n',img.metaData.DWMRI_gradient_0002);
-fprintf(fid,'DWMRI_gradient_0003:=%s\n',img.metaData.DWMRI_gradient_0003);
-fprintf(fid,'DWMRI_gradient_0004:=%s\n',img.metaData.DWMRI_gradient_0004);
-fprintf(fid,'DWMRI_gradient_0005:=%s\n',img.metaData.DWMRI_gradient_0005);
-fprintf(fid,'DWMRI_gradient_0006:=%s\n',img.metaData.DWMRI_gradient_0006);
-fprintf(fid,'DWMRI_gradient_0007:=%s\n',img.metaData.DWMRI_gradient_0007);
-fprintf(fid,'DWMRI_gradient_0008:=%s\n',img.metaData.DWMRI_gradient_0008);
-fprintf(fid,'DWMRI_gradient_0009:=%s\n',img.metaData.DWMRI_gradient_0009);
-fprintf(fid,'DWMRI_gradient_0010:=%s\n',img.metaData.DWMRI_gradient_0010);
-fprintf(fid,'DWMRI_gradient_0011:=%s\n',img.metaData.DWMRI_gradient_0011);
-fprintf(fid,'DWMRI_gradient_0012:=%s\n',img.metaData.DWMRI_gradient_0012);
-fprintf(fid,'DWMRI_gradient_0013:=%s\n',img.metaData.DWMRI_gradient_0013);
-fprintf(fid,'DWMRI_gradient_0014:=%s\n',img.metaData.DWMRI_gradient_0014);
-fprintf(fid,'DWMRI_gradient_0015:=%s\n',img.metaData.DWMRI_gradient_0015);
-fprintf(fid,'DWMRI_gradient_0016:=%s\n',img.metaData.DWMRI_gradient_0016);
+%Write Dicom data
+fields = fieldnames(img.metaData);
+
+if any(strcmp(fields,'DICOM_0008_0060_Modality'))
+    fprintf(fid,'DICOM_0008_0060_Modality:=%s\n',img.metaData.DICOM_0008_0060_Modality);
+end
+
+if  any(strcmp(fields,'DICOM_0008_0070_Manufacturer'))
+    fprintf(fid,'DICOM_0008_0070_Manufacturer:=%s\n',img.metaData.DICOM_0008_0070_Manufacturer);
+end
+
+if any(strcmp(fields,'DICOM_0008_1090_ManufacturerModelName'))
+    fprintf(fid,'DICOM_0008_1090_ManufacturerModelName:=%s\n',img.metaData.DICOM_0008_1090_ManufacturerModelName);
+end
+
+if  any(strcmp(fields,'DICOM_0018_0022_ScanOptions'))
+    fprintf(fid,'DICOM_0018_0022_ScanOptions:=%s\n',img.metaData.DICOM_0018_0022_ScanOptions);
+end
+
+if any(strcmp(fields,'DICOM_0018_0023_MRAcquisitionType'))
+    fprintf(fid,'DICOM_0018_0023_MRAcquisitionType:=%s\n',img.metaData.DICOM_0018_0023_MRAcquisitionType);
+end
+
+if any(strcmp(fields,'DICOM_0018_0080_RepetitionTime'))
+    fprintf(fid,'DICOM_0018_0080_RepetitionTime:=%s\n',img.metaData.DICOM_0018_0080_RepetitionTime);
+end
+
+if any(strcmp(fields,'DICOM_0018_0081_EchoTime'))
+    fprintf(fid,'DICOM_0018_0081_EchoTime:=%s\n',img.metaData.DICOM_0018_0081_EchoTime);
+end
+
+if any(strcmp(fields,'DICOM_0018_0083_NumberOfAverages'))
+    fprintf(fid,'DICOM_0018_0083_NumberOfAverages:=%s\n',img.metaData.DICOM_0018_0083_NumberOfAverages);
+end
+
+if any(strcmp(fields,'DICOM_0018_0087_MagneticFieldStrength'))
+fprintf(fid,'DICOM_0018_0087_MagneticFieldStrength:=%s\n',img.metaData.DICOM_0018_0087_MagneticFieldStrength);
+end
+
+if any(strcmp(fields,'DICOM_0018_1020_SoftwareVersions'))
+    fprintf(fid,'DICOM_0018_1020_SoftwareVersions:=%s\n',img.metaData.DICOM_0018_1020_SoftwareVersions);
+end
+
+if  any(strcmp(fields,'DICOM_0018_1314_FlipAngle'))
+    fprintf(fid,'DICOM_0018_1314_FlipAngle:=%s\n',img.metaData.DICOM_0018_1314_FlipAngle);
+end
+
+if any(strcmp(fields,'DWMRI_b_value'))
+    fprintf(fid,'DWMRI_b-value:=%s\n',img.metaData.DWMRI_b_value);
+end
+
+grads = ExtractDwiGrads(img.metaData);
+
+for i = 1:size(grads,1)
+    fprintf(fid, append('DWMRI_gradient_',num2str((i-1), '%04.f'),':=%s\n'),num2str(grads(i,:),16)); 
+end
+
 fprintf(fid,'modality:=%s\n',img.metaData.modality);
 fprintf(fid,'\n');
 fwrite(fid, img.pixelData, class(img.pixelData));

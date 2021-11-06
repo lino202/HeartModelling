@@ -1,4 +1,4 @@
-function [ nodes, faces] = ReadSurfVtk(filename)
+function [ nodes, faces, normals] = ReadSurfVtk(filename)
 %READSURFOBJ Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -20,10 +20,15 @@ while ischar(ln)
         nodes = fscanf(fid,'%f %f %f',[3, nodes_num])';
     end
     
-    if(contains(ln,'CELLS'))
-        faces_num = sscanf(ln, 'CELLS %d %d\n');
+    if(contains(ln,'POLYGONS'))
+        faces_num = sscanf(ln, 'POLYGONS %d %d\n');
         faces_num = faces_num(1);
         faces = fscanf(fid,'%d %d %d %d',[4, faces_num])';
+    end
+    
+    if(contains(ln,'NORMALS'))
+        normals_num = nodes_num; %sscanf(ln, 'NORMALS Normals float\n');
+        normals = fscanf(fid,'%f %f %f',[3, normals_num])';
     end
     
     ln = fgets(fid);
