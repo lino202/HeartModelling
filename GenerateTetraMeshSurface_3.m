@@ -3,9 +3,9 @@ addpath('functions');
 addpath('iso2mesh\iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:\DTI_konstas\data\sampleLE_MI1\';
+dataPath = 'F:\DTI_konstas\data\sampleMA_Control2\';
 surfMesh = append(dataPath, 'surfMesh.vtk');
-heart_in = append(dataPath, 'dti.vtk');
+heart_in = append(dataPath, 'dtiSlicer.vtk');
 myo_flag = 1;
 scar_flag = 2;
 endo_flag = 3;
@@ -13,9 +13,9 @@ mid_flag = 4;
 epi_flag = 5;
 
 % Output filenames
-vtk_output = append(dataPath, 'electra_tetmesh.vtk');
-inp_output = append(dataPath, 'electra_tetmesh.inp');
-fibs_output = append(dataPath, 'electra_tetfibers.txt');
+vtk_output = append(dataPath, 'electraSlicer_tetmesh.vtk');
+inp_output = append(dataPath, 'electraSlicer_tetmesh.inp');
+fibs_output = append(dataPath, 'electraSlicer_tetfibers.txt');
 
 % Read heart surface mesh and normalize normals
 % [snodes, sfaces, snormals] = ReadObj(surfMesh);

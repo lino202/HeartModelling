@@ -45,7 +45,7 @@ end
 % Write elements
 fprintf(fileID,'CELLS %d %d\n',elems_num, elems_num*(size(elems,2)+1));
 for el_id = 1:elems_num
-    fprintf(fileID,'%d %d %d %d\n',size(elems,2), elems(el_id,:)-1);
+    fprintf(fileID,'%d %d %d %d %d\n',size(elems,2), elems(el_id,:)-1);
 end
 
 fprintf(fileID,'\nCELL_TYPES %d\n',elems_num);

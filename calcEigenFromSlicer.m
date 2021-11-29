@@ -3,10 +3,10 @@ format long g;
 addpath('functions','DTIEstimation');
 
 
-dataPath = 'F:\DTI_konstas\data\sampleMA_Control2\';
-dwiName = 'dwi_denoised.nrrd';                        % this must be a .nrrd 
+dataPath = 'F:\DTI_konstas\data\sampleMAControl2\';
+dtiName = 'dtiSlicer.nrrd';                        % this must be a .nrrd 
 mskName = 'Segmentation.seg.nrrd';
-outputName = 'dti';
+outputName = 'dtiSlicer';
 
 
 myo_flag = 1;
@@ -20,70 +20,11 @@ mask = ReadNrrd(append(dataPath, mskName));
 mask = checkLPSOrientation(mask);
 
 % Read original DWI image
-dwidenoised  = ReadNrrd(append(dataPath, dwiName));
-dwidenoised = checkLPSOrientation(dwidenoised);
-DWI = double(dwidenoised.pixelData);
+dti  = ReadNrrd(append(dataPath, dtiName));
+dti = checkLPSOrientation(dti);
+DTI = double(dti.pixelData);
 
-checkSpaceOriDir(mask, dwidenoised);
-
-% Extract gradients
-grads = ExtractDwiGrads(dwidenoised.metaData);
-
-% Set b-value for gradients and DTI order (standard is 2)
-dti_order = 2;
-bval = str2num(dwidenoised.metaData.DWMRI_b_value);
-b_values = bval*ones(size(grads,1),1);
-
-if grads(1,:) == [0,0,0]
-    grads = grads(2:end,:);
-    b_values = b_values(2:end);
-    S0vol = DWI(1,:,:,:);
-    DWIvol = DWI(2:end,:,:,:);
-end
-
-% Construct all possible monomials for the specific DTI order
-% Computes G from section 5.1 (ISBI'10)
-G = constructMatrixOfMonomials(grads, dti_order);
-
-% Construct set of polynomial coefficients C
-% Computes C from section 5.1 (ISBI'10)
-C = constructSetOf321Polynomials(dti_order)'; 
-P = G*C;
-P = -diag(b_values)*P;
-
-% Compute DTI image
-dti_size = size(DWI); dti_size(1) = 6;
-DTI = zeros(dti_size);
-
-start_time=cputime;
-for k=1:dti_size(4)
-    for j=1:dti_size(3)
-        for i=1:dti_size(2)
-            % Gradient values at the voxel
-            DWIvox = DWIvol(:,i,j,k);
-            S0vox = S0vol(:,i,j,k);
-            
-            if (sum(DWIvox) ~= 0)
-                % DTI computation
-                DWIvox(DWIvox==0)=0.1;
-                y = log(DWIvox/S0vox);
-                
-                x = lsqnonneg(P, y);
-
-             
-                unique_coeffs = C*x;
-                
-                % final tensor values d11 d12 d13 d22 d23 d33
-                d = [unique_coeffs(6); unique_coeffs(5)/2; unique_coeffs(4)/2;
-                     unique_coeffs(3); unique_coeffs(2)/2; unique_coeffs(1)];
-                 
-                 DTI(:,i,j,k) = d;
-            end
-        end
-    end
-end
-end_time=cputime;
-fprintf(1,'\nTotal estimation time: %.0f ms\n\n',(end_time-start_time)*1000);
+checkSpaceOriDir(mask, dti);
 
 %% Convert DTI image to point cloud with fiber vectors 
 % Get ijk2Points transform matrix
@@ -112,14 +53,12 @@ for k=1:nZ
                 
                 pointVoxelMap(id,:) = [i,j,k];
                 
-                % d11 d12 d13 d22 d23 d33
+                
                 d = DTI(:,i,j,k);
-                d11 = d(1); d12 = d(2); d13 = d(3);
-                d22 = d(4); d23 = d(5); d33 = d(6);
 
-                D = [d11, d12, d13;
-                     d12, d22, d23;
-                     d13, d23, d33];
+                D = [d(1), d(2), d(3);
+                     d(4), d(5), d(6);
+                     d(7), d(8), d(9)];
                 
                 % Find max eigen value
                 [v,d] = eig(D);
