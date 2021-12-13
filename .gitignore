@@ -31,3 +31,4 @@ codegen/
 octave-workspace
 
 DTIEstimation/fandtasia_demo/
+__pycache__/

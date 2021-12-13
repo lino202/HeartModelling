@@ -1,12 +1,13 @@
 import os
 import numpy as np
 import meshio
+from pathlib import PurePath
 from auxiliar.conductionSystem.lib.utils import getPointsInSphere
 
-dataPath = "/home/maxi/Documents/PhD/Code/purkinje/data/sampleMA_Control2/stim/stim_cs"
+dataPath = "../data/sampleMA_Control2/stim/stim_cs"
 finalBundlesPath = os.path.join(dataPath, 'finalBundles')
 meshPath = os.path.join(dataPath, "mesh.vtk")
-outName = os.path.join(finalBundlesPath, 'stim_mesh')
+outName = 'stim_mesh'
 
 # Get mesh points and arrays from files
 mesh = meshio.read(meshPath)
@@ -30,12 +31,12 @@ for file in endpointsFiles:
         dataArr = dataArr.astype(float)
     elif 'ien' in file:
         dataArr = dataArr.astype(int)
-    name = file.split('/')[-1].split('.')[0]
+    name = PurePath(file).parts[-1].split('.')[0]
     locals()[name] = dataArr
 
 
 #Get bundles and PMJ stim nodes for each of them
-bundlesNames = [file.split('/')[-1].split('_xyz')[0] for file in endpointsFiles if 'xyz' in file] 
+bundlesNames = [ PurePath(file).parts[-1].split('_xyz')[0] for file in endpointsFiles if 'xyz' in file] 
 
 stimSets = {}
 for bundle in bundlesNames:
@@ -54,17 +55,25 @@ for bundle in bundlesNames:
     stimSets[bundle] = stimIdxs
 
 
+point_data = mesh.point_data
 
-point_data={}
+stimPointData={}
 for key in stimSets.keys():
     tmp = np.zeros(nodes.shape[0])
     tmp[stimSets[key]] = 1
-    point_data[key] = list(tmp)
+    stimPointData[key] = tmp
 
+nsets={}
+for key in point_data:
+    if key != 'layers' and key != 'dti-fibers':
+        tmp = np.where(point_data[key]==1.)[0]
+        nsets[key+'_nodes'] = tmp 
 
-meshOut = meshio.Mesh(nodes, mesh.cells, point_data=point_data)
+new_point_data = {**point_data, **stimPointData}
+meshOut = meshio.Mesh(nodes, mesh.cells, point_data=new_point_data)
 meshOut.write(os.path.join(dataPath, "{}.vtk".format(outName)))
 # meshio.vtk.write(os.path.join(dataPath, "{}.vtk".format(outName)), meshOut,  binary=False) #Debugging
 
-meshOut = meshio.Mesh(nodes, mesh.cells, point_sets=stimSets)
+new_nsets = {**nsets, **stimSets}
+meshOut = meshio.Mesh(nodes, mesh.cells, point_sets=new_nsets)
 meshOut.write(os.path.join(dataPath, "{}.inp".format(outName)))
