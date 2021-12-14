@@ -9,7 +9,7 @@ from lib.utils import getLinearPath, getLinearPath, getGeodesicPath
 #and .vtk legacy has a KeyError: 'vtkidtype' which seemed to be solved but it is not
 # that is the reason why I am using .vtu
 
-dataPath = "/home/maxi/Documents/PhD/Code/purkinje/data/sampleMA_Control2/"
+dataPath = "/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control2/stim/stim_cs"
 rvEndoSurf = os.path.join(dataPath, "rv_endo.vtu")
 lvEndoSurf = os.path.join(dataPath, "lv_endo.vtu")
 outName = "mainCSBundle"

@@ -3,13 +3,13 @@ format long g;
 addpath('functions');
 
 
-dataPath = 'F:\DTI_konstas\data\sampleMA_Control2\';
-transmural_pathA = append(dataPath, "\layers\", "transmural_distA.txt");
-transmural_pathB = append(dataPath, "\layers\", "transmural_distB.txt"); 
-transmural_pathC = append(dataPath, "\layers\", "transmural_distC.txt");
+dataPath = '/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control2';
+transmural_pathA = append(dataPath, "/layers/", "transmural_distA.txt");
+transmural_pathB = append(dataPath, "/layers/", "transmural_distB.txt"); 
+transmural_pathC = append(dataPath, "/layers/", "transmural_distC.txt");
 % stim_nodes_path = append(dataPath, "\layers\", "stim_nodes_paraview.csv"); 
-inputVtk = append(dataPath, 'electra_tetmesh.vtk');
-inputInp = append(dataPath, 'electra_tetmesh.inp');
+inputVtk = append(dataPath, '/electra_tetmesh.vtk');
+inputInp = append(dataPath, '/electra_tetmesh.inp');
 output_name = "layers_mesh";
 algo = 2;
 

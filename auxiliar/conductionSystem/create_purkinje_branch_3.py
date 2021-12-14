@@ -6,16 +6,17 @@ Created on Tue Dec  1 11:02:34 2015
 
 from lib.FractalTree import *
 from lib.parameters import Parameters
-from lib.utils import loadInp
+# from lib.utils import loadInp
 import numpy as np
 import os 
 import meshio
 
-dataPath = "/home/maxi/Documents/PhD/Code/purkinje/data/sampleMA_Control2/"
+dataPath = "/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control2/stim/stim_cs"
 bb_infile    = os.path.join(dataPath, 'mainCSBundle.inp')
-surf_file    = os.path.join(dataPath, 'lv_endo.obj')
-output_path  = os.path.join(dataPath, 'purk')
-endnode_name = "LV_PI_end"
+surf_file    = os.path.join(dataPath, 'rv_endo.obj')
+output_path  = os.path.join(dataPath, 'finalBundles')
+if not os.path.isdir(output_path): os.mkdir(output_path)
+endnode_name = "RV_SMA_end"
 output_file  = os.path.join(output_path, endnode_name.split('_end')[0])
 
 if not os.path.isdir(output_path):

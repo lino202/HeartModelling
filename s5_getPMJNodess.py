@@ -4,10 +4,10 @@ import meshio
 from pathlib import PurePath
 from auxiliar.conductionSystem.lib.utils import getPointsInSphere
 
-dataPath = "../data/sampleMA_Control2/stim/stim_cs"
-finalBundlesPath = os.path.join(dataPath, 'finalBundles')
-meshPath = os.path.join(dataPath, "mesh.vtk")
-outName = 'stim_mesh'
+dataPath = "/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control2/"
+finalBundlesPath = os.path.join(dataPath, 'stim', 'stim_cs', 'finalBundles')
+meshPath = os.path.join(dataPath, 'layers', "layers_mesh.vtk")
+outName = os.path.join(dataPath, 'stim', 'stim_cs', 'stim_mesh')
 
 # Get mesh points and arrays from files
 mesh = meshio.read(meshPath)
