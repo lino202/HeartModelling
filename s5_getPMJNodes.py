@@ -3,8 +3,13 @@ import numpy as np
 import meshio
 from pathlib import PurePath
 from auxiliar.conductionSystem.lib.utils import getPointsInSphere
+import argparse
 
-dataPath = "/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control2/"
+parser = argparse.ArgumentParser(description="Options")
+parser.add_argument('--data_path',type=str, required=True, help='path to data')
+args = parser.parse_args()
+
+dataPath = args.data_path
 finalBundlesPath = os.path.join(dataPath, 'stim', 'stim_cs', 'finalBundles')
 meshPath = os.path.join(dataPath, 'layers', "layers_mesh.vtk")
 outName = os.path.join(dataPath, 'stim', 'stim_cs', 'stim_mesh')

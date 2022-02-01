@@ -1,30 +1,39 @@
 import os
 import json 
+import argparse
 
+parser = argparse.ArgumentParser(description="Options")
+parser.add_argument('--data_path',type=str, required=True, help='path to data')
+parser.add_argument("--av_node", type=float, required=True, nargs=3, help="av node coords 3D")
+parser.add_argument("--his_node", type=float, required=True, nargs=3, help="his node coords 3D")
+parser.add_argument("--rv_init_node", type=float, required=True, nargs=3, help="first rv node coords 3D in the endo surface")
+parser.add_argument("--rv_join_node", type=float, required=True, nargs=3, help="rv bifurcation node coords 3D in the endo")
+parser.add_argument("--rvb", type=float, required=True, nargs=3, help="rvb endpoint")
+parser.add_argument("--lv_init_node", type=float, required=True, nargs=3, help="first lv node coords 3D in the endo surface")
+parser.add_argument("--lv_join_node", type=float, required=True, nargs=3, help="lv bifurcation node coords 3D in the endo")
+parser.add_argument("--lva", type=float, required=True, nargs=3, help="lva endpoint")
+parser.add_argument("--lvp", type=float, required=True, nargs=3, help="lvp endpoint")
+args = parser.parse_args()
 
-
-dataPath = "/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control2"
-purkInitNodes =  os.path.join(dataPath, 'stim', 'stim_cs', "purkInitNodes.json")
+purkInitNodes =  os.path.join(args.data_path, "purkInitNodes.json")
 
 Nodes = {
     "Common_Nodes" : {
-        "AV_Node" : [-20.745,-51.8293,23.3676],
-        "HIS_Node" : [-20.745,-51.8293,18.3676], 
+        "AV_Node" : args.av_node,
+        "HIS_Node" : args.his_node, 
     },
 
     "RV_Nodes": {
-        "Init": [-25.5579,-49.9371,15.1669],
-        "Join": [-25.8922, -49.3078, 13.5586],
-        "RV_AS": [-26.6508, -60.1452, 2.50581],
-        "RV_SMA": [-26.3031, -48.5599, 8.67955],
+        "Init": args.rv_init_node,
+        "Join": args.rv_join_node,
+        "RVB": args.rvb,
     },
 
     "LV_Nodes": {
-        "Init": [-15.3299,-52.1873,15.3401],
-        "Join": [-14.14,-51.3193,12.8821],
-        "LV_ALS": [-13.066,-58.4558,9.47285],
-        "LV_MS": [-7.74579,-50.3277,3.29272],
-        "LV_PI": [-3.35402,-37.6051,5.49655],
+        "Init": args.lv_init_node,
+        "Join": args.lv_join_node,
+        "LVA": args.lva,
+        "LVP": args.lvp,
     }
 }
 

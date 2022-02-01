@@ -8,12 +8,17 @@ import fenics
 import pandas as pd
 import os
 import numpy as np
+import argparse
 
+parser = argparse.ArgumentParser(description="Options")
+parser.add_argument('--data_path',type=str, required=True, help='path to data')
+parser.add_argument('--out_name',type=str, required=True, help='output name defines type of diffusion (BC) see paper')
+args = parser.parse_args()
 
-dataPath = "/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control2"
+dataPath = args.data_path
+outName = args.out_name
 outPath = os.path.join(dataPath, 'layers')
 if not os.path.isdir(outPath): os.mkdir(outPath)
-outName = "transmural_distB"
 
 endoLVRegionId = 2
 endoRVRegionId = 1

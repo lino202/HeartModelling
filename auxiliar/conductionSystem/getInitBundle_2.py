@@ -4,18 +4,27 @@ import meshio
 import os
 import json
 from lib.utils import getLinearPath, getLinearPath, getGeodesicPath
+import argparse
 
 #XDMF from paraview has time attribute which does not work with meshio
 #and .vtk legacy has a KeyError: 'vtkidtype' which seemed to be solved but it is not
 # that is the reason why I am using .vtu
 
-dataPath = "/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control2/stim/stim_cs"
+parser = argparse.ArgumentParser(description="Options")
+parser.add_argument('--data_path',required=True, help='path to data')
+parser.add_argument('--gen_obj', action='store_true', help='if specified, generate .obj surface endo meshes for fractal Purkinje network algo')
+args = parser.parse_args()
+
+#Inputs
+dataPath = args.data_path
 rvEndoSurf = os.path.join(dataPath, "rv_endo.vtu")
 lvEndoSurf = os.path.join(dataPath, "lv_endo.vtu")
-outName = "mainCSBundle"
 purkInitNodes =  os.path.join(dataPath, "purkInitNodes.json")
-stepsNonGeodesic = 3
-genOBJ = True
+
+#Outputs
+outName = "mainCSBundle"    # generates .inp and .vtk
+genOBJ = args.gen_obj             # if true generates xv_endo.obj for fractal algo
+
 meshRV = meshio.read(rvEndoSurf)
 meshLV = meshio.read(lvEndoSurf)
 nsets = {}
@@ -40,11 +49,13 @@ lvNodes = nodesData["LV_Nodes"]
 points, edges =  getLinearPath(commonNodes["AV_Node"], commonNodes["HIS_Node"])
 avNode = 0
 hisIdx = points.shape[0] -1
+nsets["AV_NODE"] = [avNode]     # nsets must be iterable
 nsets["AV_HIS"] = [nodeIdx for nodeIdx in range(points.shape[0])]
-
+nsets["HIS_BIFUR"] = [hisIdx]
 
 tmpPoints, tmpEdges =  getLinearPath(commonNodes["HIS_Node"], rvNodes["Init"])
 tmpEdges = tmpEdges + points.shape[0] -1
+nsets["HIS_RV_linear"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
 tmpEdges[0, 0] = hisIdx
 edges = np.concatenate((edges, tmpEdges), axis=0)
 points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
@@ -52,17 +63,17 @@ rvInitIdx = points.shape[0] -1
 
 tmpPoints, tmpEdges =  getLinearPath(commonNodes["HIS_Node"], lvNodes["Init"])
 tmpEdges = tmpEdges + points.shape[0] -1 
+nsets["HIS_LV_linear"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
 tmpEdges[0,0] = hisIdx
 edges = np.concatenate((edges, tmpEdges), axis=0)
 points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
 lvInitIdx = points.shape[0] -1
 
-
-
 # Geodesic o non linear paths-------------------------------------------------------------------------
 
 tmpPoints, tmpEdges =  getGeodesicPath(meshRVPoints, meshRVFaces, rvNodes["Init"], rvNodes["Join"])
 tmpEdges = tmpEdges + points.shape[0] -1
+nsets["HIS_RV_geo"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
 tmpEdges[0,0] = rvInitIdx
 edges = np.concatenate((edges, tmpEdges), axis=0)
 points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
@@ -70,6 +81,7 @@ rvJoinIdx = points.shape[0] -1
 
 tmpPoints, tmpEdges =  getGeodesicPath(meshLVPoints, meshLVFaces, lvNodes["Init"], lvNodes["Join"])
 tmpEdges = tmpEdges + points.shape[0] -1
+nsets["HIS_LV_geo"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
 tmpEdges[0,0] = lvInitIdx
 edges = np.concatenate((edges, tmpEdges), axis=0)
 points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
@@ -100,6 +112,8 @@ for key in rvNodes.keys():
         points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
         nsets["{}_end".format(key)] = [points.shape[0]-1]
 
+
+# Get all together!, points is ready, generate cells and point_data for visualization in .vtk, nsets are ready
 cells = [
     ("line", edges),
 ]

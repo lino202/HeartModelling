@@ -1,9 +1,15 @@
 import meshio
 import fenics
 import os 
+import argparse
 
-dataPath = "/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control2"
-outputFormat = "pvd"  #"pvd" or "xdmf"
+parser = argparse.ArgumentParser(description="Options")
+parser.add_argument('--data_path',type=str, required=True, help='path to data')
+parser.add_argument('--out_format',type=str, required=True, help='output format: pvd | xdmf')
+args = parser.parse_args()
+
+dataPath = args.data_path
+outputFormat = args.out_format 
 vtkPath = os.path.join(dataPath, "electra_tetmesh.vtk")
 
 

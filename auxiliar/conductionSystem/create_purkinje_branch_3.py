@@ -6,22 +6,31 @@ Created on Tue Dec  1 11:02:34 2015
 
 from lib.FractalTree import *
 from lib.parameters import Parameters
-# from lib.utils import loadInp
 import numpy as np
 import os 
 import meshio
+import argparse
 
-dataPath = "/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control2/stim/stim_cs"
+parser = argparse.ArgumentParser(description="Options")
+parser.add_argument('--data_path',type=str, required=True, help='path to data')
+parser.add_argument('--endnode_name',type=str, required=True, help='endnode name in .inp file for Purk tree computation')
+parser.add_argument('--length',type=float, required=True, help='length for tree calculation, see Paper')
+parser.add_argument('--seglength',type=float, required=True, help='seglength for tree calculation, see Paper')
+parser.add_argument('--angle',type=float, required=True, help='angle for tree calculation, see Paper')
+parser.add_argument('--iterations',type=float, required=True, help='iterations for tree calculation, see Paper')
+args = parser.parse_args()
+
+dataPath = args.data_path
+endnode_name = args.endnode_name
+
 bb_infile    = os.path.join(dataPath, 'mainCSBundle.inp')
 surf_file    = os.path.join(dataPath, 'rv_endo.obj')
 output_path  = os.path.join(dataPath, 'finalBundles')
 if not os.path.isdir(output_path): os.mkdir(output_path)
-endnode_name = "RV_SMA_end"
 output_file  = os.path.join(output_path, endnode_name.split('_end')[0])
 
 if not os.path.isdir(output_path):
     os.mkdir(output_path)
-
 
 # Load bundle tree
 mesh = meshio.read(bb_infile)
@@ -45,10 +54,10 @@ next_node = end_node - grow_dir
 
 # Create Fractal tree parameters
 param = Parameters()
-param.setLength(2.7)
-param.setSegLength(0.3)
-param.setAngle(0.15)
-param.setIterations(10)
+param.setLength(args.length)
+param.setSegLength(args.seglength)
+param.setAngle(args.angle)
+param.setIterations(args.iterations)
 
 # Compute purkinje tree for RBB
 param.setMeshfile(surf_file)
