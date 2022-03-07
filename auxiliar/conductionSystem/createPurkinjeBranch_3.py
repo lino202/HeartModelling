@@ -17,14 +17,14 @@ parser.add_argument('--endnode_name',type=str, required=True, help='endnode name
 parser.add_argument('--length',type=float, required=True, help='length for tree calculation, see Paper')
 parser.add_argument('--seglength',type=float, required=True, help='seglength for tree calculation, see Paper')
 parser.add_argument('--angle',type=float, required=True, help='angle for tree calculation, see Paper')
-parser.add_argument('--iterations',type=float, required=True, help='iterations for tree calculation, see Paper')
+parser.add_argument('--iterations',type=int, required=True, help='iterations for tree calculation, see Paper')
 args = parser.parse_args()
 
 dataPath = args.data_path
 endnode_name = args.endnode_name
 
 bb_infile    = os.path.join(dataPath, 'mainCSBundle.inp')
-surf_file    = os.path.join(dataPath, 'rv_endo.obj')
+surf_file    = os.path.join(dataPath, '{}_endo.obj'.format('rv' if "rv" in endnode_name else 'lv'))
 output_path  = os.path.join(dataPath, 'finalBundles')
 if not os.path.isdir(output_path): os.mkdir(output_path)
 output_file  = os.path.join(output_path, endnode_name.split('_end')[0])
@@ -66,7 +66,3 @@ param.setInitNode(end_node)
 param.setSecondNode(next_node)
 print("Computing purkinje network")
 branches, nodes = Fractal_Tree_3D(param)
-
-
-
-pass

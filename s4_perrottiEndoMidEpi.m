@@ -3,15 +3,16 @@ format long g;
 addpath('functions');
 
 
-dataPath = '/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleMA_Control2';
-transmural_pathA = append(dataPath, "/layers/", "transmural_distA.txt");
-transmural_pathB = append(dataPath, "/layers/", "transmural_distB.txt"); 
-transmural_pathC = append(dataPath, "/layers/", "transmural_distC.txt");
+dataPath = '/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_MI1';
+transmural_pathA = append(dataPath, "/layers/", "transmural_distXV.txt");
+transmural_pathB = append(dataPath, "/layers/", "transmural_distRV.txt"); 
+transmural_pathC = append(dataPath, "/layers/", "transmural_distLV.txt");
 % stim_nodes_path = append(dataPath, "\layers\", "stim_nodes_paraview.csv"); 
 inputVtk = append(dataPath, '/electra_tetmesh.vtk');
 inputInp = append(dataPath, '/electra_tetmesh.inp');
-output_name = "layers_mesh";
+output_name = "layers_mesh_mi";
 algo = 2;
+inf_as_healthy = 0;
 
 myo_flag = 1;
 scar_flag = 2;
@@ -46,6 +47,10 @@ for ff = 1:length(fields)
     if strcmp(fields{ff}{2},'dti-fibers'), fibs = fields{ff}{1}; end
 end
 
+if inf_as_healthy
+    myo_points = ones(size(myo_points));
+    scar_points = zeros(size(scar_points)); 
+end
 %% Calculate layers
 
 phi_endo = (1-endo_per) * phi0 + endo_per * phi1;    % thresholds

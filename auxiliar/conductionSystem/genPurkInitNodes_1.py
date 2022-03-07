@@ -26,14 +26,14 @@ Nodes = {
     "RV_Nodes": {
         "Init": args.rv_init_node,
         "Join": args.rv_join_node,
-        "RVB": args.rvb,
+        "rvb": args.rvb,
     },
 
     "LV_Nodes": {
         "Init": args.lv_init_node,
         "Join": args.lv_join_node,
-        "LVA": args.lva,
-        "LVP": args.lvp,
+        "lva": args.lva,
+        "lvp": args.lvp,
     }
 }
 

@@ -23,14 +23,7 @@ endpointsFiles.sort()
 
 for file in endpointsFiles:
     with open(file, 'r') as f:
-        data = f.read()
-
-        # if 'xyz' in file:
-        dataArr = np.array([])
-        data = data.split('\n')[:-1]
-        for i in range(len(data)):
-            newRow = np.array([data[i].split(' ')])
-            dataArr = np.concatenate( (dataArr, newRow), axis=0) if dataArr.size else newRow
+        data = f.readlines()
 
     if 'xyz' in file:
         dataArr = dataArr.astype(float)

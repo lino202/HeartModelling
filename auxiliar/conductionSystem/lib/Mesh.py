@@ -90,7 +90,7 @@ class Mesh:
         if len(triangles) == 0:
             raise Exception('node not connected to triangles, check your mesh')
         #print triangles
-        #Compute the vertex normal as the avergage of the triangle normals.
+        #Compute the vertex normal as the average of the triangle normals.
         vertex_normal=np.sum(self.normals[triangles],axis=0)
         #Normalize
         vertex_normal=vertex_normal/np.linalg.norm(vertex_normal)

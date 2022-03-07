@@ -9,10 +9,14 @@ import pandas as pd
 import os
 import numpy as np
 import argparse
+from scipy.spatial.distance import cdist
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--data_path',type=str, required=True, help='path to data')
 parser.add_argument('--out_name',type=str, required=True, help='output name defines type of diffusion (BC) see paper')
+parser.add_argument('--endoLVId',type=int, required=True, help='Id for the endo surface of the LV')
+parser.add_argument('--endoRVId',type=int, required=True, help='Id for the endo surface of the RV')
+parser.add_argument('--epiId' ,type=int, required=True, help='Id for the epi surface')
 args = parser.parse_args()
 
 dataPath = args.data_path
@@ -20,14 +24,27 @@ outName = args.out_name
 outPath = os.path.join(dataPath, 'layers')
 if not os.path.isdir(outPath): os.mkdir(outPath)
 
-endoLVRegionId = 2
-endoRVRegionId = 1
-epiRegionId = 0
+endoLVRegionId = args.endoLVId
+endoRVRegionId = args.endoRVId
+epiRegionId = args.epiId
 
 
-def isMemberIdxsRowWise(arr1, arr2, tol = 1E-6):
-    idxs = np.where((abs(arr1-arr2[:,None]) <= tol).all(2))
-    return idxs[0]
+def isMemberIdxsRowWise(arr1, arr2, tol = 1E-6, showMem=False):
+    if showMem: 
+        print("Required Memory: {} GB".format(4 *(arr1.shape[0]) * (arr2.shape[0]) / 1e9))
+    else:
+        arr1 = np.reshape(arr1, (-1,3))
+    idxs = np.min(cdist(arr2,arr1), axis=1) < tol
+    # idxs = np.where((abs(arr1-arr2[:,None]) <= tol).all(2))
+    return idxs.nonzero()[0]
+
+# def isMemberIdxsRowWise(arr1, arr2, tol = 1E-6):
+#     memReq = 4 *(arr1.shape[0]) * (arr2.shape[0]) / 1e9
+#     if memReq> 6:
+#         pass
+#     else:
+#         idxs = np.where((cdist(arr1,arr2) <= tol).all(2))
+#     return idxs[0]
 
 
 class Omega(fenics.SubDomain): 
@@ -55,25 +72,25 @@ endoLV = data[data[:,3]==endoLVRegionId][:,0:-1]
 epi = data[data[:,3]==epiRegionId][:,0:-1]
 bmeshPoints = fenics.BoundaryMesh(mesh, "exterior", True).coordinates()
 
-idxs = isMemberIdxsRowWise(endoRV, bmeshPoints)
+idxs = isMemberIdxsRowWise(endoRV, bmeshPoints, showMem=True)
 endoRV = bmeshPoints[idxs,:]
 base = np.delete(bmeshPoints, idxs,axis=0)
 
-idxs = isMemberIdxsRowWise(endoLV, base)
+idxs = isMemberIdxsRowWise(endoLV, base, showMem=True)
 endoLV = base[idxs,:]
 base = np.delete(base, idxs,axis=0)
 
-idxs = isMemberIdxsRowWise(epi, base)
+idxs = isMemberIdxsRowWise(epi, base, showMem=True)
 epi = base[idxs,:]
 base = np.delete(base, idxs,axis=0)
 
-if "A" in outName:
+if "XV" in outName:
     bcArray0 = np.concatenate((endoLV,endoRV), axis=0)
     bcArray1 = epi
-elif "B" in outName:
+elif "RV" in outName:
     bcArray0 = endoRV
     bcArray1 = np.concatenate((endoLV,epi), axis=0)
-elif "C" in outName:
+elif "LV" in outName:
     bcArray0 = endoLV
     bcArray1 = np.concatenate((endoRV,epi), axis=0)
 else: raise ValueError("Wring transmural distance Name")

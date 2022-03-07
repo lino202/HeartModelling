@@ -1,10 +1,10 @@
-function data = ReadSurfVtk(filename)
+function data = ReadSharpTxt(filename)
 %READ .txt files with # shaprs in the headers and continues data of one
 %number
 % Check filepath's extension
 [~, ~, ext] = fileparts(filename);
 if (~strcmp(ext,'.txt'))
-    error('Given filename should have .vtk extension');
+    error('Given filename should have .txt extension');
 end
 
 % Open the file

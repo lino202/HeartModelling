@@ -3,7 +3,7 @@ import pygeodesic.geodesic as geodesic
 import meshio
 import os
 import json
-from lib.utils import getLinearPath, getLinearPath, getGeodesicPath
+from lib.utils import checkRepeatedPoints, getLinearPath, getLinearPath, getGeodesicPath, resampleGeodesic
 import argparse
 
 #XDMF from paraview has time attribute which does not work with meshio
@@ -49,13 +49,13 @@ lvNodes = nodesData["LV_Nodes"]
 points, edges =  getLinearPath(commonNodes["AV_Node"], commonNodes["HIS_Node"])
 avNode = 0
 hisIdx = points.shape[0] -1
-nsets["AV_NODE"] = [avNode]     # nsets must be iterable
-nsets["AV_HIS"] = [nodeIdx for nodeIdx in range(points.shape[0])]
-nsets["HIS_BIFUR"] = [hisIdx]
+nsets["av_node"] = [avNode]     # nsets must be iterable
+nsets["av_his"] = [nodeIdx for nodeIdx in range(points.shape[0])]
+nsets["his_bifur_node"] = [hisIdx]
 
 tmpPoints, tmpEdges =  getLinearPath(commonNodes["HIS_Node"], rvNodes["Init"])
 tmpEdges = tmpEdges + points.shape[0] -1
-nsets["HIS_RV_linear"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
+nsets["his_rv_linear"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
 tmpEdges[0, 0] = hisIdx
 edges = np.concatenate((edges, tmpEdges), axis=0)
 points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
@@ -63,7 +63,7 @@ rvInitIdx = points.shape[0] -1
 
 tmpPoints, tmpEdges =  getLinearPath(commonNodes["HIS_Node"], lvNodes["Init"])
 tmpEdges = tmpEdges + points.shape[0] -1 
-nsets["HIS_LV_linear"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
+nsets["his_lv_linear"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
 tmpEdges[0,0] = hisIdx
 edges = np.concatenate((edges, tmpEdges), axis=0)
 points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
@@ -71,53 +71,60 @@ lvInitIdx = points.shape[0] -1
 
 # Geodesic o non linear paths-------------------------------------------------------------------------
 
-tmpPoints, tmpEdges =  getGeodesicPath(meshRVPoints, meshRVFaces, rvNodes["Init"], rvNodes["Join"])
+tmpPoints, _ =  getGeodesicPath(meshRVPoints, meshRVFaces, rvNodes["Init"], rvNodes["Join"])
+tmpPoints, tmpEdges = resampleGeodesic(tmpPoints)
 tmpEdges = tmpEdges + points.shape[0] -1
-nsets["HIS_RV_geo"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
+nsets["his_rv_geo"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
 tmpEdges[0,0] = rvInitIdx
 edges = np.concatenate((edges, tmpEdges), axis=0)
 points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
 rvJoinIdx = points.shape[0] -1
 
-tmpPoints, tmpEdges =  getGeodesicPath(meshLVPoints, meshLVFaces, lvNodes["Init"], lvNodes["Join"])
+tmpPoints, _ =  getGeodesicPath(meshLVPoints, meshLVFaces, lvNodes["Init"], lvNodes["Join"])
+tmpPoints, tmpEdges = resampleGeodesic(tmpPoints)
 tmpEdges = tmpEdges + points.shape[0] -1
-nsets["HIS_LV_geo"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
+nsets["his_lv_geo"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
 tmpEdges[0,0] = lvInitIdx
 edges = np.concatenate((edges, tmpEdges), axis=0)
 points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
 lvJoinIdx = points.shape[0] -1
 
-nsets["HIS_LV_RV"] = [nodeIdx for nodeIdx in range(hisIdx + 1 ,points.shape[0])]
+nsets["his_lv_rv"] = [nodeIdx for nodeIdx in range(hisIdx + 1 ,points.shape[0])]
 
 #Geodesic endpoints-----------------------------------------------------------------------------------------
 for key in lvNodes.keys():
-    if "LV" in key:
-        tmpPoints, tmpEdges =  getGeodesicPath(meshLVPoints, meshLVFaces, lvNodes["Join"], lvNodes[key])
+    if "lv" in key:
+        tmpPoints, _ =  getGeodesicPath(meshLVPoints, meshLVFaces, lvNodes["Join"], lvNodes[key])
+        tmpPoints, tmpEdges = resampleGeodesic(tmpPoints)
         tmpEdges = tmpEdges + points.shape[0] -1
         nsets[key] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
         tmpEdges[0,0] = lvJoinIdx
         edges = np.concatenate((edges, tmpEdges), axis=0)
         points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
-        nsets["{}_end".format(key)] = [points.shape[0]-1]
-        
+        nsets["{}_end".format(key.lower())] = [points.shape[0]-1]
 
 
 for key in rvNodes.keys():
-    if "RV" in key:
-        tmpPoints, tmpEdges =  getGeodesicPath(meshRVPoints, meshRVFaces, rvNodes["Join"], rvNodes[key])
+    if "rv" in key:
+        tmpPoints, _ =  getGeodesicPath(meshRVPoints, meshRVFaces, rvNodes["Join"], rvNodes[key])
+        tmpPoints, tmpEdges = resampleGeodesic(tmpPoints)
         tmpEdges = tmpEdges + points.shape[0] -1
         nsets[key] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
         tmpEdges[0,0] = rvJoinIdx
         edges = np.concatenate((edges, tmpEdges), axis=0)
         points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
-        nsets["{}_end".format(key)] = [points.shape[0]-1]
+        nsets["{}_end".format(key.lower())] = [points.shape[0]-1]
 
 
 # Get all together!, points is ready, generate cells and point_data for visualization in .vtk, nsets are ready
+
+checkRepeatedPoints(points)
+
 cells = [
     ("line", edges),
 ]
 
+nsets["all_nodes"] = list(np.arange(points.shape[0]))
 
 point_data={}
 for key in nsets.keys():
