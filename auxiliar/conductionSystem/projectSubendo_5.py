@@ -41,6 +41,8 @@ phi1 = 1
 phiEndo = (1-endoPer) * phi0 + endoPer * phi1    # thresholds
 phiEpi = epiPer * phi0 + (1-epiPer) * phi1
 subendoWindow = [phi0 - ((phi0 - phiEndo) * subendoWindow)  , phi1]
+intramyoWindow = [phiEndo , phi1]
+# intramyoWindow = [phiEndo + (abs(phiEndo - phiEpi) / intramyoWindow)  , phiEndo + 2*(abs(phiEndo - phiEpi) / intramyoWindow)]
 
 #MAIN BUNDLE------------------------------------------------------------------------
 # 1 Reconstruc HisBundle from AV node to bifurcation
@@ -185,7 +187,7 @@ if args.project_intramyo:
     print("-----------Making projection into mid-myocardium of End Branches------------")
     tmpPurkBranches = {}  
     del purkSimple["purk_endnodes"]
-    intramyoWindow = [phiEndo + (abs(phiEndo - phiEpi) / intramyoWindow)  , phiEndo + 2*(abs(phiEndo - phiEpi) / intramyoWindow)]
+    
     for key in purkBranches.keys():
         branchType = key.split("_")[0]
         del purkSimple["{}_purk_endnodes".format(branchType)]

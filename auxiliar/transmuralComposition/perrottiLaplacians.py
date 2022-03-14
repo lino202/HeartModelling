@@ -10,7 +10,9 @@ import os
 import numpy as np
 import argparse
 from scipy.spatial.distance import cdist
+import time 
 
+start = time.time()
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--data_path',type=str, required=True, help='path to data')
 parser.add_argument('--out_name',type=str, required=True, help='output name defines type of diffusion (BC) see paper')
@@ -35,16 +37,7 @@ def isMemberIdxsRowWise(arr1, arr2, tol = 1E-6, showMem=False):
     else:
         arr1 = np.reshape(arr1, (-1,3))
     idxs = np.min(cdist(arr2,arr1), axis=1) < tol
-    # idxs = np.where((abs(arr1-arr2[:,None]) <= tol).all(2))
     return idxs.nonzero()[0]
-
-# def isMemberIdxsRowWise(arr1, arr2, tol = 1E-6):
-#     memReq = 4 *(arr1.shape[0]) * (arr2.shape[0]) / 1e9
-#     if memReq> 6:
-#         pass
-#     else:
-#         idxs = np.where((cdist(arr1,arr2) <= tol).all(2))
-#     return idxs[0]
 
 
 class Omega(fenics.SubDomain): 
@@ -136,3 +129,5 @@ with open(os.path.join(outPath, '{}.txt'.format(outName)), "w") as file:
 
     for node in u.compute_vertex_values(mesh):
         file.write("{:.15f}\n".format(node))
+
+print("Time of entire operation: {} seconds".format(time.time()-start))

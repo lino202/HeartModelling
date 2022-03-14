@@ -17,8 +17,8 @@ args = parser.parse_args()
 
 #Inputs
 dataPath = args.data_path
-rvEndoSurf = os.path.join(dataPath, "rv_endo.vtu")
-lvEndoSurf = os.path.join(dataPath, "lv_endo.vtu")
+rvEndoSurf = os.path.join(dataPath, "rv_endo.obj")
+lvEndoSurf = os.path.join(dataPath, "lv_endo.obj")
 purkInitNodes =  os.path.join(dataPath, "purkInitNodes.json")
 
 #Outputs

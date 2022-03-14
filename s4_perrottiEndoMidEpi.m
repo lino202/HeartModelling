@@ -10,9 +10,9 @@ transmural_pathC = append(dataPath, "/layers/", "transmural_distLV.txt");
 % stim_nodes_path = append(dataPath, "\layers\", "stim_nodes_paraview.csv"); 
 inputVtk = append(dataPath, '/electra_tetmesh.vtk');
 inputInp = append(dataPath, '/electra_tetmesh.inp');
-output_name = "layers_mesh_mi";
+output_name = "layers_mesh_he";
 algo = 2;
-inf_as_healthy = 0;
+inf_as_healthy = 1;
 
 myo_flag = 1;
 scar_flag = 2;
