@@ -3,8 +3,8 @@ addpath('functions');
 addpath('iso2mesh/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = '/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_MI1/';
-surfMesh = append(dataPath, 'refineMeshSurf.obj');
+dataPath = 'F:/HeartModeling/Data/sampleLE_MI1/';
+surfMesh = append(dataPath, 'improvedSurfMesh.obj');
 heart_in = append(dataPath, 'dti.vtk');
 myo_flag = 1;
 scar_flag = 2;
@@ -24,12 +24,12 @@ fibs_output = append(dataPath, 'electra_tetfibers.txt');
 surfSeeds=surfseeds(snodes(:,1:3),sfaces(:,1:3));
 minBB = min(snodes);
 maxBB = max(snodes);
-[nodes,elems,faces]=surf2mesh(snodes,sfaces,minBB,maxBB,1,[],surfSeeds,[],0);
+[nodes,elems,faces]=surf2mesh(snodes,sfaces,minBB,maxBB,1,0.5,surfSeeds,[],0);
 elems=removedupelem(elems);
 
 % visualize the resulting mesh
-plotmesh(nodes,faces(:,1:3));
-axis equal;
+% plotmesh(nodes,faces(:,1:3));
+% axis equal;
 
 % Read heart mask voxel points and fiber vectors
 [points,fields] = ReadVtkPoints(heart_in);
