@@ -4,7 +4,7 @@ addpath('iso2mesh/iso2mesh-1.9.6');
 
 % Input filenames
 dataPath = '/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_MI1/';
-surfMesh = append(dataPath, 'surfMesh.vtk');
+surfMesh = append(dataPath, 'refineMeshSurf.obj');
 heart_in = append(dataPath, 'dti.vtk');
 myo_flag = 1;
 scar_flag = 2;
@@ -18,14 +18,13 @@ inp_output = append(dataPath, 'electra_tetmesh.inp');
 fibs_output = append(dataPath, 'electra_tetfibers.txt');
 
 % Read heart surface mesh and normalize normals
-% [snodes, sfaces, snormals] = ReadObj(surfMesh);
-[snodes, sfaces, snormals] = ReadSurfVtk(surfMesh);
+[snodes, sfaces, snormals] = ReadObj(surfMesh);
+% [snodes, sfaces, snormals] = ReadSurfVtk(surfMesh);
 
-% s1=surfseeds(snodes(:,1:3),sfaces(:,1:3));
+surfSeeds=surfseeds(snodes(:,1:3),sfaces(:,1:3));
 minBB = min(snodes);
 maxBB = max(snodes);
-% [nodes,elems,faces]=surf2mesh(snodes,sfaces,minBB,maxBB,1,[],s1,[],0);
-[nodes,elems,faces]=surf2mesh(snodes,sfaces,minBB,maxBB,1,[]);
+[nodes,elems,faces]=surf2mesh(snodes,sfaces,minBB,maxBB,1,[],surfSeeds,[],0);
 elems=removedupelem(elems);
 
 % visualize the resulting mesh

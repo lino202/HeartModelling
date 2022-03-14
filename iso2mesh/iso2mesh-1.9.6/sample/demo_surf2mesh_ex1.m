@@ -5,8 +5,6 @@
 %% preparation
 % user must add the path of iso2mesh to matlab path list
 % addpath('../');
-clear all;
-clc;
 
 % user need to add the full path to .../iso2mesh/bin directory
 % to windows/Linux/Unix PATH environment variable
@@ -19,5 +17,5 @@ load tube_surface.mat
 [node,elem,face]=surf2mesh(v,f,[1 1 1],[100 100 100],0.1,25);
 
 %% visualize the resulting mesh
-plotmesh(nodes,faces(:,1:3));
+plotmesh(node,face(:,1:3));
 axis equal;

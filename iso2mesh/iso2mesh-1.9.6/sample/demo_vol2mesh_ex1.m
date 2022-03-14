@@ -16,7 +16,7 @@ load rat_head.mat
 % A,b are registration matrix and vector, respectively
 %% perform mesh generation
 
-[nodes,elem,faces]=vol2mesh(volimage>0.05,1:size(volimage,1),1:size(volimage,2),...
+[node,elem,face]=vol2mesh(volimage>0.05,1:size(volimage,1),1:size(volimage,2),...
                            1:size(volimage,3),2,2,1);
 
 %% alternatively, one can use the following cmd as a less robust approach
@@ -25,5 +25,5 @@ load rat_head.mat
 
 %% visualize the resulting mesh
 
-plotmesh(nodes,faces);
+plotmesh(node,face);
 axis equal;
