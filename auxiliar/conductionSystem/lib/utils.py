@@ -119,7 +119,7 @@ def resampleGeodesic(points, thresholdDist=0.7):
     return resampledPoints, edges
 
 
-def smoothProjection(points,edges, angleTheshold=20):
+def smoothProjection(points,edges, angleTheshold=10):
     
     # Get idxs of edges that correspond to nodes connected 2 or 3 times (exclude extremes)
     idxs2Evaluate, count = np.unique(edges.flatten(), return_counts=True)

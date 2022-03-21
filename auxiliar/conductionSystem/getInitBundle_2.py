@@ -12,7 +12,6 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--data_path',required=True, help='path to data')
-parser.add_argument('--gen_obj', action='store_true', help='if specified, generate .obj surface endo meshes for fractal Purkinje network algo')
 args = parser.parse_args()
 
 #Inputs
@@ -23,7 +22,6 @@ purkInitNodes =  os.path.join(dataPath, "purkInitNodes.json")
 
 #Outputs
 outName = "mainCSBundle"    # generates .inp and .vtk
-genOBJ = args.gen_obj             # if true generates xv_endo.obj for fractal algo
 
 meshRV = meshio.read(rvEndoSurf)
 meshLV = meshio.read(lvEndoSurf)
@@ -139,21 +137,3 @@ meshOut.write(os.path.join(dataPath, "{}.vtk".format(outName)))
 
 meshOut = meshio.Mesh(points, cells, point_sets=nsets)
 meshOut.write(os.path.join(dataPath, "{}.inp".format(outName)))
-
-
-# Get the .obj as required for FractalTree Mesh loadOBJ
-if genOBJ:
-    cells = [
-        ("triangle", meshRVFaces),
-    ]
-
-
-    meshOut = meshio.Mesh(meshRVPoints, cells)
-    meshOut.write(os.path.join(dataPath, "rv_endo.obj"))
-
-    cells = [
-        ("triangle", meshLVFaces),
-    ]
-
-    meshOut = meshio.Mesh(meshLVPoints, cells)
-    meshOut.write(os.path.join(dataPath, "lv_endo.obj"))

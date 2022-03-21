@@ -115,8 +115,9 @@ a = fenics.dot(fenics.grad(u), fenics.grad(v))*fenics.dx
 L = f*v*fenics.dx - g*v*fenics.ds
 
 # Compute solution
+# cg is the linear iteratively solver, it is changed form 'lu' default as 2M cells meshes run out of memory
 u = fenics.Function(V)
-fenics.solve(a == L, u, bcs)
+fenics.solve(a == L, u, bcs, solver_parameters={'linear_solver':'cg'})
 
 
 # Save solution to file in VTK format and Txt

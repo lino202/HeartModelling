@@ -18,7 +18,7 @@ inp_output = append(dataPath, 'electra_tetmesh.inp');
 fibs_output = append(dataPath, 'electra_tetfibers.txt');
 
 % Read heart surface mesh and normalize normals
-[snodes, sfaces, snormals] = ReadObj(surfMesh);
+[snodes, sfaces, snormals] = ReadObj(surfMesh); %from Meshlab
 % [snodes, sfaces, snormals] = ReadSurfVtk(surfMesh);
 
 surfSeeds=surfseeds(snodes(:,1:3),sfaces(:,1:3));
