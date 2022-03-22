@@ -18,11 +18,9 @@ parser.add_argument('--meanMag',type=int, required=True, help='number of nodes t
 parser.add_argument('--meanNor',type=int, required=True, help='number of nodes to average for normal direction of the projection')
 parser.add_argument('--intramyo_window',type=int, required=True, help='intramyo window is the middle width transmural wall in which purk endnodes are going to be projected')
 parser.add_argument('--intramyo_percentage',type=int, help='percentage of endpoints to project to intramyo')
-parser.add_argument('--epi_window',type=int, required=True, help='epi window is the proximal width transmural wall in which purk endnodes are going to be projected')
+# parser.add_argument('--epi_window',type=int, required=True, help='epi window is the proximal width transmural wall in which purk endnodes are going to be projected')
 parser.add_argument('--epi_percentage',type=int, help='percentage of endpoints to project to epi')
 parser.add_argument('--proj_linear', action='store_true', help='if especified, linear projection into intramid otherwise folows the already curved branch')
-
-
 args = parser.parse_args()
 
 #Inputs
@@ -31,8 +29,8 @@ rvSurfMesh = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "rv_end
 csSubEndoMesh = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "cs_subendo.inp"))
 csSubEndoIntraMesh = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "cs_subendo_intramyo.inp"))
 mesh = meshio.read(os.path.join(args.data_path, "layers", "{}.inp".format(args.mesh_name)))
-transDistRV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distB000000.vtu"))
-transDistLV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distC000000.vtu"))
+transDistRV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distRV000000.vtu"))
+transDistLV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distLV000000.vtu"))
 outPath = os.path.join(args.data_path, "stim", "stim_cs")
 outName = args.out_name
 
@@ -44,13 +42,13 @@ nsets = copy.deepcopy(csSubEndoIntraMesh.point_sets)
 #Perrotti definitions, must be consistent with the ones used
 endoPer = args.endo_per / 100
 epiPer = args.epi_per / 100
-intramyoWindow = args.intramyo_window
-epiWindow = args.epi_window
 phi0 = -1
 phi1 = 1
 phiEndo = (1-endoPer) * phi0 + endoPer * phi1    # thresholds
 phiEpi = epiPer * phi0 + (1-epiPer) * phi1
-
+intramyoWindow = [phiEndo + (abs(phiEndo - phiEpi) / args.intramyo_window)  , phiEndo + 2*(abs(phiEndo - phiEpi) / args.intramyo_window)]
+# epiWindow = [phiEpi , phiEpi + (abs(phi1 - phiEpi) / args.epi_window)]
+epiWindow = [phiEpi , phi1]
 
 # ------------------------- Project EndBranches in Scar as SubEndo again -------------------------------------------------
 endNodes = nsets["purk_endnodes"]
@@ -84,7 +82,6 @@ for endIdx in scarEndNodes:
 
 print("-----------Making projection into mid-myocardium of End Branches------------")
 tmpPurkBranches = {}  
-intramyoWindow = [phiEndo + (abs(phiEndo - phiEpi) / intramyoWindow)  , phiEndo + 2*(abs(phiEndo - phiEpi) / intramyoWindow)]
 totBranches = len(scarEndBranches)
 scarEndBranches2Mid = random.sample(scarEndBranches, int(totBranches*(args.intramyo_percentage/100)))
 
@@ -133,7 +130,7 @@ nsets["purk_endnodes"] = uniqueEdges[uniqueEdges!=nsets["av_node"]]
 # ---------------------------------------Project Epi--------------------------------------------
 
 print("-----------Making projection into epicardium of End Branches------------")
-epiWindow = [phiEpi , phiEpi + (abs(phi1 - phiEpi) / epiWindow)]
+
 scarEndBranches = [endBranch for endBranch in scarEndBranches if not endBranch in scarEndBranches2Mid]
 scarEndBranches2Epi = random.sample(scarEndBranches, int(totBranches*(args.epi_percentage/100)))
 
