@@ -5,7 +5,7 @@ addpath('functions','DTIEstimation');
 
 dataPath = 'F:\DTI_konstas\data\sampleMA_Control2\';
 dwiName = 'dwi_denoised.nrrd';                        % this must be a .nrrd 
-mskName = 'Segmentation.seg.nrrd';
+mskName = 'Segmentation.seg.nrrd';                    % MI needs to have the scar in segmentation 
 outputName = 'dti';
 
 

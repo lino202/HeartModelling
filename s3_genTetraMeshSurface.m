@@ -24,7 +24,7 @@ fibs_output = append(dataPath, 'electra_tetfibers.txt');
 surfSeeds=surfseeds(snodes(:,1:3),sfaces(:,1:3));
 minBB = min(snodes);
 maxBB = max(snodes);
-[nodes,elems,faces]=surf2mesh(snodes,sfaces,minBB,maxBB,1,0.5,surfSeeds,[],0);
+[nodes,elems,faces]=surf2mesh(snodes,sfaces,minBB,maxBB,1,0.1,surfSeeds,[],0);
 elems=removedupelem(elems);
 
 % visualize the resulting mesh
