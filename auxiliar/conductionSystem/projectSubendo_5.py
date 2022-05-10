@@ -1,4 +1,3 @@
-from enum import unique
 import os
 import random
 import meshio
@@ -40,8 +39,8 @@ phi0 = -1
 phi1 = 1
 phiEndo = (1-endoPer) * phi0 + endoPer * phi1    # thresholds
 phiEpi = epiPer * phi0 + (1-epiPer) * phi1
-subendoWindow = [phi0 - ((phi0 - phiEndo) * subendoWindow)  , phi1]
-intramyoWindow = [phiEndo , phi1] 
+subendoWindow = [phi0 - ((phi0 - phiEndo) * subendoWindow)  , phiEpi]
+intramyoWindow = [phiEndo , phiEpi] 
 # intramyoWindow = [phiEndo + (abs(phiEndo - phiEpi) / intramyoWindow)  , phiEndo + 2*(abs(phiEndo - phiEpi) / intramyoWindow)]
 
 #MAIN BUNDLE------------------------------------------------------------------------
@@ -239,9 +238,6 @@ if args.project_intramyo:
         nsets = {**nsetsSimple, **purkSimple, **tmpPurkBranches}
     else:
         nsets = {**nsetsSimple, **purkSimple}
-
-
-
 
 
 

@@ -3,7 +3,7 @@ format long g;
 addpath('functions');
 
 
-dataPath = '/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleMA_MI1/';
+dataPath = '/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control3/';
 transmural_pathA = append(dataPath, "/layers/", "transmural_distXV.txt");
 transmural_pathB = append(dataPath, "/layers/", "transmural_distRV.txt"); 
 transmural_pathC = append(dataPath, "/layers/", "transmural_distLV.txt");
@@ -12,7 +12,7 @@ inputVtk = append(dataPath, '/electra_tetmesh.vtk');
 inputInp = append(dataPath, '/electra_tetmesh.inp');
 output_name = "layers_mesh_he";
 algo = 2;
-inf_as_healthy = 1;
+inf_as_healthy = 0;
 
 myo_flag = 1;
 scar_flag = 2;
