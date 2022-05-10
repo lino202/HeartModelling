@@ -3,7 +3,7 @@ format long g;
 addpath('functions','LMMSEDWI','MRNoiseEstimators','MRNoiseEstimators/localstat','DTIEstimation');
 
 
-dataPath = 'F:\DTI_konstas\data\sampleMA_Control2\';
+dataPath = 'F:\HeartModeling\Data\sampleLE_Control3\';
 dwiName = 'dwi.nrrd';                        % this must be a .nrrd 
 mskName = 'Segmentation.seg.nrrd';
 outputName = 'dwi_denoised.nrrd';

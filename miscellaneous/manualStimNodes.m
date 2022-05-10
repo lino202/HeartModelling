@@ -1,19 +1,13 @@
 close all; clear;
 format long g;
-addpath('functions');
+addpath('../functions');
 
 
-dataPath = 'F:\DTI_konstas\data\sampleLE_Control2';
-inputInp = append(dataPath, "/layers/", "layers_mesh2.inp");
-inputVtk = append(dataPath, "/layers/", "layers_mesh2.vtk");
-stim_folder = append(dataPath, "/stim/");
-output_name = "final_mesh2";
-
-myo_flag = 1;
-scar_flag = 2;
-endo_flag = 3;
-mid_flag = 4;
-epi_flag = 5;
+dataPath = 'F:\Electra\electra_sims\Heart\Purkinje\sampleMA_Control2\';
+inputInp = append(dataPath, "layers_mesh_he.inp");
+inputVtk = append(dataPath, "layers_mesh_he.vtk");
+stim_folder = dataPath;
+output_name = "fibrilation_mesh";
 
 
 %% Read Data
@@ -50,7 +44,7 @@ end
 
 
 %% Finish saving
-SaveAbaqus(append(dataPath, "/stim/", output_name, ".inp"), nodes, elems(:,1:4), node_sets);
-SaveTetVtk(append(dataPath, "/stim/", output_name, ".vtk"), nodes, elems(:,1:4), field_data);
+SaveAbaqus(append(dataPath, output_name, ".inp"), nodes, elems(:,1:4), node_sets);
+SaveTetVtk(append(dataPath, output_name, ".vtk"), nodes, elems(:,1:4), field_data);
 
 

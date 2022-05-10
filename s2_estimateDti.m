@@ -3,7 +3,7 @@ format long g;
 addpath('functions','DTIEstimation');
 
 
-dataPath = 'F:\DTI_konstas\data\sampleMA_Control2\';
+dataPath = 'F:\HeartModeling\Data\sampleLE_Control3\';
 dwiName = 'dwi_denoised.nrrd';                        % this must be a .nrrd 
 mskName = 'Segmentation.seg.nrrd';                    % MI needs to have the scar in segmentation 
 outputName = 'dti';

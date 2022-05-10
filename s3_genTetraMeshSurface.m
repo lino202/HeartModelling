@@ -3,8 +3,8 @@ addpath('functions');
 addpath('iso2mesh/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:/HeartModeling/Data/sampleLE_MI1/';
-surfMesh = append(dataPath, 'improvedSurfMesh.obj');
+dataPath = 'F:/HeartModeling/Data/sampleLE_Control2/';
+surfMesh = append(dataPath, 'surfMesh.obj');
 heart_in = append(dataPath, 'dti.vtk');
 myo_flag = 1;
 scar_flag = 2;
@@ -13,9 +13,9 @@ mid_flag = 4;
 epi_flag = 5;
 
 % Output filenames
-vtk_output = append(dataPath, 'electra_tetmesh.vtk');
-inp_output = append(dataPath, 'electra_tetmesh.inp');
-fibs_output = append(dataPath, 'electra_tetfibers.txt');
+vtk_output = append(dataPath, 'electra_tetmesh_coarse.vtk');
+inp_output = append(dataPath, 'electra_tetmesh_coarse.inp');
+fibs_output = append(dataPath, 'electra_tetfibers_coarse.txt');
 
 % Read heart surface mesh and normalize normals
 [snodes, sfaces, snormals] = ReadObj(surfMesh); %from Meshlab
@@ -24,7 +24,7 @@ fibs_output = append(dataPath, 'electra_tetfibers.txt');
 surfSeeds=surfseeds(snodes(:,1:3),sfaces(:,1:3));
 minBB = min(snodes);
 maxBB = max(snodes);
-[nodes,elems,faces]=surf2mesh(snodes,sfaces,minBB,maxBB,1,0.1,surfSeeds,[],0);
+[nodes,elems,faces]=surf2mesh(snodes,sfaces,minBB,maxBB,1,1,surfSeeds,[],0);
 elems=removedupelem(elems);
 
 % visualize the resulting mesh
