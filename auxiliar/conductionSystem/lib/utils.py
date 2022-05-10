@@ -45,10 +45,13 @@ def getEdges(points):
     return edges
 
 
-def isMemberIdxsRowWise(arr1, arr2, tol = 1E-6):
-    idxs = np.where((abs(arr1-arr2[:,None]) <= tol).all(2))
-    return idxs[0]
-
+def isMemberIdxsRowWise(arr1, arr2, tol = 1E-6, showMem=False):
+    if showMem: 
+        print("Required Memory: {} GB".format(4 *(arr1.shape[0]) * (arr2.shape[0]) / 1e9))
+    else:
+        arr1 = np.reshape(arr1, (-1,3))
+    idxs = np.min(cdist(arr2,arr1), axis=1) < tol
+    return idxs.nonzero()[0]
             
 def getPointsInSphere(points, center, radius=2):
     center = np.tile(center, (points.shape[0], 1))

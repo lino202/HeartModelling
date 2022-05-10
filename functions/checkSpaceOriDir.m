@@ -1,6 +1,6 @@
 function [] = checkSpaceOriDir(mask, dxi)
 
-% Tis function checks if two structs comming from ReadNrrd() have equal
+% This function checks if two structs comming from ReadNrrd() have equal
 % space name and approximately equal origin and direction coordinates
 
     isapproximatelyequal = @(x1,x2,tol) all(abs(real(x1(:)-x2(:)))<tol) & all(abs(imag(x1(:)-x2(:)))<tol);

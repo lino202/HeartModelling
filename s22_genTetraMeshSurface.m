@@ -1,0 +1,33 @@
+clear; close all;
+addpath('functions');
+addpath('iso2mesh/iso2mesh-1.9.6');
+
+% Input filenames
+dataPath = 'F:/HeartModeling/Data_OM_MI/sampleP21_389/';
+surfMesh = append(dataPath, 'surfMesh.obj');
+vtk_output = append(dataPath, 'electra_tetmesh.vtk');
+
+
+% Read heart surface mesh and normalize normals
+[snodes, sfaces, snormals] = ReadObj(surfMesh); %from Meshlab
+% [snodes, sfaces, snormals] = ReadSurfVtk(surfMesh);
+
+surfSeeds=surfseeds(snodes(:,1:3),sfaces(:,1:3));
+minBB = min(snodes);
+maxBB = max(snodes);
+[nodes,elems,faces]=surf2mesh(snodes,sfaces,minBB,maxBB,1,0.1,surfSeeds,[],0);
+elems=removedupelem(elems);
+
+% visualize the resulting mesh
+% plotmesh(nodes,faces(:,1:3));
+% axis equal;
+
+% figure; hold on; 
+% ShowFaces(nodes,faces(:,1:3),[.8 .8 .8],0.4);
+% plot3(nodes(:,1),nodes(:,2),nodes(:,3),'bo','MarkerFaceColor','b','MarkerSize',5)
+% hold off; daspect([1 1 1]);
+
+SaveTetVtk(vtk_output, nodes, elems(:,1:4), []);
+
+
+
