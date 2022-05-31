@@ -32,20 +32,20 @@ ringRV = meshio.read(os.path.join(args.dataPath,  "{}.obj".format(args.ringRV)))
 apexLV = meshio.read(os.path.join(args.dataPath,  "{}.obj".format(args.apexLV)))
 apexRV = meshio.read(os.path.join(args.dataPath,  "{}.obj".format(args.apexRV)))
 meshSurf = meshio.read(os.path.join(args.mesh2dPath, "surfMesh.obj"))
-mesh = meshio.read(os.path.join(args.mesh3dPath, "layers_mesh_he.vtk"))
+mesh = meshio.read(os.path.join(args.mesh3dPath, "electra_tetmesh.vtk"))
 points = mesh.points
 
 idxsSurf2Vol = getHugeNearest(meshSurf.points, points,  maxNumPoints=1000)
 
 idxsEndoRV = getHugeNearest(endoRV.points, meshSurf.points)
 idxsRingRV = getHugeNearest(ringRV.points, meshSurf.points)
-idxsEndoRV = idxsEndoRV[np.in1d(idxsEndoRV, idxsRingRV, invert=True)]
+# idxsEndoRV = idxsEndoRV[np.in1d(idxsEndoRV, idxsRingRV, invert=True)]
 nsets["rv_ring"] = idxsRingRV
 nsets["rv_endo"] = idxsEndoRV
 
 idxsEndoLV = getHugeNearest(endoLV.points, meshSurf.points)
 idxsRingLV = getHugeNearest(ringLV.points, meshSurf.points)
-idxsEndoLV = idxsEndoLV[np.in1d(idxsEndoLV, idxsRingLV, invert=True)]
+# idxsEndoLV = idxsEndoLV[np.in1d(idxsEndoLV, idxsRingLV, invert=True)]
 nsets["lv_ring"] = idxsRingLV
 nsets["lv_endo"] = idxsEndoLV
 
@@ -59,7 +59,8 @@ nsets["rv_apex"] = idxsApexRV
 allMinusEpi = np.array([])
 idxsEpi = np.arange(meshSurf.points.shape[0])
 for key in nsets.keys():
-    allMinusEpi = np.concatenate((allMinusEpi, nsets[key])) if allMinusEpi.size else nsets[key]
+    if "endo" in key:
+        allMinusEpi = np.concatenate((allMinusEpi, nsets[key])) if allMinusEpi.size else nsets[key]
 idxsEpi = idxsEpi[np.in1d(idxsEpi, allMinusEpi, invert=True)]
 nsets["epi"] = idxsEpi
 
