@@ -104,10 +104,12 @@ point_data["all"][idxsCorrectHealthy] = 2
 point_data["all"][idxsBZ] = 3
 point_data["all"][idxsScar] = 4
 
-
+cells = [
+    ("line", [[0, 1]])
+]
 # There might be zeros in all as some pixels with zero value could be segmented
 # into the unhealthy zone, we can decide what to do with them if they are healthy or border zone
 point_data["all"][point_data["all"]==0] = 2
 
-meshOut = meshio.Mesh(points, [], point_data=point_data)
+meshOut = meshio.Mesh(points, cells, point_data=point_data)
 meshOut.write(os.path.join(args.dataPath, "{}.vtk".format(args.outName)))
