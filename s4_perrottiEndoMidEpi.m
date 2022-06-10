@@ -3,7 +3,7 @@ format long g;
 addpath('functions');
 
 
-dataPath = '/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control3/';
+dataPath = '/home/maxi/Documents/PhD/Data/DTI_hearts/Data_Electra_DWI/sampleLE_Control2_coarse/';
 transmural_pathA = append(dataPath, "/layers/", "transmural_distXV.txt");
 transmural_pathB = append(dataPath, "/layers/", "transmural_distRV.txt"); 
 transmural_pathC = append(dataPath, "/layers/", "transmural_distLV.txt");

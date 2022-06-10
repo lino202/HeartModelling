@@ -22,6 +22,12 @@ parser.add_argument('--remoteRoiNumber',type=int, required=True)
 parser.add_argument('--save',action='store_true',  help='save histogram with thresholds')
 args = parser.parse_args()
 
+
+myo_flag = 1
+uncertain_flag = 2
+bz_flag = 3
+scar_flag = 4
+
 geVolData = nib.load(os.path.join(args.dataPath, "sa_ge.nii"))
 geVolArr = geVolData.get_fdata()
 segMask, segMaskHeader = nrrd.read(os.path.join(args.dataPath, "Segmentation.seg.nrrd"))
@@ -99,17 +105,17 @@ for key in nsets.keys():
     point_data[key] = list(tmp)
 
 point_data["all"] = np.zeros(points.shape[0])
-point_data["all"][healthyIdxs] = 1
-point_data["all"][idxsCorrectHealthy] = 2
-point_data["all"][idxsBZ] = 3
-point_data["all"][idxsScar] = 4
+point_data["all"][healthyIdxs] = myo_flag
+point_data["all"][idxsCorrectHealthy] = uncertain_flag
+point_data["all"][idxsBZ] = bz_flag
+point_data["all"][idxsScar] = scar_flag
 
 cells = [
     ("line", [[0, 1]])
 ]
 # There might be zeros in all as some pixels with zero value could be segmented
 # into the unhealthy zone, we can decide what to do with them if they are healthy or border zone
-point_data["all"][point_data["all"]==0] = 2
+point_data["all"][point_data["all"]==0] = uncertain_flag
 
 meshOut = meshio.Mesh(points, cells, point_data=point_data)
 meshOut.write(os.path.join(args.dataPath, "{}.vtk".format(args.outName)))

@@ -24,8 +24,8 @@ elif args.interpType == "rbf":
     values2 = RBFInterpolator(points1, values, neighbors=100)(points2)
 
 #get round values for vtk and inp
-values2[values2<1] = 1
-values2[values2>4] = 4
+values2[values2<np.min(values)] = np.min(values)
+values2[values2>np.max(values)] = np.max(values)
 mesh2.point_data["all"] = np.round(values2)
 fileOutName = args.outPath.split(".")[0] + "_{}.vtk".format(args.interpType)
 mesh2.write(fileOutName)
