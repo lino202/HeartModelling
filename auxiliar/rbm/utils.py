@@ -4,7 +4,7 @@ import os
 from scipy.spatial.distance import cdist
 from tqdm import tqdm
 
-def getHugeNearest(arr1, arr2, maxNumPoints=5000):
+def getHugeNearest(arr1, arr2, maxNumPoints=1000):
     steps = int(np.ceil(arr1.shape[0] / maxNumPoints))
     idxsTot = np.array([])
     for i in tqdm(range(steps)):

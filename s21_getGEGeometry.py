@@ -111,7 +111,7 @@ point_data["all"][idxsBZ] = bz_flag
 point_data["all"][idxsScar] = scar_flag
 
 cells = [
-    ("line", [[0, 1]])
+    ("line", [[0, 1]])    #this is just for being able to open with meshio afterwards
 ]
 # There might be zeros in all as some pixels with zero value could be segmented
 # into the unhealthy zone, we can decide what to do with them if they are healthy or border zone
