@@ -10,8 +10,8 @@ parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--dataPath',type=str, required=True, help='path to data')
 parser.add_argument('--mesh3dPath',type=str, required=True, help='path to data')
 parser.add_argument('--outName',type=str, required=True, help='output name')
-
 args = parser.parse_args()
+
 mesh = meshio.read(os.path.join(args.mesh3dPath, "rbm_mesh.vtk"))
 rbmVersors = readFibersfromElectraPre(os.path.join(args.dataPath, "long_fibers.txt"))
 print("Mesh nodes {} and fibers {}\n".format(mesh.points.shape, rbmVersors.shape) )
