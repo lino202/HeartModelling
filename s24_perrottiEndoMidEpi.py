@@ -91,6 +91,12 @@ algo_points[(transA_endo | transA_mid) & (transB_mid | transB_epi) & (transC_mid
 algo_points[(transA_endo | transA_mid) & (transB_endo | transC_endo)] = endo_flag
 
 if not args.infAsHealthy:
+    endoBZ_points = np.zeros((meshVtk.points.shape[0])) 
+    endoBZ_points[np.where((all_points==bz_flag) & (algo_points==endo_flag))] = 1
+    midBZ_points = np.zeros((meshVtk.points.shape[0])) 
+    midBZ_points[np.where((all_points==bz_flag) & (algo_points==mid_flag))] = 1
+    epiBZ_points = np.zeros((meshVtk.points.shape[0])) 
+    epiBZ_points[np.where((all_points==bz_flag) & (algo_points==epi_flag))] = 1
     algo_points[all_points==bz_flag] = bz_flag
     algo_points[all_points==scar_flag] = scar_flag
 
@@ -101,6 +107,12 @@ for tissueType in validKeys:
     point_data[tissueType][algo_points==globals()["{}_flag".format(tissueType)]] = 1
     nsets["{}_nodes".format(tissueType)] = np.where(point_data[tissueType] == 1)[0]
 point_data["all"] = algo_points
+point_data["endoBZ"] = endoBZ_points
+point_data["midBZ"] = midBZ_points
+point_data["epiBZ"] = epiBZ_points
+nsets["endobz_nodes"] = np.where(endoBZ_points==1)[0]
+nsets["midbz_nodes"] = np.where(midBZ_points==1)[0]
+nsets["epibz_nodes"] = np.where(epiBZ_points==1)[0]
 
 #SaveData
 meshOutVtk = meshio.Mesh(meshVtk.points, meshVtk.cells, point_data=point_data)

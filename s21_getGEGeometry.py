@@ -30,7 +30,7 @@ scar_flag = 4
 
 geVolData = nib.load(os.path.join(args.dataPath, "sa_ge.nii"))
 geVolArr = geVolData.get_fdata()
-segMask, segMaskHeader = nrrd.read(os.path.join(args.dataPath, "Segmentation.seg.nrrd"))
+segMask, segMaskHeader = nrrd.read(os.path.join(args.dataPath, "Segmentation-label.nrrd"))
 space = segMaskHeader['space']
 spaceOrigin = np.concatenate((segMaskHeader['space origin'],[1]))
 ijk2Points = np.zeros((4,4))
