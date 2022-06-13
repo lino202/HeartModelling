@@ -4,7 +4,8 @@ import os
 import numpy as np
 import argparse
 import meshio
-from utils import writeFibers4JSON, readFibersfromElectraPre, getHugeNearest
+from utils import writeFibers4JSON, readFibersfromElectraPre
+from scipy.spatial import KDTree
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--dataPath',type=str, required=True, help='path to data')
@@ -27,7 +28,8 @@ elif args.fiberMethod == "LDRB":
         rbmVersors = np.array(f["fiber"]["vector"])   #already normalized
         angles = np.array(f["fiber"]["scalar"])
 
-    idxs = getHugeNearest(meshPoints, fiberPoints)
+    tree = KDTree(fiberPoints)
+    _ , idxs = tree.query(meshPoints, k=1)
     rbmVersors = rbmVersors[idxs,:]
     angles = angles[idxs]
 
