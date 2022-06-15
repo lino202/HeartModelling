@@ -107,12 +107,15 @@ for tissueType in validKeys:
     point_data[tissueType][algo_points==globals()["{}_flag".format(tissueType)]] = 1
     nsets["{}_nodes".format(tissueType)] = np.where(point_data[tissueType] == 1)[0]
 point_data["all"] = algo_points
-point_data["endoBZ"] = endoBZ_points
-point_data["midBZ"] = midBZ_points
-point_data["epiBZ"] = epiBZ_points
-nsets["endobz_nodes"] = np.where(endoBZ_points==1)[0]
-nsets["midbz_nodes"] = np.where(midBZ_points==1)[0]
-nsets["epibz_nodes"] = np.where(epiBZ_points==1)[0]
+
+
+if not args.infAsHealthy:
+    point_data["endoBZ"] = endoBZ_points
+    point_data["midBZ"] = midBZ_points
+    point_data["epiBZ"] = epiBZ_points
+    nsets["endobz_nodes"] = np.where(endoBZ_points==1)[0]
+    nsets["midbz_nodes"] = np.where(midBZ_points==1)[0]
+    nsets["epibz_nodes"] = np.where(epiBZ_points==1)[0]
 
 #SaveData
 meshOutVtk = meshio.Mesh(meshVtk.points, meshVtk.cells, point_data=point_data)
