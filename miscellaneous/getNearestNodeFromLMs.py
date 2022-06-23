@@ -35,7 +35,7 @@ for i, idx in enumerate(idxs):
     nsets[labels[i]] = [idx]
     nsets["all"].append(idx)
 
-point_data={}
+point_data=mesh.point_data
 for key in nsets.keys():
     tmp = np.zeros(points.shape[0])
     tmp[nsets[key]] = 1

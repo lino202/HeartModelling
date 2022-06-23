@@ -3,8 +3,8 @@ addpath('functions');
 addpath('iso2mesh/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:/HeartModeling/Data/sampleLE_Control2/';
-surfMesh = append(dataPath, 'surfMesh.obj');
+dataPath = 'F:/HeartModeling/Data_1/sampleLE_Control2/registration/';
+surfMesh = append(dataPath, 'surfMeshExvivo.obj');
 heart_in = append(dataPath, 'dti.vtk');
 myo_flag = 1;
 scar_flag = 2;

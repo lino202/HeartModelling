@@ -3,9 +3,9 @@ addpath('functions');
 addpath('iso2mesh/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:/HeartModeling/Data_OM_MI/sampleP21_389/';
-surfMesh = append(dataPath, 'surfMesh.obj');
-vtk_output = append(dataPath, 'electra_tetmesh.vtk');
+dataPath = 'F:/HeartModeling/Data_1/sampleLE_Control2/registration/registration/';
+surfMesh = append(dataPath, 'surfMeshInvivo_Trans.obj');
+vtk_output = append(dataPath, 'inVivoRigidTrans.vtk');
 
 
 % Read heart surface mesh and normalize normals
