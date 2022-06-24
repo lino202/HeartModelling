@@ -44,7 +44,7 @@ for ff = 1:length(fields)
     if strcmp(fields{ff}{2},'epi'), epi_points = fields{ff}{1}; end
     if strcmp(fields{ff}{2},'myo'), myo_points = fields{ff}{1}; end
     if strcmp(fields{ff}{2},'scar'), scar_points = fields{ff}{1}; end
-    if strcmp(fields{ff}{2},'dti-fibers'), fibs = fields{ff}{1}; end
+    if strcmp(fields{ff}{2},'dti_fibers'), fibs = fields{ff}{1}; end
 end
 
 if inf_as_healthy
@@ -98,7 +98,7 @@ epi_points(algo_points==epi_flag) = 1;
 
 % Collect field data
 field_data = {{endo_points,'endo'},{mid_points,'mid'},{epi_points,'epi'},...
-              {myo_points,'myo'}, {scar_points,'scar'}, {fibs,'dti-fibers'},...
+              {myo_points,'myo'}, {scar_points,'scar'}, {fibs,'dti_fibers'},...
               {algo_points, 'layers'}};
 
 % Create node sets

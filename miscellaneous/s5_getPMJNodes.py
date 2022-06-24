@@ -63,7 +63,7 @@ for key in stimSets.keys():
 
 nsets={}
 for key in point_data:
-    if key != 'layers' and key != 'dti-fibers':
+    if key != 'layers' and key != 'dti_fibers':
         tmp = np.where(point_data[key]==1.)[0]
         nsets[key+'_nodes'] = tmp 
 

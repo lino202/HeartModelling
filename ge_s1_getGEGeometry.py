@@ -104,18 +104,18 @@ for key in nsets.keys():
     tmp[nsets[key]] = 1
     point_data[key] = list(tmp)
 
-point_data["all"] = np.zeros(points.shape[0])
-point_data["all"][healthyIdxs] = myo_flag
-point_data["all"][idxsCorrectHealthy] = uncertain_flag
-point_data["all"][idxsBZ] = bz_flag
-point_data["all"][idxsScar] = scar_flag
+point_data["layers_mi"] = np.zeros(points.shape[0])
+point_data["layers_mi"][healthyIdxs] = myo_flag
+point_data["layers_mi"][idxsCorrectHealthy] = uncertain_flag
+point_data["layers_mi"][idxsBZ] = bz_flag
+point_data["layers_mi"][idxsScar] = scar_flag
 
 cells = [
     ("line", [[0, 1]])    #this is just for being able to open with meshio afterwards
 ]
-# There might be zeros in all as some pixels with zero value could be segmented
+# There might be zeros in layers_mi as some pixels with zero value could be segmented
 # into the unhealthy zone, we can decide what to do with them if they are healthy or border zone
-point_data["all"][point_data["all"]==0] = uncertain_flag
+point_data["layers_mi"][point_data["layers_mi"]==0] = uncertain_flag
 
 meshOut = meshio.Mesh(points, cells, point_data=point_data)
 meshOut.write(os.path.join(args.dataPath, "{}.vtk".format(args.outName)))

@@ -52,7 +52,7 @@ class Omega(fenics.SubDomain):
 
 # Create mesh and define function space
 mesh = fenics.Mesh()
-f = fenics.XDMFFile(fenics.MPI.comm_world, os.path.join(dataPath, "electra_tetmesh.xdmf"))
+f = fenics.XDMFFile(fenics.MPI.comm_world, os.path.join(dataPath, "tetmesh.xdmf"))
 f.read(mesh)
 fenics.info(mesh)
 V = fenics.FunctionSpace(mesh, 'Lagrange', 1)

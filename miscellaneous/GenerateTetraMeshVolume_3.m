@@ -34,7 +34,7 @@ for ff = 1:length(fields)
     if strcmp(fields{ff}{2},'endo_nodes'), endo_points = fields{ff}{1}; end
     if strcmp(fields{ff}{2},'mid_nodes'), mid_points = fields{ff}{1}; end
     if strcmp(fields{ff}{2},'epi_nodes'), epi_points = fields{ff}{1}; end
-    if strcmp(fields{ff}{2},'dti-fibers'), fibs = fields{ff}{1}; end
+    if strcmp(fields{ff}{2},'dti_fibers'), fibs = fields{ff}{1}; end
 end
 
 endo = find(endo_points==1);
@@ -66,7 +66,7 @@ fibs_tet = fibs(neigh,:);
 
 % Collect field data
 field_data = {{endo_flags,'endo'},{mid_flags,'mid'},{epi_flags,'epi'},...
-              {fibs_tet,'dti-fibers'}};
+              {fibs_tet,'dti_fibers'}};
 
 % Create node sets
 nsets{1} = {endo_tet,'endo_nodes'};

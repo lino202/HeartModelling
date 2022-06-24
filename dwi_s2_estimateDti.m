@@ -1,9 +1,9 @@
 close all; clear;
 format long g;
-addpath('functions','DTIEstimation');
+addpath('matlabFunctions','libraries/DTIEstimation');
 
 
-dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control3\';
+dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control2prueba\';
 dwiName = 'dwi_denoised.nrrd';                        % this must be a .nrrd 
 mskName = 'Segmentation.seg.nrrd';                    % MI needs to have the scar in segmentation 
 outputName = 'dti';
@@ -191,7 +191,7 @@ field_data = {{endo_fd,'endo_nodes'},...
               {myo_fd,'myo_nodes'},...
               {scar_fd,'scar_nodes'},...
               {allparts_fd,'all_parts'},...
-              {fibs,'dti-fibers'}};
+              {fibs,'dti_fibers'}};
 SavePointsToVtk(append(dataPath, outputName, '.vtk'), points, field_data);
 
 

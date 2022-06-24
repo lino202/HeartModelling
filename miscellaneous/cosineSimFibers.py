@@ -11,8 +11,8 @@ args = parser.parse_args()
 
 mesh1 = meshio.read(args.file1)
 mesh2 = meshio.read(args.file2)
-versors1 = mesh1.point_data["dti-fibers"]
-versors2 = mesh2.point_data["dti-fibers"]
+versors1 = mesh1.point_data["dti_fibers"]
+versors2 = mesh2.point_data["dti_fibers"]
 
 # versors1 = np.array([])
 # versors2 = np.array([])

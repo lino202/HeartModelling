@@ -1,9 +1,9 @@
 close all; clear;
 format long g;
-addpath('functions','LMMSEDWI','MRNoiseEstimators','MRNoiseEstimators/localstat','DTIEstimation');
+addpath('matlabFunctions','libraries/LMMSEDWI','libraries/MRNoiseEstimators','libraries/MRNoiseEstimators/localstat','libraries/DTIEstimation');
 
 
-dataPath = 'F:\HeartModeling\Data\sampleLE_Control3\';
+dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control2prueba\';
 dwiName = 'dwi.nrrd';                        % this must be a .nrrd 
 mskName = 'Segmentation.seg.nrrd';
 outputName = 'dwi_denoised.nrrd';

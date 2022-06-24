@@ -6,6 +6,7 @@ import meshio
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--dataPath',type=str, required=True, help='path to data')
 parser.add_argument('--outName',type=str, required=True)
+parser.add_argument('--vtkMesh',type=str, required=True, help="vtk mesh with or without previous node classification, if 'layers_mi' it comes from scar determination MI and if not 'layers_mi' comes form healthy")
 parser.add_argument('--infAsHealthy', action='store_true', help='if especified, MI is not taken into account')
 args = parser.parse_args()
 
@@ -13,7 +14,7 @@ args = parser.parse_args()
 transmural_pathA = os.path.join(args.dataPath, 'layers', "transmural_distXV000000.vtu") 
 transmural_pathB = os.path.join(args.dataPath, 'layers', "transmural_distRV000000.vtu") 
 transmural_pathC = os.path.join(args.dataPath, 'layers', "transmural_distLV000000.vtu") 
-inputVtk = os.path.join(args.dataPath, 'mi_rbf.vtk')
+inputVtk = os.path.join(args.dataPath, '{}.vtk'.format(args.vtkMesh))
 
 
 validKeys = ["endo", "mid", "epi", "myo", "scar", "uncertain", "bz"]
@@ -37,7 +38,11 @@ trans_distB = meshio.read(transmural_pathB)
 trans_distC = meshio.read(transmural_pathC)
 meshVtk = meshio.read(inputVtk)
 #Change data reference points for incorporating endo mid and epi
-all_points = meshVtk.point_data["all"]
+if "layers_mi" in meshVtk.point_data.keys():
+    all_points = meshVtk.point_data["layers_mi"]
+else:
+    all_points = np.zeros((meshVtk.points.shape[0]))
+    
 all_points[all_points==2] = uncertain_flag
 all_points[all_points==3] = bz_flag
 all_points[all_points==4] = scar_flag
@@ -100,13 +105,13 @@ if not args.infAsHealthy:
     algo_points[all_points==bz_flag] = bz_flag
     algo_points[all_points==scar_flag] = scar_flag
 
-point_data = {}
+point_data = meshVtk.point_data
 nsets = {}
 for tissueType in validKeys:
     point_data[tissueType] = np.zeros((meshVtk.points.shape[0]))
     point_data[tissueType][algo_points==globals()["{}_flag".format(tissueType)]] = 1
     nsets["{}_nodes".format(tissueType)] = np.where(point_data[tissueType] == 1)[0]
-point_data["all"] = algo_points
+point_data["layers_tissues"] = algo_points
 
 
 if not args.infAsHealthy:

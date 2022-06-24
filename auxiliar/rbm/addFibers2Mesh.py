@@ -20,7 +20,6 @@ meshPoints = mesh.points
 if args.fiberMethod == "ElectraPre":
     rbmVersors = readFibersfromElectraPre(os.path.join(args.dataPath, "long_fibers.txt"))
 elif args.fiberMethod == "LDRB":
-    # fiberMesh = meshio.read()
     import h5py
     with h5py.File(os.path.join(args.dataPath, "{}.h5".format(args.fiberMeshName)), "r") as f:
         # List all groups

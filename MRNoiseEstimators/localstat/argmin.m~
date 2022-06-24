@@ -1,5 +1,0 @@
-function am=argmin(V)
-
-[a,b]=min(V(:));
-
-am=b;

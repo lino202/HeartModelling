@@ -31,11 +31,11 @@ with open(os.path.join(path, "lmsDiffs.txt"), "w") as file:
     for key in lmsDiff.keys():
         file.write("{0:s},{1:f},{2:f},{3:f}\n".format(key,lmsDiff[key][0],lmsDiff[key][1], lmsDiff[key][2] ))
 
-# fibers2 = RBFInterpolator(surfFibers.points, surfFibers.point_data["dti-fibers"], neighbors=100)(meshExvivo.points)
+# fibers2 = RBFInterpolator(surfFibers.points, surfFibers.point_data["dti_fibers"], neighbors=100)(meshExvivo.points)
 # fibersNorm = np.linalg.norm(fibers2, axis=1)
 # fibers2 = fibers2 / np.array([fibersNorm, fibersNorm, fibersNorm]).T
 
 # writeFibers4JSON(os.path.join(path, "exVivoSurfFibers.txt"), fibers2)
 
-# meshOut = meshio.Mesh(meshExvivo.points, meshExvivo.cells, point_data={"dti-fibers": fibers2})
+# meshOut = meshio.Mesh(meshExvivo.points, meshExvivo.cells, point_data={"dti_fibers": fibers2})
 # meshOut.write(os.path.join(path, "{}_lms_fibers.vtk".format(name)))

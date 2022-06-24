@@ -10,8 +10,7 @@ args = parser.parse_args()
 
 dataPath = args.data_path
 outputFormat = args.out_format 
-vtkPath = os.path.join(dataPath, "electra_tetmesh.vtk")
-
+vtkPath = os.path.join(dataPath, "tetmesh.vtk")
 
 # Transform to xdmf for reading wiht fenics
 xmlPath = vtkPath.replace('vtk', 'xdmf')
