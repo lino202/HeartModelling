@@ -1,18 +1,17 @@
 clear; close all;
-addpath('functions');
-addpath('iso2mesh\iso2mesh-1.9.6');
+addpath('../matlabFunctions', '../libraries/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:\DTI_konstas\data\sampleControl2\';
-mskName = 'Segmentation.seg.nrrd';
+dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control3\RBM_getAlphaBeta\';
+mskName = 'SegmentationLV.seg.nrrd';
 msk = ReadNrrd(append(dataPath, mskName));
 pointsVoxelMap = load(append(dataPath, 'pointVoxelMap.mat')).pointVoxelMap;
 heart_in = append(dataPath, 'dti.vtk');
 
 % Output filenames
-vtk_output = append(dataPath, 'electra_tetmesh.vtk');
-inp_output = append(dataPath, 'electra_tetmesh.inp');
-fibs_output = append(dataPath, 'electra_tetfibers.txt');
+vtk_output = append(dataPath, 'tetmesh.vtk');
+inp_output = append(dataPath, 'tetmesh.inp');
+fibs_output = append(dataPath, 'tetfibers.txt');
 
 % Read heart surface mesh and normalize normals
 

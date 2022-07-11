@@ -3,9 +3,9 @@ format long g;
 addpath('matlabFunctions','libraries/DTIEstimation');
 
 
-dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control2prueba\';
+dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control3\RBM_getAlphaBeta\';
 dwiName = 'dwi_denoised.nrrd';                        % this must be a .nrrd 
-mskName = 'Segmentation.seg.nrrd';                    % MI needs to have the scar in segmentation 
+mskName = 'SegmentationLV.seg.nrrd';                    % MI needs to have the scar in segmentation 
 outputName = 'dti';
 
 

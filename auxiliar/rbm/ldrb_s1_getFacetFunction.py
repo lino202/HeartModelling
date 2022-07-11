@@ -9,6 +9,7 @@ from utils import getHugeNearest, isMemberIdxsRowWise
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--dataPath',type=str, required=True, help='path to data')
+parser.add_argument('--domainType',type=str, required=True, help='BiV (Biventricular) or LV')
 args = parser.parse_args()
 
 outPath = os.path.join(args.dataPath, "RBM_LDRB")
@@ -21,17 +22,21 @@ df.info(mesh)
 bmesh = df.BoundaryMesh(mesh, "exterior", True)
 bmeshPoints = bmesh.coordinates()
 endoLVMesh = meshio.read(os.path.join(args.dataPath, "RBM_LDRB", "lv_endo.obj"))
-endoRVMesh = meshio.read(os.path.join(args.dataPath, "RBM_LDRB", "rv_endo.obj"))
-epiMesh = meshio.read(os.path.join(args.dataPath, "RBM_LDRB", "epi.obj"))
-
-endoRVPoints = endoRVMesh.points
 endoLVPoints = endoLVMesh.points
+epiMesh = meshio.read(os.path.join(args.dataPath, "RBM_LDRB", "epi.obj"))
 epiPoints = epiMesh.points
+
+if args.domainType == "BiV": 
+    endoRVMesh = meshio.read(os.path.join(args.dataPath, "RBM_LDRB", "rv_endo.obj"))
+    endoRVPoints = endoRVMesh.points
+
 
 markers = ldrb.utils.default_markers()
 all_markers = np.zeros((mesh.coordinates().shape[0]))
-idxs = getHugeNearest(endoRVPoints, mesh.coordinates(), showMem=True)
-all_markers[idxs] = markers["rv"]
+
+if args.domainType == "BiV": 
+    idxs = getHugeNearest(endoRVPoints, mesh.coordinates(), showMem=True)
+    all_markers[idxs] = markers["rv"]
 
 idxs = getHugeNearest(endoLVPoints, mesh.coordinates(), showMem=True)
 all_markers[idxs] = markers["lv"]
@@ -40,7 +45,12 @@ idxs = getHugeNearest(epiPoints, mesh.coordinates(), showMem=True)
 all_markers[idxs] = markers["epi"]
 
 #Delete all from surf and get base
-allMinusBase = np.concatenate((endoLVPoints, endoRVPoints, epiPoints), axis=0)
+if args.domainType == "BiV": 
+    allMinusBase = np.concatenate((endoLVPoints, endoRVPoints, epiPoints), axis=0) 
+elif args.domainType == "LV": 
+    allMinusBase = np.concatenate((endoLVPoints, epiPoints), axis=0) 
+else: raise ValueError("Wrong domainType parameter")
+
 idxs = getHugeNearest(allMinusBase, bmeshPoints, showMem=True)
 basePoints = np.delete(bmeshPoints, idxs, axis=0)
 idxs = getHugeNearest(basePoints, mesh.coordinates(), showMem=True)
