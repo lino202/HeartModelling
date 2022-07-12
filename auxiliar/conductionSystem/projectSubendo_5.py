@@ -19,6 +19,7 @@ parser.add_argument('--project_intramyo', action='store_true', help='if specifie
 parser.add_argument('--debug_vtk', action='store_true', help='if especified, save all branches to vtk and inp')
 parser.add_argument('--proj_linear', action='store_true', help='if especified, linear projection into intramid otherwise folows the already curved branch')
 parser.add_argument('--intramyo_percentage',type=int, help='percentage of endpoints to project to intramyo')
+parser.add_argument('--projectRV', action='store_true', help='if especified, projects RV')
 args = parser.parse_args()
 
 #Inputs
@@ -130,20 +131,19 @@ for key in branches2Project:
     print("Processing {}".format(key))
     meshPurk = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "finalBundles", "{}.vtu".format(key)))
     tmpPoints = meshPurk.points
-    tmpEdges = meshPurk.cells[0][1]
+    tmpEdges = meshPurk.cells_dict["line"]
 
-    #Reorder mesh as for having continuos indexing per branch
+    #Reorder mesh for having continuos indexing per branch
     tmpPoints, tmpEdges = reorderPurkMesh(tmpPoints, tmpEdges)
 
     #Calculate projection dir and magnitude for projection points
-    dirs = getProjectionDir(tmpPoints, lvSurfMesh if "lv" in key else rvSurfMesh, k=args.meanNor)
-    mags = getProjectionMag(tmpPoints, transDistLV if "lv" in key else transDistRV, subendoWindow, k=args.meanMag)
-    mags = np.expand_dims(mags, axis=1)
-    mags = np.repeat(mags, repeats=3, axis=1)
-    tmpPoints = tmpPoints + dirs * mags
-    
-    #Smooth projection
-    tmpPoints = smoothProjection(tmpPoints, tmpEdges)
+    if args.projectRV or key!="rvb":
+        dirs = getProjectionDir(tmpPoints, lvSurfMesh if "lv" in key else rvSurfMesh, k=args.meanNor)
+        mags = getProjectionMag(tmpPoints, transDistLV if "lv" in key else transDistRV, subendoWindow, k=args.meanMag)
+        mags = np.expand_dims(mags, axis=1)
+        mags = np.repeat(mags, repeats=3, axis=1)
+        tmpPoints = tmpPoints + dirs * mags    
+        tmpPoints = smoothProjection(tmpPoints, tmpEdges)
 
     #Add points, edges and nsets
     tmpEdges = tmpEdges + points.shape[0] - 1
@@ -187,7 +187,12 @@ if args.project_intramyo:
     tmpPurkBranches = {}  
     del purkSimple["purk_endnodes"]
     
+    if not args.projectRV: 
+        del purkBranches["rvb_branches"]
+        del purkSimple["rvb_purk_endnodes"]
+
     for key in purkBranches.keys():
+        print("Proccessing {}".format(key))
         branchType = key.split("_")[0]
         del purkSimple["{}_purk_endnodes".format(branchType)]
         idxs = checkEndBranchesOrder(purkBranches[key], branchType)

@@ -2,10 +2,10 @@ clear; close all;
 addpath('matlabFunctions', 'libraries/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control3\RBM_getAlphaBeta\';
-surfMesh = append(dataPath, 'improvedSurfMesh.obj');
+dataPath = 'F:\HeartModeling\NeisserModel\';
+surfMesh = append(dataPath, 'surfMeshFinal2.obj');
 vtk_output = append(dataPath, 'tetmesh.vtk');
-tetMaxVol = 1;
+tetMaxVol = 0.001;
 
 % Read heart surface mesh and normalize normals
 [snodes, sfaces, snormals] = ReadObj(surfMesh); %from Meshlab
