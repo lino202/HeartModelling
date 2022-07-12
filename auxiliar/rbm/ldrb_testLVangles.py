@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 start = time.time()
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--dataPath',type=str, required=True, help='path to data')
+parser.add_argument('--outName',type=str, required=True, help='path to data')
 args = parser.parse_args()
 
 # Volume Mesh, Mesh DTI fibers and FacetFunction reading
@@ -30,10 +31,10 @@ markers.pop("rv", None)
 
 # Choose space for the fiber fields
 fiber_space = "Lagrange_1"
-indexs = np.meshgrid(np.arange(-90, 90, 10), np.arange(-90, 90, 10))
+indexs = np.meshgrid(np.arange(-90, -88, 1), np.arange(-90, -88, 1))
 indexs = np.array([indexs[0].flatten(), indexs[1].flatten()])
 
-with open(os.path.join(args.dataPath, "RBM_LDRB", "resultsAlphaAngles.txt"), 'w') as file:
+with open(os.path.join(args.dataPath, "RBM_LDRB", "{}.txt".format(args.outName)), 'w') as file:
     file.write("# Results for LV alpha angle determination\n")
 
 thetaMeans = np.zeros(indexs.shape[1])
@@ -58,13 +59,13 @@ for i in tqdm(range(indexs.shape[1])):
         normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
         thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
 
-        with open(os.path.join(args.dataPath, "RBM_LDRB", "resultsAlphaAngles.txt"), 'a') as file:
+        with open(os.path.join(args.dataPath, "RBM_LDRB", "{}.txt".format(args.outName)), 'a') as file:
             file.write("{0}: Endo {1}, Epi {2}, ThetaMean {3:.2f}\n".format(i, endo, epi, thetaMeans[i]))
 
 plt.figure()
 plt.plot(np.arange(0,indexs.shape[1]), thetaMeans)
 plt.ylabel("Theta Mean in Degrees")
-plt.savefig(os.path.join(args.dataPath, "RBM_LDRB", "resultsAlphaAngles.png"))
+plt.savefig(os.path.join(args.dataPath, "RBM_LDRB", "{}.png".format(args.outName)))
 
 # Get the minimum pair
 idxMin = np.argmin(thetaMeans)

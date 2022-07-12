@@ -13,8 +13,8 @@ mesh = meshio.read(args.filePath)
 pointData = mesh.point_data
 nsets={}
 for key in pointData.keys():
-    if key in validKeys:
-        nsets["{}_nodes".format(key)] = np.where(pointData[key]==1)[0]
+    # if key in validKeys:
+    nsets["{}".format(key)] = np.where(pointData[key]==1)[0]
 
 meshOut = meshio.Mesh(mesh.points, mesh.cells, point_sets=nsets)
 meshOut.write("{}.inp".format(args.filePath.split(".")[0]))
