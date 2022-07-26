@@ -36,7 +36,7 @@ if not os.path.isdir(output_path):
 # Load bundle tree
 mesh = meshio.read(bb_infile)
 vertexs = mesh.points
-connectivity = mesh.cells[0][1]
+connectivity = mesh.cells_dict['line']
 nsets = mesh.point_sets
 # vertexs, connectivity, nsets = loadInp(bb_infile)
 

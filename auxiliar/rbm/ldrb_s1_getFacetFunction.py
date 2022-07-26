@@ -13,6 +13,8 @@ parser.add_argument('--domainType',type=str, required=True, help='BiV (Biventric
 args = parser.parse_args()
 
 outPath = os.path.join(args.dataPath, "RBM_LDRB")
+if not os.path.exists(outPath):
+    os.mkdir(outPath)
 
 # Volume Mesh reading
 mesh = df.Mesh()

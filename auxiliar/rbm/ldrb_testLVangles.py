@@ -31,7 +31,7 @@ markers.pop("rv", None)
 
 # Choose space for the fiber fields
 fiber_space = "Lagrange_1"
-indexs = np.meshgrid(np.arange(-90, -88, 1), np.arange(-90, -88, 1))
+indexs = np.meshgrid(np.arange(40, 60, 1), np.arange(-50, -30, 1))
 indexs = np.array([indexs[0].flatten(), indexs[1].flatten()])
 
 with open(os.path.join(args.dataPath, "RBM_LDRB", "{}.txt".format(args.outName)), 'w') as file:
@@ -70,5 +70,4 @@ plt.savefig(os.path.join(args.dataPath, "RBM_LDRB", "{}.png".format(args.outName
 # Get the minimum pair
 idxMin = np.argmin(thetaMeans)
 print("The min mean theta is {0:.2f}, for alpha_endo_lv {1} and alpha_epi_lv {2}".format(thetaMeans[idxMin], indexs[0,idxMin], indexs[1,idxMin]))
-
 print("Time of entire operation: {} seconds".format(time.time()-start))

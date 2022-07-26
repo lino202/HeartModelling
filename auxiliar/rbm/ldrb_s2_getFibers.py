@@ -10,6 +10,10 @@ parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--dataPath',type=str, required=True, help='path to data')
 parser.add_argument('--addName',type=str, required=True, help='name for Fibers')
 parser.add_argument('--domainType',type=str, required=True, help='BiV (Biventricular) or LV')
+parser.add_argument('--alpha_endo_lv',type=int, required=True)
+parser.add_argument('--alpha_epi_lv',type=int, required=True)
+parser.add_argument('--alpha_endo_rv',type=int)
+parser.add_argument('--alpha_epi_rv',type=int)
 args = parser.parse_args()
 
 # Volume Mesh and FacetFunction reading
@@ -45,7 +49,7 @@ if args.domainType == "BiV":
     )
 elif args.domainType == "LV":
     markers.pop("rv", None)
-    angles = dict(alpha_endo_lv=60, alpha_epi_lv=-60, beta_endo_lv=0, beta_epi_lv=0)
+    angles = dict(alpha_endo_lv=args.alpha_endo_lv, alpha_epi_lv=args.alpha_epi_lv, beta_endo_lv=0, beta_epi_lv=0)
 else: raise ValueError("Wrong domainType parameter")
 
 

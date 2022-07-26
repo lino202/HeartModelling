@@ -12,35 +12,34 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--data_path',required=True, help='path to data')
+parser.add_argument('--domainType',type=str, required=True, help='BiV (Biventricular) or LV')
 args = parser.parse_args()
 
 #Inputs
 dataPath = args.data_path
-rvEndoSurf = os.path.join(dataPath, "rv_endo.obj")
+if args.domainType == "BiV": rvEndoSurf = os.path.join(dataPath, "rv_endo.obj")
 lvEndoSurf = os.path.join(dataPath, "lv_endo.obj")
 purkInitNodes =  os.path.join(dataPath, "purkInitNodes.json")
 
 #Outputs
 outName = "mainCSBundle"    # generates .inp and .vtk
 
-meshRV = meshio.read(rvEndoSurf)
+if args.domainType == "BiV": meshRV = meshio.read(rvEndoSurf)
 meshLV = meshio.read(lvEndoSurf)
 nsets = {}
 
-meshRVPoints = meshRV.points
+if args.domainType == "BiV":
+    meshRVPoints = meshRV.points
+    meshRVFaces = meshRV.cells_dict['triangle']
+
 meshLVPoints = meshLV.points
-for cellCluster in meshRV.cells:
-    if cellCluster[0] =='triangle':
-        meshRVFaces =  cellCluster[1]
-for cellCluster in meshLV.cells:
-    if cellCluster[0] =='triangle':
-        meshLVFaces =  cellCluster[1]
+meshLVFaces = meshLV.cells_dict['triangle']
 
 # Select all the points for generating the bundle - Import nodes info-----------------------------------
 with open(purkInitNodes, 'r')as file:
     nodesData = json.load(file)
 commonNodes = nodesData["Common_Nodes"]
-rvNodes = nodesData["RV_Nodes"]
+if args.domainType == "BiV": rvNodes = nodesData["RV_Nodes"]
 lvNodes = nodesData["LV_Nodes"]
 
 # Create linear/non geodesic paths-----------------------------------------------------------------
@@ -51,13 +50,14 @@ nsets["av_node"] = [avNode]     # nsets must be iterable
 nsets["av_his"] = [nodeIdx for nodeIdx in range(points.shape[0])]
 nsets["his_bifur_node"] = [hisIdx]
 
-tmpPoints, tmpEdges =  getLinearPath(commonNodes["HIS_Node"], rvNodes["Init"])
-tmpEdges = tmpEdges + points.shape[0] -1
-nsets["his_rv_linear"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
-tmpEdges[0, 0] = hisIdx
-edges = np.concatenate((edges, tmpEdges), axis=0)
-points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
-rvInitIdx = points.shape[0] -1
+if args.domainType == "BiV":
+    tmpPoints, tmpEdges =  getLinearPath(commonNodes["HIS_Node"], rvNodes["Init"])
+    tmpEdges = tmpEdges + points.shape[0] -1
+    nsets["his_rv_linear"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
+    tmpEdges[0, 0] = hisIdx
+    edges = np.concatenate((edges, tmpEdges), axis=0)
+    points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
+    rvInitIdx = points.shape[0] -1
 
 tmpPoints, tmpEdges =  getLinearPath(commonNodes["HIS_Node"], lvNodes["Init"])
 tmpEdges = tmpEdges + points.shape[0] -1 
@@ -68,15 +68,15 @@ points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
 lvInitIdx = points.shape[0] -1
 
 # Geodesic o non linear paths-------------------------------------------------------------------------
-
-tmpPoints, _ =  getGeodesicPath(meshRVPoints, meshRVFaces, rvNodes["Init"], rvNodes["Join"])
-tmpPoints, tmpEdges = resampleGeodesic(tmpPoints)
-tmpEdges = tmpEdges + points.shape[0] -1
-nsets["his_rv_geo"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
-tmpEdges[0,0] = rvInitIdx
-edges = np.concatenate((edges, tmpEdges), axis=0)
-points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
-rvJoinIdx = points.shape[0] -1
+if args.domainType == "BiV":
+    tmpPoints, _ =  getGeodesicPath(meshRVPoints, meshRVFaces, rvNodes["Init"], rvNodes["Join"])
+    tmpPoints, tmpEdges = resampleGeodesic(tmpPoints)
+    tmpEdges = tmpEdges + points.shape[0] -1
+    nsets["his_rv_geo"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
+    tmpEdges[0,0] = rvInitIdx
+    edges = np.concatenate((edges, tmpEdges), axis=0)
+    points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
+    rvJoinIdx = points.shape[0] -1
 
 tmpPoints, _ =  getGeodesicPath(meshLVPoints, meshLVFaces, lvNodes["Init"], lvNodes["Join"])
 tmpPoints, tmpEdges = resampleGeodesic(tmpPoints)
@@ -101,17 +101,17 @@ for key in lvNodes.keys():
         points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
         nsets["{}_end".format(key.lower())] = [points.shape[0]-1]
 
-
-for key in rvNodes.keys():
-    if "rv" in key:
-        tmpPoints, _ =  getGeodesicPath(meshRVPoints, meshRVFaces, rvNodes["Join"], rvNodes[key])
-        tmpPoints, tmpEdges = resampleGeodesic(tmpPoints)
-        tmpEdges = tmpEdges + points.shape[0] -1
-        nsets[key] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
-        tmpEdges[0,0] = rvJoinIdx
-        edges = np.concatenate((edges, tmpEdges), axis=0)
-        points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
-        nsets["{}_end".format(key.lower())] = [points.shape[0]-1]
+if args.domainType == "BiV":
+    for key in rvNodes.keys():
+        if "rv" in key:
+            tmpPoints, _ =  getGeodesicPath(meshRVPoints, meshRVFaces, rvNodes["Join"], rvNodes[key])
+            tmpPoints, tmpEdges = resampleGeodesic(tmpPoints)
+            tmpEdges = tmpEdges + points.shape[0] -1
+            nsets[key] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0] -1 )]
+            tmpEdges[0,0] = rvJoinIdx
+            edges = np.concatenate((edges, tmpEdges), axis=0)
+            points = np.concatenate((points, tmpPoints[1:,:]), axis=0)
+            nsets["{}_end".format(key.lower())] = [points.shape[0]-1]
 
 
 # Get all together!, points is ready, generate cells and point_data for visualization in .vtk, nsets are ready

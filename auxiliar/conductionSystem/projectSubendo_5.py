@@ -20,13 +20,14 @@ parser.add_argument('--debug_vtk', action='store_true', help='if especified, sav
 parser.add_argument('--proj_linear', action='store_true', help='if especified, linear projection into intramid otherwise folows the already curved branch')
 parser.add_argument('--intramyo_percentage',type=int, help='percentage of endpoints to project to intramyo')
 parser.add_argument('--projectRV', action='store_true', help='if especified, projects RV')
+parser.add_argument('--domainType',type=str, required=True, help='BiV (Biventricular) or LV')
 args = parser.parse_args()
 
 #Inputs
 lvSurfMesh = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "lv_endo.obj"))  #normals corrected
-rvSurfMesh = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "rv_endo.obj"))
+if args.domainType == "BiV": rvSurfMesh = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "rv_endo.obj"))
 csBundle = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "mainCSBundle.vtk"))
-transDistRV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distRV000000.vtu"))
+if args.domainType == "BiV": transDistRV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distRV000000.vtu"))
 transDistLV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distLV000000.vtu"))
 outPath = os.path.join(args.data_path, "stim", "stim_cs")
 outName = args.out_name
@@ -57,7 +58,12 @@ nsetsSimple["his_bifur_node"] = [hisBifNodeIdx]
 
 # First project the geodesic bundles into subendo
 print("---------Projecting Main Bundles-----------")
-branches2Project = ["rvb", "lva", "lvp", "his_rv_geo", "his_lv_geo"] 
+if args.domainType == "BiV":
+    branches2Project = ["rvb", "lva", "lvp", "his_rv_geo", "his_lv_geo"]
+elif args.domainType == "LV":
+    branches2Project = ["lva", "lvp", "his_lv_geo"]
+else: raise ValueError("domainType must be BiV or LV") 
+
 for key in branches2Project:
     print("Processing {}".format(key))
     branchIdxs = csBundle.point_data[key]
@@ -96,16 +102,17 @@ for key in branches2Project:
 
 
 # Second, recalculate linear his bundle branches
-tmpPoints, _ =  getLinearPath(points[hisBifNodeIdx,:], points[hisRVGeoInitIdx,:])
-tmpPoints = tmpPoints[1:-1]        # both points are already in the mesh
-tmpEdges = getEdges(tmpPoints)
-tmpEdges = tmpEdges + points.shape[0]
-nsetsSimple["his_rv_linear"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0])]
-minEdge = np.min(tmpEdges); maxEdge = np.max(tmpEdges)
-tmpEdges = np.concatenate((tmpEdges, np.array([[hisRVGeoInitIdx, maxEdge]])), axis=0)
-tmpEdges = np.concatenate((tmpEdges, np.array([[hisBifNodeIdx, minEdge]])), axis=0)
-edges = np.concatenate((edges, tmpEdges), axis=0)
-points = np.concatenate((points, tmpPoints), axis=0)
+if args.domainType == "BiV":
+    tmpPoints, _ =  getLinearPath(points[hisBifNodeIdx,:], points[hisRVGeoInitIdx,:])
+    tmpPoints = tmpPoints[1:-1]        # both points are already in the mesh
+    tmpEdges = getEdges(tmpPoints)
+    tmpEdges = tmpEdges + points.shape[0]
+    nsetsSimple["his_rv_linear"] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0])]
+    minEdge = np.min(tmpEdges); maxEdge = np.max(tmpEdges)
+    tmpEdges = np.concatenate((tmpEdges, np.array([[hisRVGeoInitIdx, maxEdge]])), axis=0)
+    tmpEdges = np.concatenate((tmpEdges, np.array([[hisBifNodeIdx, minEdge]])), axis=0)
+    edges = np.concatenate((edges, tmpEdges), axis=0)
+    points = np.concatenate((points, tmpPoints), axis=0)
 
 tmpPoints, _ =  getLinearPath(points[hisBifNodeIdx,:], points[hisLVGeoInitIdx,:])
 tmpPoints = tmpPoints[1:-1]        # both points are already in the mesh
@@ -122,7 +129,12 @@ checkRepeatedPoints(points)
 
 # Make the projection for every Purkinje tree and unify all
 print("----------Making Purkinje Tree Projection----------")
-branches2Project = ["lva", "lvp", "rvb"]
+if args.domainType == "BiV":
+    branches2Project = ["lva", "lvp", "rvb"]
+elif args.domainType == "LV":
+    branches2Project = ["lva", "lvp"]
+else: raise ValueError("domainType must be BiV or LV") 
+
 purkBranches = {}
 purkSimple = {}
 tmpPurkBranches = {}
@@ -187,7 +199,7 @@ if args.project_intramyo:
     tmpPurkBranches = {}  
     del purkSimple["purk_endnodes"]
     
-    if not args.projectRV: 
+    if not args.projectRV and args.domainType == "BiV": 
         del purkBranches["rvb_branches"]
         del purkSimple["rvb_purk_endnodes"]
 

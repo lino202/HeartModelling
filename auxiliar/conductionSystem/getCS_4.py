@@ -1,4 +1,3 @@
-from multiprocessing.sharedctypes import Value
 import os
 import meshio
 import numpy as np 
@@ -7,6 +6,7 @@ from lib.utils import checkRepeatedPoints, reorderPurkMesh, saveVtkInpMesh1D
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--data_path',type=str, required=True, help='path to data')
+parser.add_argument('--domainType',type=str, required=True, help='BiV (Biventricular) or LV')
 args = parser.parse_args()
 
 #Inputs
@@ -16,16 +16,21 @@ outPath = os.path.join(args.data_path, "stim", "stim_cs")
 outName = "cs_endo"
 
 points = csBundle.points
-edges = csBundle.cells[0][1]
+edges = csBundle.cells_dict['line']
 nsets = csBundle.point_sets
 
 
 # Unify all
-purkTrees = ["lva", "lvp", "rvb"] 
+if args.domainType == "BiV":
+    purkTrees = ["lva", "lvp", "rvb"] 
+elif args.domainType == "LV":
+    purkTrees = ["lva", "lvp"]
+else: raise ValueError("Domain type should be BiV or LV") 
+
 for key in purkTrees:
     meshPurk = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "finalBundles", "{}.vtu".format(key)))
     meshPurkPoints = meshPurk.points
-    meshPurkEdges = meshPurk.cells[0][1]
+    meshPurkEdges = meshPurk.cells_dict['line']
 
     meshPurkPoints, meshPurkEdges = reorderPurkMesh(meshPurkPoints, meshPurkEdges)
 
