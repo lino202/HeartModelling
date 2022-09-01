@@ -2,8 +2,8 @@ clear; close all;
 addpath('../matlabFunctions', '../libraries/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control3\RBM_getAlphaBeta\';
-mskName = 'SegmentationLV.seg.nrrd';
+dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control3\';
+mskName = 'Segmentation.seg.nrrd';
 msk = ReadNrrd(append(dataPath, mskName));
 pointsVoxelMap = load(append(dataPath, 'pointVoxelMap.mat')).pointVoxelMap;
 
@@ -22,7 +22,7 @@ iz = minBB(3):maxBB(3);
 [nodes,elems,faces,regions]=vol2mesh(msk.pixelData,ix,iy,iz,1,[],1);
 
 
-SaveTetVtk(vtk_output, nodes, elems(:,1:4), []);
+% SaveTetVtk(vtk_output, nodes, elems(:,1:4), []);
 
 
 

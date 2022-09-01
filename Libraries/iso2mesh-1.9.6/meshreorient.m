@@ -23,6 +23,6 @@ function [newelem, evol]=meshreorient(node,elem)
 evol=elemvolume(node,elem,'signed');
 
 % make sure all elements are positive in volume
-idx=find(evol<0);
+idx=find(evol>0); 
 elem(idx,[end-1,end])=elem(idx,[end,end-1]);
 newelem=elem;
