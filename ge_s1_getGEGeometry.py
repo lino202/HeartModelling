@@ -13,6 +13,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from auxiliar.conductionSystem.lib.utils import isMemberIdxsRowWise
 
+font = {'family' : "Times New Roman",
+        'weight' : 'normal',
+        'size'   : 20}
+plt.rc('font', **font)
+
+
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--dataPath',type=str, required=True, help='path to data')
 parser.add_argument('--outName',type=str, required=True, help='output name')
@@ -73,7 +79,7 @@ ax_box.axvline(borderZoneThresBottom, color='g', linestyle='dashed', linewidth=2
 ax_box.axvline(scarThres, color='r', linestyle='dashed', linewidth=2)
 sns.despine(ax=ax_hist)
 sns.despine(ax=ax_box, left=True)
-plt.savefig(os.path.join(args.dataPath, "thresholds.png")) if args.save else plt.show(block=True)
+plt.savefig(os.path.join(args.dataPath, "thresholds2.png")) if args.save else plt.show(block=True)
 
 # Get points for border zone and scar in unhealthy zone
 mask = np.zeros(geVolArr.shape)

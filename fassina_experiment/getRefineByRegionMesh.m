@@ -1,7 +1,7 @@
 clear; close all;
 addpath('../matlabFunctions', '../libraries/iso2mesh-1.9.6');
 
-vtk_output = "F:\HeartModeling\NeisserModel\tetmesh.vtk";
+vtk_output = "F:\HeartModeling\NeisserModel\tetmesh_onetetsize.vtk";
 x = 1:20;       %10 units are 1 mm so we need to divide by 10 var nodes afterwards
 y = 1:100;
 z = 1:65;
@@ -12,9 +12,9 @@ vol = uint8(vol);
 figure(), imshow(squeeze(vol(2,:,:)), [0 2])
 
 clear opt;
-opt(1).radbound=1; % head surface element size bound
+opt(1).radbound=0.5; % head surface element size bound
 opt(2).radbound=0.5; % brain surface element size bound
-maxvol = '1=1:2=0.5'; 
+maxvol = '1=0.5:2=0.5'; 
 
 tic
 % [node,elem,face]=v2m(img,isovalues,opt,maxvol,method)

@@ -21,23 +21,35 @@ points1 = mesh1.points
 points2 = mesh2.points
 values = mesh1.point_data[args.nameValue]
 
+if "cover" in mesh2.point_data.keys():
+    realMyoIdxs = np.where(mesh2.point_data["cover"] == 0)[0]
+    points2 = points2[realMyoIdxs]
+
 if args.interpType == "nearest":
     values2 = griddata(points1, values, points2, method='nearest')
 elif args.interpType == "rbf":
     values2 = RBFInterpolator(points1, values, neighbors=args.neighbours)(points2)
 
+if "layers" in args.nameValue: finalValues2 = np.zeros((mesh2.points.shape[0]))
+if "dti" in args.nameValue: finalValues2 = np.zeros((mesh2.points.shape[0], 3))
+finalValues2[:] = np.nan 
+if "cover" in mesh2.point_data.keys():
+    finalValues2[realMyoIdxs] =  values2
+else:
+    finalValues2 = values2
+
 #get round values for vtk and inp
-if args.nameValue == "layers_mi":
-    values2[values2<np.min(values)] = np.min(values)
-    values2[values2>np.max(values)] = np.max(values)
-    values2 = np.round(values2)
-elif args.nameValue == "dti_fibers":
-    fibersNorm = np.linalg.norm(values2, axis=1)
-    values2 = values2 /  np.array([fibersNorm, fibersNorm, fibersNorm]).T
+if args.nameValue == "layers_mi" or args.nameValue == "layers":
+    finalValues2[finalValues2<np.nanmin(values)] = np.nanmin(values)
+    finalValues2[finalValues2>np.nanmax(values)] = np.nanmax(values)
+    finalValues2 = np.round(finalValues2)
+elif args.nameValue == "dti-fibers" or args.nameValue == "dti_fibers":
+    fibersNorm = np.linalg.norm(finalValues2, axis=1)
+    finalValues2 = finalValues2 /  np.array([fibersNorm, fibersNorm, fibersNorm]).T
     outPath = "/".join(args.outPath.split("/")[:-1])
-    writeFibers4JSON(os.path.join(outPath, "fibersJsonElectra.txt"), values2)
+    writeFibers4JSON(os.path.join(outPath, "fibersJsonElectra.txt"), finalValues2)
 else: raise ValueError("Wrong valueName")
 
-mesh2.point_data[args.nameValue] = values2
+mesh2.point_data[args.nameValue] = finalValues2
 fileOutName = args.outPath.split(".")[0] + "_{}.vtk".format(args.interpType)
 mesh2.write(fileOutName)
