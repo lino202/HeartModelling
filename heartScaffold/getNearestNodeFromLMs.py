@@ -13,12 +13,15 @@ mesh = meshio.read(args.mesh)
 name = args.mesh.split("/")[-1].split(".")[0]
 path = args.mesh.split(name)[0]
 points = mesh.points
+point_data = mesh.point_data
+nsets = {}
+for key in point_data.keys():
+    if "contact" in key:      #Exclude corner as it should already be in .fscv but the contact must be added
+        nsets[key] = np.where(point_data[key]==1)[0]
+
 with open(args.landMarks, 'r') as f:
     data = f.readlines()
-
 if not "version = 5.0" in data[0]: raise ValueError("Version mismatch check fields correctness")
-
-nsets = {}
 data = data[3:]
 labels = []
 coords = np.array([])
@@ -26,16 +29,16 @@ for row in data:
     rowSplit = row.split(",")
     labels.append(rowSplit[11])
     coords = np.concatenate((coords, np.array([rowSplit[1:4]]).astype(float)), axis=0) if coords.size else  np.array([rowSplit[1:4]]).astype(float)
-
 dists = cdist(coords, points)
 idxs = np.argmin(dists, axis=1)
 
-nsets["all"] = []
+nsets["all_LMs"] = []
 for i, idx in enumerate(idxs):
     nsets[labels[i]] = [idx]
-    nsets["all"].append(idx)
+    nsets["all_LMs"].append(idx)
+nsets["all"] = np.arange(0, mesh.points.shape[0])
 
-point_data=mesh.point_data
+point_data={}
 for key in nsets.keys():
     tmp = np.zeros(points.shape[0])
     tmp[nsets[key]] = 1
@@ -43,7 +46,5 @@ for key in nsets.keys():
 
 meshOut = meshio.Mesh(points, mesh.cells, point_data=point_data)
 meshOut.write(os.path.join(path, "{}_lms.vtk".format(name)))
-
-
 meshOut = meshio.Mesh(points, mesh.cells, point_sets=nsets)
 meshOut.write(os.path.join(path, "{}_lms.inp".format(name)))

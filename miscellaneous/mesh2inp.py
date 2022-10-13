@@ -4,7 +4,8 @@ import os
 import argparse
 
 parser = argparse.ArgumentParser(description="Options")
-parser.add_argument('--filePath',type=str, required=True, help='path to file and file name')
+parser.add_argument('--inPath',type=str, required=True, help='path to file and file name')
+parser.add_argument('--outPath',type=str, required=True, help='path to file and file name')
 args = parser.parse_args()
 
 validKeys = ["endo", "mid", "epi", "myo", "scar", "uncertain", "bz"]
@@ -16,7 +17,7 @@ epi_flag = 5
 uncertain_flag = 6
 bz_flag = 7
 
-mesh = meshio.read(args.filePath)
+mesh = meshio.read(args.inPath)
 pointData = mesh.point_data
 pointDataKeys = pointData.keys()
 nsets={}
@@ -34,4 +35,4 @@ else:
             nsets["{}".format(key)] = np.where(pointData[key]==1)[0]
 
 meshOut = meshio.Mesh(mesh.points, mesh.cells, point_sets=nsets)
-meshOut.write("{}.inp".format(args.filePath.split(".")[0]))
+meshOut.write(args.outPath)

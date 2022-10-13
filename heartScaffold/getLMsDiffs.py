@@ -6,25 +6,25 @@ from utils import writeFibers4JSON
 from scipy.interpolate import RBFInterpolator
 
 parser = argparse.ArgumentParser(description="Options")
-parser.add_argument('--meshInvivo',type=str, required=True, help='path to data')
-parser.add_argument('--meshExvivo',type=str, required=True, help='path to data')
+parser.add_argument('--meshFixed',type=str, required=True, help='path to data')
+parser.add_argument('--meshMoving',type=str, required=True, help='path to data')
 # parser.add_argument('--surfFibers',type=str, required=True, help='path to data')
 args = parser.parse_args()
 
-meshInvivo = meshio.read(args.meshInvivo)
-meshExvivo = meshio.read(args.meshExvivo)
+meshFixed = meshio.read(args.meshFixed)
+meshMoving = meshio.read(args.meshMoving)
 # surfFibers = meshio.read(args.surfFibers)
 
 lmsDiff = {}
-for key in meshInvivo.point_data.keys():
-    if key != "all":
-        B = meshInvivo.points[np.where(meshInvivo.point_data[key]==1)[0][0],:]
-        A = meshExvivo.points[np.where(meshExvivo.point_data[key]==1)[0][0],:]
+for key in meshFixed.point_data.keys():
+    if key != "all" and ("LM" in key or "lm" in key):
+        B = meshFixed.points[np.where(meshFixed.point_data[key]==1)[0][0],:]
+        A = meshMoving.points[np.where(meshMoving.point_data[key]==1)[0][0],:]
         lmsDiff[key] = B - A
 
 
-name = args.meshExvivo.split("/")[-1].split(".")[0]
-path = args.meshExvivo.split(name)[0]
+name = args.meshMoving.split("/")[-1].split(".")[0]
+path = args.meshMoving.split(name)[0]
 
 with open(os.path.join(path, "lmsDiffs.txt"), "w") as file:
     file.write("#Name x,y,z diff\n")

@@ -18,7 +18,7 @@ if(nargin==3)
 end
 
 if(strcmp(method,'cgalmesh'))
-   [no,tet,el]=v2m(uint8(img),isovalues,opt,1000,method);
+   [no,tet,el]=v2m(uint8(img),isovalues,opt,1,method);
    regions=[];
    fclist=unique(el(:,4));
    len=length(fclist);

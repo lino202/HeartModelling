@@ -92,7 +92,7 @@ for key in point_data.keys():
         nsets["{}_nodes".format(key)] = np.where(point_data[key]==1)[0]
 
 meshOutInp = meshio.Mesh(tissueMesh.points, tissueMesh.cells, point_sets=nsets)
-meshOutInp.write(os.path.join(args.outPath, "tissue.inp"))
+# meshOutInp.write(os.path.join(args.outPath, "tissue.inp"))
 writeFibers4JSON(os.path.join(args.outPath, "fibers.txt"), tissueFibers)
 
 

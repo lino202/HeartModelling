@@ -1,4 +1,4 @@
-function [] = SaveTetVtk(vtk_output, nodes, elems, field_data, nsets)
+function [] = SaveTetVtk(vtk_output, nodes, elems, field_data, nsets, cell_data)
 %SAVEEMBGRIDTOVTK Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -93,6 +93,23 @@ if ~isempty(nsets)
         fprintf(fileID,'\n');  
     end
 end
+
+% For now works for cell_data of one dimension with same type of cell
+% and including all the cells in the field_data
+if ~isempty(cell_data)
+    fprintf(fileID,'CELL_DATA %d\n', size(cell_data{1}{2},1));
+    fprintf(fileID,'FIELD FieldData %d\n', size(cell_data,2));
+    
+    for i=1:size(cell_data,2)
+        fprintf(fileID,'%s %d %d int32\n', cell_data{i}{1}, size(cell_data{i}{2},2), size(cell_data{i}{2},1));
+        for cell = 1: size(cell_data{i}{2},1)
+            fprintf(fileID,'%d\n', int32(cell_data{i}{2}(cell,1)));
+        end
+        fprintf(fileID,'\n');  
+    end
+
+end
+
 
 
 % Close output file
