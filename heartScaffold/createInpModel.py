@@ -17,7 +17,7 @@ scaffoldPoints = meshScaffold.points
 heartPoints = meshHeart.points
 lmsDiff = {}
 for key in meshHeart.point_data.keys():
-    if not "all" in key and ("LM" in key or "lm" in key):
+    if not "all" in key and ("LM" in key or "lm" in key) and not "lms" in key:
         B = meshHeart.points[np.where(meshHeart.point_data[key]==1)[0][0],:]
         A = meshScaffold.points[np.where(meshScaffold.point_data[key]==1)[0][0],:]
         lmsDiff[key] = B - A
@@ -43,11 +43,14 @@ with open(args.outPath, 'w') as f:
     for idx, n in enumerate(meshHeart.points):
         f.write("{0:d}, {1:.15f}, {2:.15f}, {3:.15f}\n".format(idx+1, n[0], n[1], n[2]))
     if args.isSurface:
-        f.write("*Element, type=R3D3\n")
+        f.write("*Element, type=S3\n")
         for idx, el in enumerate(meshHeart.cells_dict[heartCellShape]):
             f.write("{0:d}, {1:d}, {2:d}, {3:d}\n".format(idx+1, el[0]+1, el[1]+1, el[2]+1))
         f.write("*Elset, elset=ALL_HEART, generate\n")
-        f.write("1, {}, 1\n".format(meshHeart.cells_dict[heartCellShape].shape[0])) 
+        f.write("1, {}, 1\n".format(meshHeart.cells_dict[heartCellShape].shape[0]))
+        f.write("** Section: Section_HEART\n")
+        f.write("*Shell Section, elset=ALL_HEART, material=MATERIAL_HEART\n")
+        f.write("0.2, 5\n")
     else:
         f.write("*Element, type=C3D4\n")
         for idx, el in enumerate(meshHeart.cells_dict[heartCellShape]):
@@ -103,10 +106,10 @@ with open(args.outPath, 'w') as f:
     f.write("*End Assembly\n**\n")
     
     f.write("** MATERIALS\n**\n")
-    if not args.isSurface:
-        f.write("*Material, name=MATERIAL_HEART\n")
-        f.write("*Elastic\n")
-        f.write("200., 0.3\n")
+    # if not args.isSurface:
+    f.write("*Material, name=MATERIAL_HEART\n")
+    f.write("*Elastic\n")
+    f.write("200., 0.3\n")
     f.write("*Material, name=MATERIAL_SCAFFOLD\n")
     f.write("*Elastic\n")
     f.write("300.E15, 0.3 \n")

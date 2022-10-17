@@ -42,7 +42,7 @@ if "set_lm_corner_1" in meshScaffold.point_data.keys():
             idxsLMs = np.append(idxsLMs, np.where(meshScaffold.point_data[key]==1)[0])
     idxsLMs = np.unique(idxsLMs)
 nsets["set_contact"] = idxsContact
-nsets["set_lms"] = idxsLMs
+nsets["set_all_lms"] = idxsLMs
 
 for i, lm in enumerate(idxsLMs):
     nsets["set_lm_{}".format(i)] = lm
@@ -64,7 +64,7 @@ else:
     print("No repeated LMs in the heart")
 
 nsetsHeart = {}
-nsetsHeart["set_lms"] = heartLMs
+nsetsHeart["set_all_lms"] = heartLMs
 for i, lm in enumerate(heartLMs):
     nsetsHeart["set_lm_{}".format(i)] = lm
 
