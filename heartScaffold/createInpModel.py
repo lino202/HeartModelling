@@ -6,27 +6,35 @@ from scipy.spatial.distance import cdist
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--meshHeart',type=str, required=True, help='path to data')
+parser.add_argument('--meshOnHeart',type=str, required=True, help='path to data')
 parser.add_argument('--meshScaffold',type=str, required=True, help='path to data')
 parser.add_argument('--outPath',type=str, required=True, help='path to data')
-parser.add_argument('--isSurface', action='store_true', help='path to data')
+parser.add_argument('--heartSurface', action='store_true', help='path to data')
+parser.add_argument('--scaffoldSurface', action='store_true', help='path to data')
 args = parser.parse_args()
 
 meshHeart = meshio.read(args.meshHeart)
+meshOnHeart = meshio.read(args.meshOnHeart)
 meshScaffold = meshio.read(args.meshScaffold)
 scaffoldPoints = meshScaffold.points
 heartPoints = meshHeart.points
 lmsDiff = {}
-for key in meshHeart.point_data.keys():
+for key in meshOnHeart.point_data.keys():
     if not "all" in key and ("LM" in key or "lm" in key) and not "lms" in key:
-        B = meshHeart.points[np.where(meshHeart.point_data[key]==1)[0][0],:]
+        B = meshOnHeart.points[np.where(meshOnHeart.point_data[key]==1)[0][0],:]
         A = meshScaffold.points[np.where(meshScaffold.point_data[key]==1)[0][0],:]
         lmsDiff[key] = B - A
 
 nnl=15
-if args.isSurface:
+if args.heartSurface:
     heartCellShape = "triangle"
 else:
     heartCellShape = "tetra"
+
+if args.scaffoldSurface:
+    scaffoldCellShape = "quad"
+else:
+    scaffoldCellShape = "tetra"
 
 #Write Model in inp
 with open(args.outPath, 'w') as f:
@@ -42,7 +50,7 @@ with open(args.outPath, 'w') as f:
     f.write("*Node\n")
     for idx, n in enumerate(meshHeart.points):
         f.write("{0:d}, {1:.15f}, {2:.15f}, {3:.15f}\n".format(idx+1, n[0], n[1], n[2]))
-    if args.isSurface:
+    if args.heartSurface:
         f.write("*Element, type=S3\n")
         for idx, el in enumerate(meshHeart.cells_dict[heartCellShape]):
             f.write("{0:d}, {1:d}, {2:d}, {3:d}\n".format(idx+1, el[0]+1, el[1]+1, el[2]+1))
@@ -68,14 +76,24 @@ with open(args.outPath, 'w') as f:
     f.write("*Node\n")
     for idx, n in enumerate(meshScaffold.points):
         f.write("{0:d}, {1:.15f}, {2:.15f}, {3:.15f}\n".format(idx+1, n[0], n[1], n[2]))
-    f.write("*Element, type=S4\n")
-    for idx, el in enumerate(meshScaffold.cells_dict["quad"]):
-        f.write("{0:d}, {1:d}, {2:d}, {3:d}, {4:d}\n".format(idx+1, el[0]+1, el[1]+1, el[2]+1, el[3]+1))
-    f.write("*Elset, elset=ALL_SCAFFOLD, generate\n")
-    f.write("1, {}, 1\n".format(meshScaffold.cells_dict["quad"].shape[0]))   
-    f.write("** Section: Section_SCAFFOLD\n")
-    f.write("*Shell Section, elset=ALL_SCAFFOLD, material=MATERIAL_SCAFFOLD\n")
-    f.write("0.1, 5\n")
+    if args.scaffoldSurface:
+        f.write("*Element, type=S4\n")
+        for idx, el in enumerate(meshScaffold.cells_dict[scaffoldCellShape]):
+            f.write("{0:d}, {1:d}, {2:d}, {3:d}, {4:d}\n".format(idx+1, el[0]+1, el[1]+1, el[2]+1, el[3]+1))
+        f.write("*Elset, elset=ALL_SCAFFOLD, generate\n")
+        f.write("1, {}, 1\n".format(meshScaffold.cells_dict[scaffoldCellShape].shape[0]))   
+        f.write("** Section: Section_SCAFFOLD\n")
+        f.write("*Shell Section, elset=ALL_SCAFFOLD, material=MATERIAL_SCAFFOLD\n")
+        f.write("0.1, 5\n")
+    else:
+        f.write("*Element, type=C3D4\n")
+        for idx, el in enumerate(meshScaffold.cells_dict[scaffoldCellShape]):
+            f.write("{0:d}, {1:d}, {2:d}, {3:d}, {4:d}\n".format(idx+1, el[0]+1, el[1]+1, el[2]+1, el[3]+1))
+        f.write("*Elset, elset=ALL_SCAFFOLD, generate\n")
+        f.write("1, {}, 1\n".format(meshScaffold.cells_dict[scaffoldCellShape].shape[0]))   
+        f.write("** Section: Section_SCAFFOLD\n")
+        f.write("*Solid Section, elset=ALL_SCAFFOLD, material=MATERIAL_SCAFFOLD\n")
+        f.write("\n")
     f.write("*End Part\n**\n**\n")
 
 
@@ -99,14 +117,9 @@ with open(args.outPath, 'w') as f:
                 ",\n".join(",".join(nds[i : i + nnl]) for i in range(0, len(nds), nnl))
                 + "\n"
             )
-    # if args.isSurface:
-        # f.write("*Nset, nset=heartRefNode, instance=HeartInstance\n1,\n")
-        # f.write("** Constraint: Constraint-1\n")
-        # f.write("*Rigid Body, ref node=heartRefNode, nset=ALL_HEART\n")
     f.write("*End Assembly\n**\n")
     
     f.write("** MATERIALS\n**\n")
-    # if not args.isSurface:
     f.write("*Material, name=MATERIAL_HEART\n")
     f.write("*Elastic\n")
     f.write("200., 0.3\n")
