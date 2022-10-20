@@ -20,16 +20,13 @@ seedInner = surfseeds(nInner, fInner);
 seedOut     = nOuter(1,:) - (nOuter(1,:) - nInner(idx,:)) .* dist/3;
 % seedBG      = nOuter(1,:) + (nOuter(1,:) - nInner(idx,:)) .* dist/3;
 regions     = [seedOut, 0.025; seedInner 0.1];
-
 % minBB = min(nComb) - 2;  %only required for forcebox
 % maxBB = max(nComb) + 2;
 
 tic
 [nodes,elems]=surf2mesh(nComb,fComb,[],[],1,[],regions,[]);
 toc
-
-cell_data = {{'myo-patch', elems(:,5)}};
-
+cell_data = {{'myo_cells', elems(:,5)-1}};
 tic
 SaveTetVtk(myoPatchMesh, nodes, elems(:,1:4), [], [], cell_data);
 toc

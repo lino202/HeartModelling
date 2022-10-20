@@ -95,13 +95,12 @@ if ~isempty(nsets)
 end
 
 % For now works for cell_data of one dimension with same type of cell
-% and including all the cells in the field_data
 if ~isempty(cell_data)
     fprintf(fileID,'CELL_DATA %d\n', size(cell_data{1}{2},1));
-    fprintf(fileID,'FIELD FieldData %d\n', size(cell_data,2));
-    
     for i=1:size(cell_data,2)
-        fprintf(fileID,'%s %d %d int32\n', cell_data{i}{1}, size(cell_data{i}{2},2), size(cell_data{i}{2},1));
+        fprintf(fileID,'SCALARS %s int 1\n', cell_data{i}{1});
+        fprintf(fileID,'LOOKUP_TABLE default\n');
+%         fprintf(fileID,'%s %d %d int32\n', cell_data{i}{1}, size(cell_data{i}{2},2), size(cell_data{i}{2},1));
         for cell = 1: size(cell_data{i}{2},1)
             fprintf(fileID,'%d\n', int32(cell_data{i}{2}(cell,1)));
         end
