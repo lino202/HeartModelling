@@ -6,7 +6,7 @@ from scipy.spatial.distance import cdist
 import sys
 sys.path.append(os.path.join(os.path.dirname(sys.path[0])))
 from auxiliar.conductionSystem.lib.Mesh import Mesh
-from utils import getEdges
+from auxiliar.conductionSystem.lib.utils import getEdges
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--meshHeart',type=str, required=True, help='path to data mesh in obj')
@@ -104,7 +104,7 @@ for key in nsetsScaffold.keys():
     point_data_Scaffold[key] = tmp
 
 meshScaffold.point_data = point_data_Scaffold
-meshScaffold.write(os.path.join(args.outPath, "{}_lms.vtk".format(scaffoldName)))
+meshScaffold.write(os.path.join(args.outPath, "scaffolds", "{}_lms.vtk".format(scaffoldName)))
 
 # #Write Landmarks for tweking in Slicer
 # with open(os.path.join(args.outPath, "scaffold_lms.fcsv"), 'w') as f:
