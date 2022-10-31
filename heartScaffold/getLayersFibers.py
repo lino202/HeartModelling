@@ -1,7 +1,7 @@
 import numpy as np
 import argparse
 import meshio
-from scipy.interpolate import RBFInterpolator
+from scipy.interpolate import RBFInterpolator, griddata
 import time
 
 parser = argparse.ArgumentParser(description="Options")
@@ -16,7 +16,7 @@ baseMesh = meshio.read(args.heartPatchMesh)
 layersMesh = meshio.read(args.layersFibsMesh)
 
 baseMeshCells = baseMesh.cells_dict["tetra"]
-idxsCellsMyo = np.where((baseMesh.cell_data["myo_cells"][0]==3) | (baseMesh.cell_data["myo_cells"][0]==0))[0]
+idxsCellsMyo = np.where(baseMesh.cell_data["myo_cells"][0]==1)[0]
 idxsPointsMyo = np.unique(baseMesh.cells_dict["tetra"][idxsCellsMyo].flatten())
 # idxsCellsPatch = np.isin(np.arange(baseMeshCells.shape[0]),idxsCellsMyo, invert=True).nonzero()[0]
 # idxsPointsPatch = np.unique(baseMesh.cells_dict["tetra"][idxsCellsPatch].flatten())
@@ -26,7 +26,11 @@ idxsPointsPatch = np.isin(np.arange(baseMesh.points.shape[0]),idxsPointsMyo, inv
 point_data = {}
 for field in fields2interpolate:
     values1 = layersMesh.point_data[field]
-    values2 = RBFInterpolator(layersMesh.points, values1, neighbors=10)(baseMesh.points[idxsPointsMyo])
+    # here we use nearest neighbour interpolation rather than RBF as myocardial meshes should not be coarser or finer than the one used 
+    # for the MI-only model, then this interp should be ok. Also and more importantly RBF gets nodes with a layers values of 6 that was previsouly 
+    # used as uncertain nodes that were out the bz in the LGE-MR brightness analysis
+    values2 = griddata(layersMesh.points, values1, baseMesh.points[idxsPointsMyo], method='nearest')
+    # values2 = RBFInterpolator(layersMesh.points, values1, neighbors=10)(baseMesh.points[idxsPointsMyo])
     if "layers" in field: 
         finalValues2 = np.zeros(baseMesh.points.shape[0])
     elif "fib" in field:

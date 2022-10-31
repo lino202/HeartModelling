@@ -10,7 +10,8 @@ import time
 import matplotlib.pyplot as plt
 import sys
 sys.path.append(os.path.join('/'.join(sys.path[0].split("/")[:-1])))
-from auxiliar.rbm.utils import writeFibers4JSON 
+from auxiliar.rbm.utils import writeFibers4JSON
+import copy
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--meshMIPatch',type=str, required=True)
@@ -80,7 +81,7 @@ print("Total time {0:.4f} s".format(time.time()-startTot))
 print("Per point times mean: {0:.4f} s min:{1:.4f} s max:{2:.4f} s".format(np.mean(times), np.min(times), np.max(times)))
 
 pointNearTriIdx = np.delete(pointNearTriIdx, np.isnan(pointNearTriIdx[:,0]), axis=0).astype(int)
-fibers = meshMIPatch.point_data["rbm-fibers-long"]
+fibers = copy.deepcopy(meshMIPatch.point_data["rbm-fibers-long"])                                 #rbm-fibers-long should have the random fibers on patch
 fibers[pointNearTriIdx[:,0],:] = meshScaffold.cell_data["fibs"][0][pointNearTriIdx[:,1],:]
 fibersAlignedPointData = np.zeros(meshMIPatch.points.shape[0])
 fibersAlignedPointData[pointNearTriIdx[:,0]] = 1
@@ -89,6 +90,8 @@ fibersAlignedPointData[pointNearTriIdx[:,0]] = 1
 print("The percentage of alignment is {0:.4f} %".format(pointNearTriIdx.shape[0]/idxsPatch.shape[0] * 100))
 meshMIPatch.point_data["fibers-aligned-vectors"] = fibers
 meshMIPatch.point_data["fibers-aligned-scalar"] = fibersAlignedPointData
-meshMIPatch.write(os.path.join(args.outPath, "mipatch_layers_fibs.vtk"))
+meshMIPatch.point_data["fibers-rbmlongmyo-randompatch"] = meshMIPatch.point_data["rbm-fibers-long"]
+meshMIPatch.point_data.pop("rbm-fibers-long")
+meshMIPatch.write(os.path.join(args.outPath, "heartPatch_tetmesh_layers_fibs.vtk"))
 
 writeFibers4JSON(os.path.join(args.outPath, "fibers.txt"), fibers)
