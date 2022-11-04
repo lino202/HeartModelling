@@ -92,6 +92,6 @@ meshMIPatch.point_data["fibers-aligned-vectors"] = fibers
 meshMIPatch.point_data["fibers-aligned-scalar"] = fibersAlignedPointData
 meshMIPatch.point_data["fibers-rbmlongmyo-randompatch"] = meshMIPatch.point_data["rbm-fibers-long"]
 meshMIPatch.point_data.pop("rbm-fibers-long")
-meshMIPatch.write(os.path.join(args.outPath, "heartPatch_tetmesh_layers_fibs.vtk"))
+meshMIPatch.write(os.path.join(args.outPath, "heartPatch_tetmesh_layers_alignfibs.vtk"))
 
 writeFibers4JSON(os.path.join(args.outPath, "fibers.txt"), fibers)
