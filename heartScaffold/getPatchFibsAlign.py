@@ -28,7 +28,7 @@ idxsPatch = np.where(meshMIPatch.point_data["layers"]==9)[0]
 mipatchPoints = meshMIPatch.points.astype(float)
 scaffoldPoints = meshScaffold.points.astype(float)
 scaffoldCells = meshScaffold.cells_dict["triangle"]
-patchFibs = meshMIPatch.point_data["rbm-fibers-long"][idxsPatch]
+patchFibs = meshMIPatch.point_data["fibers-rbmlongmyo-randompatch"][idxsPatch]
 
 # idxsPatch = idxsPatch[:10000]
 times = np.zeros(idxsPatch.shape[0])
@@ -81,7 +81,7 @@ print("Total time {0:.4f} s".format(time.time()-startTot))
 print("Per point times mean: {0:.4f} s min:{1:.4f} s max:{2:.4f} s".format(np.mean(times), np.min(times), np.max(times)))
 
 pointNearTriIdx = np.delete(pointNearTriIdx, np.isnan(pointNearTriIdx[:,0]), axis=0).astype(int)
-fibers = copy.deepcopy(meshMIPatch.point_data["rbm-fibers-long"])                                 #rbm-fibers-long should have the random fibers on patch
+fibers = copy.deepcopy(meshMIPatch.point_data["fibers-rbmlongmyo-randompatch"])                                 #rbm-fibers-long should have the random fibers on patch
 fibers[pointNearTriIdx[:,0],:] = meshScaffold.cell_data["fibs"][0][pointNearTriIdx[:,1],:]
 fibersAlignedPointData = np.zeros(meshMIPatch.points.shape[0])
 fibersAlignedPointData[pointNearTriIdx[:,0]] = 1
@@ -90,8 +90,8 @@ fibersAlignedPointData[pointNearTriIdx[:,0]] = 1
 print("The percentage of alignment is {0:.4f} %".format(pointNearTriIdx.shape[0]/idxsPatch.shape[0] * 100))
 meshMIPatch.point_data["fibers-aligned-vectors"] = fibers
 meshMIPatch.point_data["fibers-aligned-scalar"] = fibersAlignedPointData
-meshMIPatch.point_data["fibers-rbmlongmyo-randompatch"] = meshMIPatch.point_data["rbm-fibers-long"]
-meshMIPatch.point_data.pop("rbm-fibers-long")
-meshMIPatch.write(os.path.join(args.outPath, "heartPatch_tetmesh_layers_alignfibs.vtk"))
+# meshMIPatch.point_data["fibers-rbmlongmyo-randompatch"] = meshMIPatch.point_data["rbm-fibers-long"]
+# meshMIPatch.point_data.pop("rbm-fibers-long")
+meshMIPatch.write(os.path.join(args.outPath, "heartPatch_tetmesh_layers_fibs.vtk"))
 
 writeFibers4JSON(os.path.join(args.outPath, "fibers.txt"), fibers)

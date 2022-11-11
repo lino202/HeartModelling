@@ -2,9 +2,9 @@ clear; close all;
 addpath('../matlabFunctions', '../libraries/iso2mesh-1.9.6');
 
 dataPath  = "F:/HeartModeling/Data_OM_MI/sampleP21_389/";
-meshXorSurf = append(dataPath, "BioVAD/final_mipatch_surfmesh2.obj");
+meshXorSurf = append(dataPath, "BioVAD/final_mipatch_surfmesh.obj");
 meshScaffSurf = append(dataPath, "BioVAD/final_shell.obj");
-meshHeartSurf = append(dataPath, "/surfMesh.obj");
+meshHeartSurf = append(dataPath, "/surfMesh_coarse.obj");
 tetMesh = append(dataPath, "BioVAD/heartPatch_tetmesh.vtk");
 
 
@@ -15,7 +15,7 @@ tetMesh = append(dataPath, "BioVAD/heartPatch_tetmesh.vtk");
 seedHeart = surfseeds(noHeart, elHeart);
 seedScaff = surfseeds(noScaff, elScaff);
 
-regions     = [seedHeart, 0.1; seedScaff, 0.001];
+regions     = [seedHeart, 1.; seedScaff, 0.0001];
 tic
 [nodes,elems]=surf2mesh(no,el,[],[],1,[],regions,[]);
 toc

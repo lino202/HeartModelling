@@ -42,7 +42,8 @@ patchFibs = rotations.apply(patchFibs)
 patchFibsMag = np.expand_dims(np.linalg.norm(patchFibs, axis=1), axis=1)
 patchFibs = patchFibs / np.hstack((patchFibsMag,patchFibsMag,patchFibsMag))
 meshMIPatch.point_data["rbm-fibers-long"][idxsPatch] = patchFibs
-if np.isnan(meshMIPatch.point_data["rbm-fibers-long"]).nonzero()[0].size:
+meshMIPatch.point_data["fibers-rbmlongmyo-randompatch"] = meshMIPatch.point_data.pop("rbm-fibers-long")
+if np.isnan(meshMIPatch.point_data["fibers-rbmlongmyo-randompatch"]).nonzero()[0].size:
     raise ValueError("Nan in fiber field!")
 
 #SAVE
