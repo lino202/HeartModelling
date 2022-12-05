@@ -38,7 +38,7 @@ cellsXorFamily[outerPatch] = flags["outerPatch"]
 cellsXorFamily[innerHeart] = flags["innerHeart"]
 cellsXorFamily[outerHeart] = flags["outerHeart"]
 meshXor.cell_data = {"cellsXor": [cellsXorFamily]}
-# meshXor.write(os.path.join(args.outPath, "controlClustering.vtk"))
+meshXor.write(os.path.join(args.outPath, "controlXorClustering.vtk"))
 
 #del inner Patch from mesh
 meshWithoutInnerPatch = delElemsFromMesh(meshXor, innerPatch)

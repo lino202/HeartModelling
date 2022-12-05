@@ -15,7 +15,7 @@ tetMesh = append(dataPath, "BioVAD/heartPatch_tetmesh.vtk");
 seedHeart = surfseeds(noHeart, elHeart);
 seedScaff = surfseeds(noScaff, elScaff);
 
-regions     = [seedHeart, 1.; seedScaff, 0.0001];
+regions     = [seedHeart, 1.; seedScaff, 0.001];
 tic
 [nodes,elems]=surf2mesh(no,el,[],[],1,[],regions,[]);
 toc

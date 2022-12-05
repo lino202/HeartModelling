@@ -88,6 +88,8 @@ fibersAlignedPointData[pointNearTriIdx[:,0]] = 1
 
 #SAVE
 print("The percentage of alignment is {0:.4f} %".format(pointNearTriIdx.shape[0]/idxsPatch.shape[0] * 100))
+fibersMag = np.expand_dims(np.linalg.norm(fibers, axis=1), axis=1)
+fibers = fibers / np.hstack((fibersMag,fibersMag,fibersMag))
 meshMIPatch.point_data["fibers-aligned-vectors"] = fibers
 meshMIPatch.point_data["fibers-aligned-scalar"] = fibersAlignedPointData
 # meshMIPatch.point_data["fibers-rbmlongmyo-randompatch"] = meshMIPatch.point_data["rbm-fibers-long"]
