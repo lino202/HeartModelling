@@ -40,3 +40,20 @@ def writeFibers4JSON(filePath, rbmVersors):
         for i in range(1,rbmVersors.shape[0]-1):
             file.write("\t\t\t[{0:.15f}, {1:.15f}, {2:.15f}],\n".format(rbmVersors[i,0], rbmVersors[i,1], rbmVersors[i,2]))
         file.write("\t\t\t[{0:.15f}, {1:.15f}, {2:.15f}]]".format(rbmVersors[-1,0], rbmVersors[-1,1], rbmVersors[-1,2]))
+
+
+def getBaseApexSA(arr):
+    assert (np.nanmax(arr) > 0 and np.nanmin(arr)==0)
+    
+    for s in range(arr.shape[2]):
+        if np.count_nonzero(arr[:,:,s]) != 0:
+            apex = s
+            break
+
+    for s in range(arr.shape[2]-1,-1,-1):
+
+        if np.count_nonzero(arr[:,:,s]) != 0:
+            base = s
+            break
+        
+    return base, apex
