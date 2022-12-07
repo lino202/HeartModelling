@@ -1,8 +1,6 @@
-import os 
 import numpy as np
 import argparse
 import meshio
-from scipy.spatial.distance import cdist
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--meshHeart',type=str, required=True, help='path to data')

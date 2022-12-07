@@ -30,8 +30,10 @@ if args.interpType == "nearest":
 elif args.interpType == "rbf":
     values2 = RBFInterpolator(points1, values, neighbors=args.neighbours)(points2)
 
-if "layers" in args.nameValue: finalValues2 = np.zeros((mesh2.points.shape[0]))
-if "dti" in args.nameValue: finalValues2 = np.zeros((mesh2.points.shape[0], 3))
+if "layers" in args.nameValue or "AHA" in args.nameValue or "LVRV" in args.nameValue: 
+    finalValues2 = np.zeros((mesh2.points.shape[0]))
+if "dti" in args.nameValue: 
+    finalValues2 = np.zeros((mesh2.points.shape[0], 3))
 finalValues2[:] = np.nan 
 if "cover" in mesh2.point_data.keys():
     finalValues2[realMyoIdxs] =  values2
@@ -39,11 +41,11 @@ else:
     finalValues2 = values2
 
 #get round values for vtk and inp
-if args.nameValue == "layers_mi" or args.nameValue == "layers":
+if "layers" in args.nameValue or "AHA" in args.nameValue or "LVRV" in args.nameValue:
     finalValues2[finalValues2<np.nanmin(values)] = np.nanmin(values)
     finalValues2[finalValues2>np.nanmax(values)] = np.nanmax(values)
     finalValues2 = np.round(finalValues2)
-elif args.nameValue == "dti-fibers" or args.nameValue == "dti_fibers":
+elif "fibers" in args.nameValue:
     fibersNorm = np.linalg.norm(finalValues2, axis=1)
     finalValues2 = finalValues2 /  np.array([fibersNorm, fibersNorm, fibersNorm]).T
     outPath = "/".join(args.outPath.split("/")[:-1])
@@ -51,5 +53,5 @@ elif args.nameValue == "dti-fibers" or args.nameValue == "dti_fibers":
 else: raise ValueError("Wrong valueName")
 
 mesh2.point_data[args.nameValue] = finalValues2
-fileOutName = args.outPath.split(".")[0] + "_{}.vtk".format(args.interpType)
-mesh2.write(fileOutName)
+# fileOutName = args.outPath.split(".")[0] + "_{}.vtk".format(args.interpType)
+mesh2.write(args.outPath)

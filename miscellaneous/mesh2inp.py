@@ -1,6 +1,5 @@
 import meshio 
 import numpy as np
-import os
 import argparse
 
 parser = argparse.ArgumentParser(description="Options")
@@ -23,6 +22,7 @@ pointData = mesh.point_data
 pointDataKeys = pointData.keys()
 nsets={}
 
+# Get layers or tissue types
 if "layers" in pointDataKeys and ((not "endo" in pointDataKeys) and (not "mid" in pointDataKeys) and (not "epi" in pointDataKeys)):
     for key in pointDataKeys:
         if pointData[key].ndim == 1 and "layers" in key:
@@ -33,7 +33,12 @@ if "layers" in pointDataKeys and ((not "endo" in pointDataKeys) and (not "mid" i
 else:
     for key in pointDataKeys:
         if key in validKeys:
-            nsets["{}".format(key)] = np.where(pointData[key]==1)[0]
+            nsets["{}_nodes".format(key)] = np.where(pointData[key]==1)[0]
+
+#Get stims
+for key in pointDataKeys:
+    if "stim" in key and pointData[key].ndim == 1 and np.min(pointData[key])==0 and np.max(pointData[key])==1:
+        nsets["{}_nodes".format(key)] = np.where(pointData[key]==1)[0]
 
 meshOut = meshio.Mesh(mesh.points, mesh.cells, point_sets=nsets)
 meshOut.write(args.outPath)

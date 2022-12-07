@@ -2,7 +2,6 @@ import numpy as np
 from scipy.spatial import KDTree
 from tqdm import tqdm
 import meshio
-# import numba
 
 def getPointsEnclosedByMesh(points, outerMesh):
     #Please check meshes if bad operatoin of the function happens
