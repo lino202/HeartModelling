@@ -7,7 +7,7 @@ parser.add_argument('--inPath',type=str, required=True, help='path to file and f
 parser.add_argument('--outPath',type=str, required=True, help='path to file and file name')
 args = parser.parse_args()
 
-validKeys = ["endo", "mid", "epi", "myo", "scar", "uncertain", "bz", "patch"]
+validKeys = ["endo", "endoBZ", "mid", "midBZ", "epi", "epiBZ", "myo", "scar", "bz", "patch"]
 myo_flag = 1
 scar_flag = 8
 endo_flag = 3
