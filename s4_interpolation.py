@@ -29,10 +29,11 @@ if args.interpType == "nearest":
     values2 = griddata(points1, values, points2, method='nearest')
 elif args.interpType == "rbf":
     values2 = RBFInterpolator(points1, values, neighbors=args.neighbours)(points2)
+else: raise ValueError("Wrong interpolation type")
 
 if "layers" in args.nameValue or "AHA" in args.nameValue or "LVRV" in args.nameValue: 
     finalValues2 = np.zeros((mesh2.points.shape[0]))
-if "dti" in args.nameValue: 
+if "fibers" in args.nameValue: 
     finalValues2 = np.zeros((mesh2.points.shape[0], 3))
 finalValues2[:] = np.nan 
 if "cover" in mesh2.point_data.keys():

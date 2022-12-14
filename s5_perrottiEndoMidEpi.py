@@ -111,7 +111,7 @@ for tissueType in validKeys:
     point_data[tissueType] = np.zeros((meshVtk.points.shape[0]))
     point_data[tissueType][algo_points==globals()["{}_flag".format(tissueType)]] = 1
     nsets["{}_nodes".format(tissueType)] = np.where(point_data[tissueType] == 1)[0]
-point_data["layers_tissues"] = algo_points
+point_data["layers"] = algo_points
 
 
 if not args.infAsHealthy:

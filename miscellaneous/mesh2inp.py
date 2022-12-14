@@ -23,13 +23,16 @@ pointDataKeys = pointData.keys()
 nsets={}
 
 # Get layers or tissue types
+#Only layers is defined
 if "layers" in pointDataKeys and ((not "endo" in pointDataKeys) and (not "mid" in pointDataKeys) and (not "epi" in pointDataKeys)):
     for key in pointDataKeys:
         if pointData[key].ndim == 1 and "layers" in key:
             for pointKey in validKeys:
-                nsets["{}_nodes".format(pointKey)] = np.where(pointData["layers"] == globals()["{}_flag".format(pointKey)])[0]
+                if not "BZ" in pointKey:
+                    nsets["{}_nodes".format(pointKey)] = np.where(pointData["layers"] == globals()["{}_flag".format(pointKey)])[0]
         elif pointData[key].ndim == 1 and "cover" in key:
             nsets["cover_nodes"] = np.where(pointData[key]==1)[0]
+#If we have endo-mid-epi and bz defined separately we use got them separately
 else:
     for key in pointDataKeys:
         if key in validKeys:
@@ -38,7 +41,7 @@ else:
 #Get stims
 for key in pointDataKeys:
     if "stim" in key and pointData[key].ndim == 1 and np.min(pointData[key])==0 and np.max(pointData[key])==1:
-        nsets["{}_nodes".format(key)] = np.where(pointData[key]==1)[0]
+        nsets["{}_nodes".format(key.lower())] = np.where(pointData[key]==1)[0]
 
 meshOut = meshio.Mesh(mesh.points, mesh.cells, point_sets=nsets)
 meshOut.write(args.outPath)

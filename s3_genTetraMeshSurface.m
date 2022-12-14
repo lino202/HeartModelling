@@ -1,24 +1,49 @@
-clear; close all;
+% This code should be replace as well as the s3_genTetraMeshSurface
+% when a docker image with ubuntu is used for tetgen. For now it uses
+% WSL for using tetgen in linux that seems to generate better results
+clear; close all; clc;
 addpath('matlabFunctions', 'libraries/iso2mesh-1.9.6');
 
 % Input filenames
 dataPath = 'F:\HeartModeling\Data_OM_MI\sampleP21_389\';
 surfMesh = append(dataPath, 'surfMesh_coarse.obj');
-vtk_output = append(dataPath, 'tetmesh_coarse.vtk');
-tetMaxVol = 1;
+workdir = append(dataPath, 'mesh_edgelength\');
+outmesh = append(workdir, 'tetmesh');
+
+tetMaxVol = 0;
+edgeLength = 1.;
+wsl = 1;
 
 % Read heart surface mesh and normalize normals
 [snodes, sfaces, snormals] = ReadObj(surfMesh); %from Meshlab
-% [snodes, sfaces, snormals] = ReadSurfVtk(surfMesh);
 
-surfSeeds=surfseeds(snodes(:,1:3),sfaces(:,1:3));
-minBB = min(snodes);
-maxBB = max(snodes);
-% fprintf('SurfSeed inside, usually only one \n %f %f %f \n', surfSeeds(1,:));
-% fprintf("SurfSeed holes, usually two \n %f %f %f \n %f %f %f\n", surfSeeds(2:3,:));
+regions=surfseeds(snodes(:,1:3),sfaces(:,1:3));
+cmdopt = '-q1.414';
+tic
+if tetMaxVol>0 && edgeLength<=0
+    cmdopt = append(cmdopt, ' -a');
+    if wsl
+        cmdopt = append(cmdopt, ' -k');
+        surf2meshWSL(snodes,sfaces,[],[],1,tetMaxVol,regions,[], 0, 'tetgen', cmdopt, outmesh);
+    else
+        [nodes,elems,faces]=surf2mesh(snodes,sfaces,[],[],1,tetMaxVol,regions,[], 0, 'tetgen', cmdopt);
+        elems=removedupelem(elems);
+    end
+elseif edgeLength>0 && tetMaxVol<=0
+    snodes = [snodes, ones(size(snodes,1),1) * edgeLength];
+    cmdopt = append(cmdopt, ' -m');
+    if wsl
+        cmdopt = append(cmdopt, ' -k');
+        surf2meshWSL(snodes,sfaces,[],[],1,[],regions,[],0, 'tetgen', cmdopt, outmesh);
+    else
+        [nodes,elems,faces]=surf2mesh(snodes,sfaces,[],[],1,[],regions,[],0, 'tetgen', cmdopt);
+        elems=removedupelem(elems);
+    end  
+else
+    error("Select correctly edgelength or maxVol")
+end
+toc
 
-[nodes,elems,faces]=surf2mesh(snodes,sfaces,[],[],1,tetMaxVol,surfSeeds,[],0);
-elems=removedupelem(elems);
 
 % visualize the resulting mesh
 % plotmesh(nodes,faces(:,1:3));
@@ -28,8 +53,9 @@ elems=removedupelem(elems);
 % ShowFaces(nodes,faces(:,1:3),[.8 .8 .8],0.4);
 % plot3(nodes(:,1),nodes(:,2),nodes(:,3),'bo','MarkerFaceColor','b','MarkerSize',5)
 % hold off; daspect([1 1 1]);
-
-SaveTetVtk(vtk_output, nodes, elems(:,1:4), [],[], []);
-
-
+if ~wsl
+    tic
+    SaveTetVtk(vtk_output, nodes, elems(:,1:4), [], [], []);
+    toc
+end
 
