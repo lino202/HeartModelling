@@ -2,31 +2,33 @@
 % when a docker image with ubuntu is used for tetgen. For now it uses
 % WSL for using tetgen in linux that seems to generate better results
 clear; close all; clc;
-addpath('matlabFunctions', 'libraries/iso2mesh-1.9.6');
+addpath('../matlabFunctions', '../libraries/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:\HeartModeling\Data_OM_MI\sampleP21_389\';
-surfMesh = append(dataPath, 'surfMesh_coarse.obj');
+dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control3\ED\KoenED\Myriam\';
+surfMesh = append(dataPath, 'lv_cover_invivo.obj');
 workdir = append(dataPath, 'mesh_edgelength\');
 outmesh = append(workdir, 'tetmesh');
 
 tetMaxVol = 0;
-edgeLength = 0.350;
+edgeLength = 2;
 wsl = 1;
+
+holes = [0,0,0];
+regions = [-5,-5,18];
 
 % Read heart surface mesh and normalize normals
 [snodes, sfaces, snormals] = ReadObj(surfMesh); %from Meshlab
 
-regions=surfseeds(snodes(:,1:3),sfaces(:,1:3));
 cmdopt = '-q1.414';
 tic
 if tetMaxVol>0 && edgeLength<=0
     cmdopt = append(cmdopt, ' -a');
     if wsl
         cmdopt = append(cmdopt, ' -k');
-        surf2meshWSL(snodes,sfaces,[],[],1,tetMaxVol,regions,[], 0, 'tetgen', cmdopt, outmesh);
+        surf2meshWSL(snodes,sfaces,[],[],1,tetMaxVol,regions,holes, 0, 'tetgen', cmdopt, outmesh);
     else
-        [nodes,elems,faces]=surf2mesh(snodes,sfaces,[],[],1,tetMaxVol,regions,[], 0, 'tetgen', cmdopt);
+        [nodes,elems,faces]=surf2mesh(snodes,sfaces,[],[],1,tetMaxVol,regions,holes, 0, 'tetgen', cmdopt);
         elems=removedupelem(elems);
     end
 elseif edgeLength>0 && tetMaxVol<=0
@@ -34,9 +36,9 @@ elseif edgeLength>0 && tetMaxVol<=0
     cmdopt = append(cmdopt, ' -m');
     if wsl
         cmdopt = append(cmdopt, ' -k');
-        surf2meshWSL(snodes,sfaces,[],[],1,[],regions,[],0, 'tetgen', cmdopt, outmesh);
+        surf2meshWSL(snodes,sfaces,[],[],1,[],regions,holes,0, 'tetgen', cmdopt, outmesh);
     else
-        [nodes,elems,faces]=surf2mesh(snodes,sfaces,[],[],1,[],regions,[],0, 'tetgen', cmdopt);
+        [nodes,elems,faces]=surf2mesh(snodes,sfaces,[],[],1,[],regions,holes,0, 'tetgen', cmdopt);
         elems=removedupelem(elems);
     end  
 else

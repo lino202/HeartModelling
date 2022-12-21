@@ -42,7 +42,6 @@ if "layers_mi" in meshVtk.point_data.keys():
     all_points = meshVtk.point_data["layers_mi"]
 else:
     all_points = np.zeros((meshVtk.points.shape[0]))
-    
 all_points[all_points==2] = uncertain_flag
 all_points[all_points==3] = bz_flag
 all_points[all_points==4] = scar_flag
