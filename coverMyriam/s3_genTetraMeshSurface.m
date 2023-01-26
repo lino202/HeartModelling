@@ -5,8 +5,8 @@ clear; close all; clc;
 addpath('../matlabFunctions', '../libraries/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control3\ED\KoenED\Myriam\';
-surfMesh = append(dataPath, 'lv_cover_invivo.obj');
+dataPath = 'F:\HeartModeling\Data_OM_MI\sampleP21_389\myriam\';
+surfMesh = append(dataPath, 'surfMesh_cover.obj');
 workdir = append(dataPath, 'mesh_edgelength\');
 outmesh = append(workdir, 'tetmesh');
 
@@ -14,11 +14,17 @@ tetMaxVol = 0;
 edgeLength = 2;
 wsl = 1;
 
-holes = [0,0,0];
-regions = [-5,-5,18];
-
 % Read heart surface mesh and normalize normals
 [snodes, sfaces, snormals] = ReadObj(surfMesh); %from Meshlab
+
+
+% Here select holes and regions accordingly,
+% you can uncommnet and check with surdseeds
+regions=surfseeds(snodes(:,1:3),sfaces(:,1:3)); 
+
+holes = [regions(1,:);regions(3,:)];
+regions = regions(2,:);
+
 
 cmdopt = '-q1.414';
 tic

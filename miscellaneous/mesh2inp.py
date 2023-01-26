@@ -43,5 +43,13 @@ for key in pointDataKeys:
     if "stim" in key and pointData[key].ndim == 1 and np.min(pointData[key])==0 and np.max(pointData[key])==1:
         nsets["{}_nodes".format(key.lower())] = np.where(pointData[key]==1)[0]
 
-meshOut = meshio.Mesh(mesh.points, mesh.cells, point_sets=nsets)
+#Get elems sets
+cellData     = mesh.cell_data
+cellDataKeys = cellData.keys()
+elsets       = {}
+for key in cellDataKeys:
+    if cellData[key][0].ndim == 1:
+        elsets["{}_elems".format(key)] = [list(np.where(cellData[key][0] == 1)[0])]
+
+meshOut = meshio.Mesh(mesh.points, mesh.cells, point_sets=nsets, cell_sets=elsets)
 meshOut.write(args.outPath)
