@@ -5,13 +5,13 @@ clear; close all; clc;
 addpath('matlabFunctions', 'libraries/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:\HeartModeling\basic\test\';
-surfMesh = append(dataPath, 'testRect.obj');
+dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control2\invivo\ES_XV\';
+surfMesh = append(dataPath, 'ES_XV.obj');
 workdir = append(dataPath, 'mesh_edgelength\');
 outmesh = append(workdir, 'tetmesh');
 
 tetMaxVol = 0;
-edgeLength = 1.;
+edgeLength = 0.6;
 wsl = 1;
 
 % Read heart surface mesh and normalize normals

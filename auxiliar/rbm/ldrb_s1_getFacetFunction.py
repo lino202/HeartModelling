@@ -18,7 +18,7 @@ if not os.path.exists(outPath):
 
 # Volume Mesh reading
 mesh = df.Mesh()
-f = df.XDMFFile(df.MPI.comm_world, os.path.join(args.dataPath, "tetmesh.xdmf"))
+f = df.XDMFFile(df.MPI.comm_world, os.path.join(args.dataPath, "mesh", "tetmesh.xdmf"))
 f.read(mesh)
 df.info(mesh)
 bmesh = df.BoundaryMesh(mesh, "exterior", True)

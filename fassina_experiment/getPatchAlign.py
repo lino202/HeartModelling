@@ -55,10 +55,12 @@ patchFibers = tissueFibers[patchIdxs]
 tree = KDTree(scaffoldPoints)
 neighbours = tree.query_ball_point(patchPoints, args.distThreshold)
 cellsAligned = 0
+fibersAlignedIdxs = []
 for j in tqdm(range(neighbours.shape[0])):
     if neighbours[j]: 
         cellsAligned += 1
         tmpFibers = scaffoldFibers[neighbours[j]]
+        fibersAlignedIdxs.append(j)
         patchFibers[j,:] = np.mean(tmpFibers, axis=0)
 
 tissueFibers[patchIdxs,:] = patchFibers
@@ -80,6 +82,9 @@ print("Longitudinal aligned nodes: {0:d}/{1:d}, percent: {2:.2f}".format(nInRang
 # SAVE DATA ----------------------------------------------------------------------------------------------------------
 scaffoldMesh.points = scaffoldPoints
 tissueMesh.point_data["fibers"] = tissueFibers
+fibersAligned = np.zeros(tissueMesh.points.shape[0])
+fibersAligned[patchIdxs[fibersAlignedIdxs]] = 1
+tissueMesh.point_data["fibers_aligned"] = fibersAligned
 
 scaffoldMesh.write(os.path.join(args.outPath, "scaffold.vtk"))
 tissueMesh.write(os.path.join(args.outPath, "tissue.vtk"))

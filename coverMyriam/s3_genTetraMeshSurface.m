@@ -5,9 +5,9 @@ clear; close all; clc;
 addpath('../matlabFunctions', '../libraries/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:\HeartModeling\Data_OM_MI\sampleP21_389\myriam\';
-surfMesh = append(dataPath, 'surfMesh_cover.obj');
-workdir = append(dataPath, 'mesh_edgelength\');
+dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control2\invivo\ED_XV_cover\';
+surfMesh = append(dataPath, 'ED_XV_cover.obj');
+workdir = append(dataPath, 'mesh\');
 outmesh = append(workdir, 'tetmesh');
 
 tetMaxVol = 0;

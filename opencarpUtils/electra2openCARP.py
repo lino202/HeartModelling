@@ -44,7 +44,7 @@ if hasattr(args, "stimPointData"):
 # if fibers are already or you want just default fibers from meshtool just dont pass the argument
 if hasattr(args, "fibersPointData"):
     print("Getting fibers for elem as .lon file-------------")
-    fibsCells = np.mean(mesh.point_data["fibers"][mesh.cells_dict["tetra"]], axis=1)
+    fibsCells = np.mean(mesh.point_data[args.fibersPointData][mesh.cells_dict["tetra"]], axis=1)
     fibsCells = ut.getArrNormalization(fibsCells)
     ut.writeFibsFile(fibsCells, os.path.join(args.outFolder, "{}.lon".format(fileName)))
 
