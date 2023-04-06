@@ -1,3 +1,7 @@
+#This is conceptually wrong as tets will not have all their nodes as unattached
+#then the complete unattachment is not a realistic one
+
+
 import os 
 import numpy as np
 import argparse
