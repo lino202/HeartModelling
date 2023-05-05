@@ -11,23 +11,24 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 import seaborn as sns
-from auxiliar.conductionSystem.lib.utils import isMemberIdxsRowWise
 
-font = {'family' : "Times New Roman",
-        'weight' : 'normal',
-        'size'   : 20}
-plt.rc('font', **font)
 
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--dataPath',type=str, required=True, help='path to data')
 parser.add_argument('--outName',type=str, required=True, help='output name')
+parser.add_argument('--outThresName',type=str, required=True, help='output name')
 parser.add_argument('--healthyNumber',type=int, required=True)
 parser.add_argument('--unhealthyNumber',type=int, required=True)
 parser.add_argument('--remoteRoiNumber',type=int, required=True)
 parser.add_argument('--save',action='store_true',  help='save histogram with thresholds')
 args = parser.parse_args()
 
+sns.set(style="ticks", font_scale=3, font="Times New Roman", rc={'figure.figsize':(12,9)})
+# font = {'family' : "Times New Roman",
+#         'weight' : 'normal',
+#         'size'   : 20}
+# plt.rc('font', **font)
 
 myo_flag = 1
 uncertain_flag = 2
@@ -66,62 +67,61 @@ borderZoneThresBottom = np.max(remoteRoiGreyValues)
 print("The scarThres is {}".format(scarThres))
 print("The borderZoneThresBottom is {}".format(borderZoneThresBottom))
 
-sns.set(style="ticks")
+
 f, (ax_box, ax_hist) = plt.subplots(2, sharex=True, gridspec_kw={"height_ratios": (.15, .85)})
 sns.boxplot(x=unhealthyGreyValues, ax=ax_box)
 sns.histplot(x=unhealthyGreyValues, ax=ax_hist)
 ax_box.set(yticks=[])
-ax_hist.set_ylabel("Frequencies")
-ax_hist.set_xlabel("Unhealthy Grey Values")
+ax_hist.set_ylabel("Count", fontdict=dict(weight='bold'))
+ax_hist.set_xlabel("Affected Zone Voxel Intensities", fontdict=dict(weight='bold'))
 ax_hist.axvline(borderZoneThresBottom, color='g', linestyle='dashed', linewidth=2)
 ax_hist.axvline(scarThres, color='r', linestyle='dashed', linewidth=2)
 ax_box.axvline(borderZoneThresBottom, color='g', linestyle='dashed', linewidth=2)
 ax_box.axvline(scarThres, color='r', linestyle='dashed', linewidth=2)
 sns.despine(ax=ax_hist)
 sns.despine(ax=ax_box, left=True)
-plt.savefig(os.path.join(args.dataPath, "thresholds2.png")) if args.save else plt.show(block=True)
+plt.savefig(os.path.join(args.dataPath, args.outThresName)) if args.save else plt.show(block=True)
 
-# Get points for border zone and scar in unhealthy zone
-mask = np.zeros(geVolArr.shape)
-mask[unhealthyIJKIdxs] = 1
-unhealthyArray = mask * geVolArr
-idxsScar = np.where(unhealthyArray>scarThres)
-idxsBZ = np.where((unhealthyArray>=borderZoneThresBottom)&(unhealthyArray<=scarThres))
-idxsCorrectHealthy = np.where((unhealthyArray>0)&(unhealthyArray<borderZoneThresBottom))
+# # Get points for border zone and scar in unhealthy zone
+# mask = np.zeros(geVolArr.shape)
+# mask[unhealthyIJKIdxs] = 1
+# unhealthyArray = mask * geVolArr
+# idxsScar = np.where(unhealthyArray>scarThres)
+# idxsBZ = np.where((unhealthyArray>=borderZoneThresBottom)&(unhealthyArray<=scarThres))
+# idxsCorrectHealthy = np.where((unhealthyArray>0)&(unhealthyArray<borderZoneThresBottom))
 
-#Pass ijk idxs of scar and BZ to idxs in xyz
-ijkPixels = ijkPixels.T[:,:3]
-idxsScar = np.concatenate(( [idxsScar[0]], [idxsScar[1]], [idxsScar[2]] )).T
-idxsBZ = np.concatenate(( [idxsBZ[0]], [idxsBZ[1]], [idxsBZ[2]] )).T
-idxsCorrectHealthy = np.concatenate(( [idxsCorrectHealthy[0]], [idxsCorrectHealthy[1]], [idxsCorrectHealthy[2]] )).T
-idxsScar = isMemberIdxsRowWise(idxsScar, ijkPixels, showMem=True)
-idxsBZ = isMemberIdxsRowWise(idxsBZ, ijkPixels, showMem=True)
-idxsCorrectHealthy = isMemberIdxsRowWise(idxsCorrectHealthy, ijkPixels, showMem=True)
+# #Pass ijk idxs of scar and BZ to idxs in xyz
+# from auxiliar.conductionSystem.lib.utils import isMemberIdxsRowWise
+# ijkPixels = ijkPixels.T[:,:3]
+# idxsScar = np.concatenate(( [idxsScar[0]], [idxsScar[1]], [idxsScar[2]] )).T
+# idxsBZ = np.concatenate(( [idxsBZ[0]], [idxsBZ[1]], [idxsBZ[2]] )).T
+# idxsCorrectHealthy = np.concatenate(( [idxsCorrectHealthy[0]], [idxsCorrectHealthy[1]], [idxsCorrectHealthy[2]] )).T
+# idxsScar = isMemberIdxsRowWise(idxsScar, ijkPixels, showMem=True)
+# idxsBZ = isMemberIdxsRowWise(idxsBZ, ijkPixels, showMem=True)
+# idxsCorrectHealthy = isMemberIdxsRowWise(idxsCorrectHealthy, ijkPixels, showMem=True)
 
-healthyIdxs = np.where((tissueFlags==args.healthyNumber) | (tissueFlags==args.remoteRoiNumber))
-unhealthyIdxs = np.where(tissueFlags==args.unhealthyNumber)
+# healthyIdxs = np.where((tissueFlags==args.healthyNumber) | (tissueFlags==args.remoteRoiNumber))
+# unhealthyIdxs = np.where(tissueFlags==args.unhealthyNumber)
 
+# nsets = {"healthy": healthyIdxs, "unhealthy": unhealthyIdxs, "scar": idxsScar, "bz": idxsBZ, "correctHealthy": idxsCorrectHealthy }
+# point_data={}
+# for key in nsets.keys():
+#     tmp = np.zeros(points.shape[0])
+#     tmp[nsets[key]] = 1
+#     point_data[key] = list(tmp)
 
+# point_data["layers_mi"] = np.zeros(points.shape[0])
+# point_data["layers_mi"][healthyIdxs] = myo_flag
+# point_data["layers_mi"][idxsCorrectHealthy] = uncertain_flag
+# point_data["layers_mi"][idxsBZ] = bz_flag
+# point_data["layers_mi"][idxsScar] = scar_flag
 
-nsets = {"healthy": healthyIdxs, "unhealthy": unhealthyIdxs, "scar": idxsScar, "bz": idxsBZ, "correctHealthy": idxsCorrectHealthy }
-point_data={}
-for key in nsets.keys():
-    tmp = np.zeros(points.shape[0])
-    tmp[nsets[key]] = 1
-    point_data[key] = list(tmp)
+# cells = [
+#     ("line", [[0, 1]])    #this is just for being able to open with meshio afterwards
+# ]
+# # There might be zeros in layers_mi as some pixels with zero value could be segmented
+# # into the unhealthy zone, we can decide what to do with them if they are healthy or border zone
+# point_data["layers_mi"][point_data["layers_mi"]==0] = uncertain_flag
 
-point_data["layers_mi"] = np.zeros(points.shape[0])
-point_data["layers_mi"][healthyIdxs] = myo_flag
-point_data["layers_mi"][idxsCorrectHealthy] = uncertain_flag
-point_data["layers_mi"][idxsBZ] = bz_flag
-point_data["layers_mi"][idxsScar] = scar_flag
-
-cells = [
-    ("line", [[0, 1]])    #this is just for being able to open with meshio afterwards
-]
-# There might be zeros in layers_mi as some pixels with zero value could be segmented
-# into the unhealthy zone, we can decide what to do with them if they are healthy or border zone
-point_data["layers_mi"][point_data["layers_mi"]==0] = uncertain_flag
-
-meshOut = meshio.Mesh(points, cells, point_data=point_data)
-meshOut.write(os.path.join(args.dataPath, "{}.vtk".format(args.outName)))
+# meshOut = meshio.Mesh(points, cells, point_data=point_data)
+# meshOut.write(os.path.join(args.dataPath, "{}.vtk".format(args.outName)))
