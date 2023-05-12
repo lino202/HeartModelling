@@ -122,8 +122,15 @@ L = f*v*fenics.dx - g*v*fenics.ds
 # Compute solution
 # cg is the linear iteratively solver, it is changed form 'lu' default as 2M cells meshes run out of memory
 u = fenics.Function(V)
+# problem = fenics.LinearVariationalProblem(a, L, u, bcs)
+# solver = fenics.LinearVariationalSolver(problem)
+# solver.parameters["linear_solver"] = 'gmres'
+# solver.parameters["preconditioner"] = 'ilu'
+# solver.parameters["krylov_solver"]["absolute_tolerance"] = 1E-4
+# solver.parameters["krylov_solver"]["relative_tolerance"] = 1E-1
+# solver.parameters["krylov_solver"]["maximum_iterations"] = 1000
+# solver.solve()
 fenics.solve(a == L, u, bcs, solver_parameters={'linear_solver':'cg'})
-
 
 # Save solution to file in VTK format and Txt
 fenics.File(os.path.join(outPath,'{}.pvd'.format(args.outName))) << u
