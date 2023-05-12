@@ -2,6 +2,7 @@
 import numpy as np
 from scipy.spatial.distance import cdist
 from tqdm import tqdm
+import psutil
 
 def isMemberIdxsRowWise(arr1, arr2, tol = 1E-6, showMem=False):
     if showMem: 
@@ -12,8 +13,16 @@ def isMemberIdxsRowWise(arr1, arr2, tol = 1E-6, showMem=False):
     return idxs.nonzero()[0]
 
 def getHugeNearest(arr1, arr2, showMem=False, maxNumPoints=100):
-    if showMem: 
-        print("Required Memory: {} GB".format(4 *(arr1.shape[0]) * (arr2.shape[0]) / 1e9))
+    '''Gets the nearest memory efficiently'''
+
+    reqMem = 4 *(arr1.shape[0]) * (arr2.shape[0]) / 1e9
+    if showMem: print("Required Memory: {} GB".format(reqMem))
+    # avaiMem = (psutil.virtual_memory().available / 1e9) * 1/3
+    # maxNumPoints = (avaiMem * 1e9) / (4*arr2.shape[0])
+    # if maxNumPoints > arr1.shape[0]: 
+    #     maxNumPoints = arr1.shape[0] 
+    # else: 
+    #     maxNumPoints = int(np.floor(maxNumPoints))
     steps = int(np.ceil(arr1.shape[0] / maxNumPoints))
     idxsTot = np.array([])
     for i in tqdm(range(steps)):
