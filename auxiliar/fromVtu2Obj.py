@@ -10,10 +10,12 @@ dataPath = args.data_path
 names = ["lv_endo", "rv_endo", "epi"]
 
 for name in names:
-    mesh = meshio.read(os.path.join(dataPath, "{}.vtu".format(name)))
-    cells = [("triangle", mesh.cells_dict["triangle"])]
-    meshOut = meshio.Mesh(mesh.points, cells)
-    meshOut.write(os.path.join(dataPath, "{}.obj".format(name)))
+    fileName = os.path.join(dataPath, "{}.vtu".format(name))
+    if os.path.isfile(fileName):
+        mesh = meshio.read(fileName)
+        cells = [("triangle", mesh.cells_dict["triangle"])]
+        meshOut = meshio.Mesh(mesh.points, cells)
+        meshOut.write(os.path.join(dataPath, "{}.obj".format(name)))
 
 
 

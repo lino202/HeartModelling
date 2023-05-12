@@ -1,4 +1,4 @@
-function surf2meshWSL(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox,method,cmdopt, outmesh)
+function surf2meshWSL(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox,method,cmdopt, outmesh, tetgenPath)
 %
 % [node,elem,face]=surf2mesh(v,f,p0,p1,keepratio,maxvol,regions,holes,forcebox)
 %
@@ -75,9 +75,9 @@ fprintf(1,'creating volumetric mesh from a surface mesh ...\n');
 % [node,elem,face]=readtetgen(mwpath('post_vmesh.1'));
 % fprintf(1,'volume mesh generation is complete\n');
 
-tetgen = '/mnt/d/Programs/tetgen1.6.0/tetgen';
+tetgen = tetgenPath;
 target = strrep(append(outmesh,'.poly'),'\','/');
-target = strrep(target,'F:','/mnt/f');
+target = strrep(target,'D:','/mnt/d');
 cmd = append(tetgen, ' ', cmdopt, ' ', target, '\n');
 fprintf(1,'Copy the following command in Ubuntu WSL using tetgen\n');
 fprintf(1,cmd);

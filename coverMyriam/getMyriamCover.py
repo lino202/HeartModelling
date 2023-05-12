@@ -6,18 +6,18 @@ from scipy.spatial import KDTree
 from scipy.interpolate import RBFInterpolator
 
 parser = argparse.ArgumentParser(description="Options")
-parser.add_argument('--coveredMeshPath',type=str, required=True, help='path to data')
-parser.add_argument('--atsMeshPath',type=str, required=True, help='path to data')
-parser.add_argument('--layersMeshPath',type=str, required=True, help='path to data')
-parser.add_argument('--fibsMeshPath',type=str, required=True, help='path to data')
-parser.add_argument('--outPath',type=str, required=True, help='path to data')
-parser.add_argument('--layersName',type=str, required=True)
-parser.add_argument('--fibersName',type=str, required=True)
-parser.add_argument('--atName',type=str, required=True)
-parser.add_argument('--usePlane', action='store_true')
-parser.add_argument('--planeOrigin',type=float, nargs=3)
-parser.add_argument('--planeNormal',type=float, nargs=3)
-parser.add_argument('--tolDist',type=float, required=True, help='distance tolerance to mesh without cover')
+parser.add_argument('--coveredMeshPath', type=str,   required=True, help='path to data')
+parser.add_argument('--atsMeshPath',     type=str,   required=True, help='path to data')
+parser.add_argument('--layersMeshPath',  type=str,   required=True, help='path to data')
+parser.add_argument('--fibsMeshPath',    type=str,   required=True, help='path to data')
+parser.add_argument('--outPath',         type=str,   required=True, help='path to data')
+parser.add_argument('--layersName',      type=str)
+parser.add_argument('--fibersName',      type=str)
+parser.add_argument('--atName',          type=str)
+parser.add_argument('--usePlane',        action='store_true')
+parser.add_argument('--planeOrigin',     type=float, nargs=3)
+parser.add_argument('--planeNormal',     type=float, nargs=3)
+parser.add_argument('--tolDist',         type=float, required=True, help='distance tolerance to mesh without cover')
 args = parser.parse_args()
 
 
@@ -59,7 +59,7 @@ realMyoIdxs = np.where(coverNodes == 0)[0]
 points2 = points2[realMyoIdxs]
 
 #Interpolate layers into coarse covered mesh
-if args.layersName != "None":
+if args.layersName:
     values1 = meshLayers.point_data[args.layersName]
     values2 = RBFInterpolator(meshLayers.points, values1, neighbors=100)(points2)
     values2[values2<np.nanmin(values1)] = np.nanmin(values1)
@@ -71,7 +71,7 @@ if args.layersName != "None":
     meshCovered.point_data["layers"] = layers2
 
 #Interpolate fibers into coarse covered mesh
-if args.fibersName != "None":
+if args.fibersName:
     meshFibs = meshio.read(args.fibsMeshPath)
     values1 = meshFibs.point_data[args.fibersName]
     values2 = RBFInterpolator(meshFibs.points, values1, neighbors=100)(points2)
@@ -83,7 +83,7 @@ if args.fibersName != "None":
     meshCovered.point_data["fibers"] = fibers2
 
 #Interpolate ATs into coarse covered mesh
-if args.atName != "None":
+if args.atName:
     meshAT = meshio.read(args.atsMeshPath)
     values1 = meshAT.point_data[args.atName]
     values2 = RBFInterpolator(meshAT.points, values1, neighbors=100)(points2)

@@ -5,26 +5,27 @@ clear; close all; clc;
 addpath('matlabFunctions', 'libraries/iso2mesh-1.9.6');
 
 % Input filenames
-dataPath = 'F:\HeartModeling\Data_OM_MI\sampleP21_389\';
-surfMesh = append(dataPath, 'surfMesh.obj');
-workdir = append(dataPath, 'mesh_edgelength\300um\');
-outmesh = append(workdir, 'tetmesh');
+tetgenPath = '/mnt/c/Maxi/Programs/tetgen1.6.0/tetgen';
+dataPath   = 'D:\HeartModelling\Data_1\sampleLE_Control2\invivo\F19_Nico\no_cover\';
+surfMesh   = append(dataPath, 'F19_nocover_surfMesh.obj');
+workdir    = append(dataPath, 'mesh\');
+outmesh    = append(workdir, 'tetmesh');
 
 tetMaxVol = 0;
-edgeLength = 0.32;
+edgeLength = 1; %0.32 for opencarp
 wsl = 1;
 
 % Read heart surface mesh and normalize normals
 [snodes, sfaces, snormals] = ReadObj(surfMesh); %from Meshlab
 
 regions=surfseeds(snodes(:,1:3),sfaces(:,1:3));
-cmdopt = '-q1.414';
+cmdopt = '-q1.414 -V';
 tic
 if tetMaxVol>0 && edgeLength<=0
     cmdopt = append(cmdopt, ' -a');
     if wsl
         cmdopt = append(cmdopt, ' -k');
-        surf2meshWSL(snodes,sfaces,[],[],1,tetMaxVol,regions,[], 0, 'tetgen', cmdopt, outmesh);
+        surf2meshWSL(snodes,sfaces,[],[],1,tetMaxVol,regions,[], 0, 'tetgen', cmdopt, outmesh, tetgenPath);
     else
         [nodes,elems,faces]=surf2mesh(snodes,sfaces,[],[],1,tetMaxVol,regions,[], 0, 'tetgen', cmdopt);
         elems=removedupelem(elems);
@@ -34,7 +35,7 @@ elseif edgeLength>0 && tetMaxVol<=0
     cmdopt = append(cmdopt, ' -m');
     if wsl
         cmdopt = append(cmdopt, ' -k');
-        surf2meshWSL(snodes,sfaces,[],[],1,[],regions,[],0, 'tetgen', cmdopt, outmesh);
+        surf2meshWSL(snodes,sfaces,[],[],1,[],regions,[],0, 'tetgen', cmdopt, outmesh, tetgenPath);
     else
         [nodes,elems,faces]=surf2mesh(snodes,sfaces,[],[],1,[],regions,[],0, 'tetgen', cmdopt);
         elems=removedupelem(elems);
