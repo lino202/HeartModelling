@@ -41,13 +41,13 @@ f.read(mesh)
 df.info(mesh)
 bmesh = df.BoundaryMesh(mesh, "exterior", True)
 bmeshPoints = bmesh.coordinates()
-endoLVMesh = meshio.read(os.path.join(args.dataPath, "RBM_LDRB", "lv_endo.obj"))
+endoLVMesh = meshio.read(os.path.join(args.dataPath, 'mesh', "lv_endo.obj"))
 endoLVPoints = endoLVMesh.points
-epiMesh = meshio.read(os.path.join(args.dataPath, "RBM_LDRB", "epi.obj"))
+epiMesh = meshio.read(os.path.join(args.dataPath, 'mesh', "epi.obj"))
 epiPoints = epiMesh.points
 
 if args.domainType == "BiV": 
-    endoRVMesh = meshio.read(os.path.join(args.dataPath, "RBM_LDRB", "rv_endo.obj"))
+    endoRVMesh = meshio.read(os.path.join(args.dataPath, 'mesh', "rv_endo.obj"))
     endoRVPoints = endoRVMesh.points
 markers = ldrb.utils.default_markers()
 all_markers = np.zeros((mesh.coordinates().shape[0]))
