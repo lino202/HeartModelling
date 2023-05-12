@@ -120,7 +120,7 @@ def pointTriDistCore(a, b, c, d, e, f):
 
                             # of region 4
             else:
-                # region 3
+                # The region 3
                 s = 0
                 if e >= 0:
                     t = 0
@@ -135,7 +135,7 @@ def pointTriDistCore(a, b, c, d, e, f):
                         # of region 3
         else:
             if t < 0:
-                # region 5
+                # The region 5
                 t = 0
                 if d >= 0:
                     s = 0
@@ -148,14 +148,14 @@ def pointTriDistCore(a, b, c, d, e, f):
                         s = -d / a
                         sqrdistance = d * s + f
             else:
-                # region 0
+                # The region 0
                 invDet = 1.0 / det
                 s = s * invDet
                 t = t * invDet
                 sqrdistance = s * (a * s + b * t + 2.0 * d) + t * (b * s + c * t + 2.0 * e) + f
     else:
         if s < 0.0:
-            # region 2
+            # The region 2
             tmp0 = b + d
             tmp1 = c + e
             if tmp1 > tmp0:  # minimum on edge s+t=1
@@ -213,7 +213,7 @@ def pointTriDistCore(a, b, c, d, e, f):
                             s = -d / a
                             sqrdistance = d * s + f
             else:
-                # region 1
+                # The region 1
                 numer = c + e - b - d
                 if numer <= 0:
                     s = 0.0
