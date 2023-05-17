@@ -97,15 +97,15 @@ L = f*v*fenics.dx - g*v*fenics.ds
 u = fenics.Function(V)
 
 
-# problem = fenics.LinearVariationalProblem(a, L, u, bcs)
-# solver = fenics.LinearVariationalSolver(problem)
-# solver.parameters["linear_solver"] = 'gmres'
-# solver.parameters["preconditioner"] = 'ilu'
-# solver.parameters["krylov_solver"]["absolute_tolerance"] = 1E-4
-# solver.parameters["krylov_solver"]["relative_tolerance"] = 1E-1
-# solver.parameters["krylov_solver"]["maximum_iterations"] = 1000
-# solver.solve()
-fenics.solve(a == L, u, bcs, solver_parameters={'linear_solver':'cg'})
+problem = fenics.LinearVariationalProblem(a, L, u, bcs)
+solver = fenics.LinearVariationalSolver(problem)
+solver.parameters["linear_solver"] = 'gmres'
+solver.parameters["preconditioner"] = 'ilu'
+solver.parameters["krylov_solver"]["absolute_tolerance"] = 1E-6
+solver.parameters["krylov_solver"]["relative_tolerance"] = 1E-3
+solver.parameters["krylov_solver"]["maximum_iterations"] = 1000
+solver.solve()
+# fenics.solve(a == L, u, bcs, solver_parameters={'linear_solver':'cg'})
 
 
 # Save solution to file in VTK format and Txt
