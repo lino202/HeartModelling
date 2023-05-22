@@ -106,4 +106,4 @@ def main():
 if __name__ == '__main__':
     start = time.time()
     main()
-    print("Total training time was {} s".format(time.time() - start))
+    print("Total time was {} s".format(time.time() - start))
