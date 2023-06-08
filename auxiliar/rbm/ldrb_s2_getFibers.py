@@ -29,7 +29,7 @@ def main():
 
     # Choose space for the fiber fields
     # This is a string on the form {family}_{degree}
-    fiber_space = "Lagrange_1"
+    fiber_space = "P_1"
 
 
     if args.domainType == "BiV":
@@ -81,7 +81,7 @@ def main():
     # You can also store files in XDMF which will also compute the fiber angle as scalars on the glyph to be visualised in Paraview. 
     # Note that these functions don't work (yet) using mpirun
     # (These function are not tested in parallel)
-    # Wrong nomenclature by the library. S is normal sheet in Bayer et al and T is transverse which is sheet (s) in oder articles/Nico,
+    # Wrong nomenclature by the library. S is normal sheet in Bayer et al and T is transverse which is sheet (s) in other articles/Nico,
     # and T should be more or less radial to the epicardial plane: 
     # Nico/LeGrice "Laminar structure of the heart: ventricular myocyte arrangement and connective tissue architecture in the dog" 
     # and Bayer et al see pictures) 
