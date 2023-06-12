@@ -12,7 +12,7 @@ args = parser.parse_args()
 
 
 transmural_pathC = os.path.join(args.dataPath, 'layers', "transmural_distLV000000.vtu") 
-inputVtk = os.path.join(args.dataPath, '{}.vtk'.format(args.vtkMesh))
+inputVtk = os.path.join(args.dataPath, 'mesh', '{}.vtk'.format(args.vtkMesh))
 
 
 validKeys = ["endo", "mid", "epi", "myo", "scar", "uncertain", "bz"]

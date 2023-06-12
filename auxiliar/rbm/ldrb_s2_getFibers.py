@@ -29,7 +29,7 @@ def main():
 
     # Choose space for the fiber fields
     # This is a string on the form {family}_{degree}
-    fiber_space = "P_1"
+    fiber_space = "Lagrange_1"
 
 
     if args.domainType == "BiV":
@@ -66,7 +66,7 @@ def main():
     # serial in stead. In that case you can read the the functions from the xml
     # Using the following code
 
-    # +
+    # TODO From here it is unnecessary to reload and re save we can add here the saving of the fsn vector fields
     V = ldrb.space_from_string(fiber_space, mesh, dim=3)
 
     fiber = df.Function(V)
@@ -89,6 +89,8 @@ def main():
     ldrb.fiber_to_xdmf(sheet, os.path.join(args.dataPath,"{}_sheet_normal_N_{}".format(args.domainType, args.addName)))
     ldrb.fiber_to_xdmf(sheet_normal, os.path.join(args.dataPath,"{}_sheet_S_{}".format(args.domainType, args.addName)))
 
+    #TODO the scalar computation is the angle with respect to z. So if the geometry is not aligned with its LA
+    # in x this angle/scalar would not represent the angle put as input correctly
 
 if __name__ == '__main__':
     start = time.time()
