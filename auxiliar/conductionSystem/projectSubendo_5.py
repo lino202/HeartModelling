@@ -24,11 +24,11 @@ parser.add_argument('--domainType',type=str, required=True, help='BiV (Biventric
 args = parser.parse_args()
 
 #Inputs
-lvSurfMesh = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "lv_endo.obj"))  #normals corrected
-if args.domainType == "BiV": rvSurfMesh = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "rv_endo.obj"))
+lvSurfMesh = meshio.read(os.path.join(args.data_path, "mesh", "lv_endo.obj"))  #normals corrected
+if args.domainType == "BiV": rvSurfMesh = meshio.read(os.path.join(args.data_path, "mesh", "rv_endo.obj"))
 csBundle = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "mainCSBundle.vtk"))
-if args.domainType == "BiV": transDistRV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distRV000000.vtu"))
-transDistLV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distLV000000.vtu"))
+if args.domainType == "BiV": transDistRV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distRV.vtu"))
+transDistLV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distLV.vtu"))
 outPath = os.path.join(args.data_path, "stim", "stim_cs")
 outName = args.out_name
 

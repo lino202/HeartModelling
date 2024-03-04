@@ -3,10 +3,10 @@ format long g;
 addpath('matlabFunctions','libraries/LMMSEDWI','libraries/MRNoiseEstimators','libraries/MRNoiseEstimators/localstat','libraries/DTIEstimation');
 
 
-dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control3\RBM_getAlphaBeta\';
-dwiName = 'dwi.nrrd';                        % this must be a .nrrd 
-mskName = 'SegmentationLV.seg.nrrd';
-outputName = 'dwi_denoised.nrrd';
+dataPath = 'D:/Paper3/DWI/sample1_bis/';
+dwiName = 'dwi_reg_DTI_medium.nrrd';                        % this must be a .nrrd 
+mskName = 'Segmentation.seg.nrrd';
+outputName = 'dwi_denoised_lmmsedwi.nrrd';
 
 
 % Read original DWI image

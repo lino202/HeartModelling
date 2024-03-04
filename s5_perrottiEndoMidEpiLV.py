@@ -11,7 +11,7 @@ parser.add_argument('--infAsHealthy', action='store_true', help='if especified, 
 args = parser.parse_args()
 
 
-transmural_pathC = os.path.join(args.dataPath, 'layers', "transmural_distLV000000.vtu") 
+transmural_pathC = os.path.join(args.dataPath, 'layers', "transmural_distLV.vtu") 
 inputVtk = os.path.join(args.dataPath, 'mesh', '{}.vtk'.format(args.vtkMesh))
 
 

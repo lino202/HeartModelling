@@ -3,11 +3,16 @@ format long g;
 addpath('matlabFunctions','libraries/DTIEstimation');
 
 
-dataPath = 'F:\HeartModeling\Data_1\sampleLE_Control3\RBM_getAlphaBeta\';
-dwiName = 'dwi_denoised.nrrd';                        % this must be a .nrrd 
-mskName = 'SegmentationLV.seg.nrrd';                    % MI needs to have the scar in segmentation 
-outputName = 'dti';
+dataPath = 'D:/Paper3/DWI/sample2/';
+dwiName = 'dwi_denoised_lmmsedwi.nrrd';                        % this must be a .nrrd 
+mskName = 'medium_iso2_labels.seg.nrrd';                    % MI needs to have the scar in segmentation 
+outputName = 'dti_fromscript';
 
+% There is an error in reading the dwi as it seems to not be encoded in
+% gzip but this is strange because this dwi.nrrd is the denoised from
+% dwi_s1_** script which uses the writeNrrd function defined here. The
+% estimation is mainly done with slicer but this might be checked TODO
+% This happens in some samples
 
 myo_flag = 1;
 scar_flag = 2;

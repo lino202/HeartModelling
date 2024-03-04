@@ -6,13 +6,13 @@ addpath('matlabFunctions', 'libraries/iso2mesh-1.9.6');
 
 % Input filenames
 tetgenPath = '/mnt/c/Maxi/Programs/tetgen1.6.0/tetgen';
-dataPath   = 'D:\HeartModelling\Data_OM_MI\sampleP21_389\mesh_edgelength\';
+dataPath   = 'D:\HeartModelling\Britt_ideal_ellipsoide\mesh_refine\';
 surfMesh   = append(dataPath, 'surfMesh.obj');
-workdir    = append(dataPath, '500um\mesh\');
+workdir    = append(dataPath, 'myrefine\');
 outmesh    = append(workdir, 'tetmesh');
 
 tetMaxVol = 0;
-edgeLength = 0.5; %0.32 for opencarp
+edgeLength = 0.6; %0.32 for opencarp
 wsl = 1;
 
 % Read heart surface mesh and normalize normals

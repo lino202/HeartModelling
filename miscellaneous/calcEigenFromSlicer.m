@@ -1,12 +1,12 @@
 close all; clear;
 format long g;
-addpath('functions','DTIEstimation');
+addpath('../matlabFunctions','../libraries/DTIEstimation');
 
 
-dataPath = 'F:\DTI_konstas\data\sampleMAControl2\';
-dtiName = 'dtiSlicer.nrrd';                        % this must be a .nrrd 
-mskName = 'Segmentation.seg.nrrd';
-outputName = 'dtiSlicer';
+dataPath = 'D:/Paper3/DWI/mi/sample8/';
+dtiName = 'dti.nrrd';                        % this must be a .nrrd 
+mskName = 'label_biv.nrrd';
+outputName = 'main_eigen';
 
 
 myo_flag = 1;

@@ -37,7 +37,7 @@ def main():
     ut.writeCellsFile(mesh.cells_dict[args.cellType], os.path.join(args.outFolder, "{}.elem".format(fileName)), cellType=ut.meshioOCCellsMap[args.cellType])
 
     #Create .vtx files of point data of interest
-    if hasattr(args, "stimPointData"):
+    if args.stimPointData:
         print("Getting stim nodes as vtx file -------------")
         tmp = mesh.point_data[args.stimPointData]
         tmp = (tmp==1).nonzero()[0]
@@ -45,7 +45,7 @@ def main():
 
     #Add fibers to cell data
     # if fibers are already or you want just default fibers from meshtool just dont pass the argument
-    if hasattr(args, "fibersPointData"):
+    if args.fibersPointData:
         print("Getting fibers for elem as .lon file-------------")
         fibsCells = np.mean(mesh.point_data[args.fibersPointData][mesh.cells_dict["tetra"]], axis=1)
         fibsCells = ut.getArrNormalization(fibsCells)

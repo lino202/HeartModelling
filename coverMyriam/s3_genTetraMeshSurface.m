@@ -6,8 +6,8 @@ addpath('../matlabFunctions', '../libraries/iso2mesh-1.9.6');
 
 % Input filenames
 tetgenPath = '/mnt/c/Maxi/Programs/tetgen1.6.0/tetgen';
-dataPath   = 'D:\HeartModelling\Data_1\sampleLE_Control2\invivo\F19_Nico\cover\';
-surfMesh   = append(dataPath, 'F19_cover_surfMesh.obj');
+dataPath   = 'D:\HeartModelling\Data_1\sampleLE_Control2\invivo\F19_Nico\cover\mi_smooth\';
+surfMesh   = append(dataPath, 'surface_F19_cover_smooth.obj');
 workdir    = append(dataPath, 'mesh\');
 outmesh    = append(workdir, 'tetmesh_2mm');
 

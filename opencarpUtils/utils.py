@@ -1,6 +1,6 @@
 import numpy as np
 
-meshioOCCellsMap = {"tetra": "Tt"}
+meshioOCCellsMap = {"tetra": "Tt", "line": "Ln"}
 
 def writeStimVtxFile(arr, outName, stimType="Intra"):
     with open(outName, 'w') as f:
@@ -36,6 +36,8 @@ def writeCellsFile(arr, outName, cellType="Tt", tags=1):
             f.write("{0:d}\n".format(arr.shape[0]))
             if cellType=="Tt":
                 cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d} {4:d} {5:d}\n".format(cellType, x[0], x[1], x[2], x[3], tags),list(arr)))
+            elif cellType=="Ln":
+                cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d}\n".format(cellType, x[0], x[1], tags),list(arr)))
             else: raise ValueError("Wrong cell type")
             f.writelines(cells)
 
