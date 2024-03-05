@@ -175,6 +175,7 @@ dependencies:
   - pkg-config=0.29.2=h36c2ea0_1008
   - pkgconfig=1.5.5=pyhd8ed1ab_4
   - ply=3.11=py_1
+  - psutil=5.9.5=py311h2582759_0
   - pthread-stubs=0.4=h36c2ea0_1001
   - ptscotch=6.0.9=hb499603_2
   - pulseaudio-client=16.1=h5195f5e_3
@@ -240,6 +241,9 @@ dependencies:
   - zlib=1.2.13=h166bdaf_4
   - zstd=1.5.2=h3eb15da_6
   - pip:
-      - ldrb==2023.3.0
+      - et-xmlfile==1.1.0
+      - ldrb==2023.5.0
+      - openpyxl==3.1.2
       - pygeodesic==0.1.8
+      - vtk==9.3.0
 prefix: /home/maxi/miniconda3/envs/HeartModellingFenics
