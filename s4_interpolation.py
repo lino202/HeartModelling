@@ -35,7 +35,7 @@ def main():
         values2 = RBFInterpolator(points1, values, neighbors=args.neighbours)(points2)
     else: raise ValueError("Wrong interpolation type")
 
-    if "layers" in args.nameValue or "AHA" in args.nameValue or "LVRV" in args.nameValue: 
+    if "layers" in args.nameValue or "AHA" in args.nameValue or "LVRV" in args.nameValue or "nodes" in args.nameValue: 
         finalValues2 = np.zeros((mesh2.points.shape[0]))
     if "fibers" in args.nameValue: 
         finalValues2 = np.zeros((mesh2.points.shape[0], 3))
@@ -46,7 +46,7 @@ def main():
         finalValues2 = values2
 
     #get round values for vtk and inp
-    if "layers" in args.nameValue or "AHA" in args.nameValue or "LVRV" in args.nameValue:
+    if "layers" in args.nameValue or "AHA" in args.nameValue or "LVRV" in args.nameValue or "nodes" in args.nameValue:
         finalValues2[finalValues2<np.nanmin(values)] = np.nanmin(values)
         finalValues2[finalValues2>np.nanmax(values)] = np.nanmax(values)
         finalValues2 = np.round(finalValues2)

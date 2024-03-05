@@ -28,9 +28,9 @@ def main():
     parser = argparse.ArgumentParser(description="Options")
     parser.add_argument('--dataPath',      type=str, required=True, help='path to data')
     parser.add_argument('--domainType',    type=str, required=True, help='BiV (Biventricular) or LV')
-    parser.add_argument('--nProcesses',    type=int, required=True, help='number of processes to use', default=7)
-    parser.add_argument('--chunksize',     type=int, required=True, help='max memory for determining chunksize in Pool', default=100)
-    parser.add_argument('--maxNumPoints',  type=int, required=True, help='max memory for determining chunksize in Pool', default=100)
+    parser.add_argument('--nProcesses',    type=int, help='number of processes to use', default=7)
+    parser.add_argument('--chunksize',     type=int, help='Value for determining chunksize in Pool', default=100)
+    parser.add_argument('--maxNumPoints',  type=int, help='Value for determining chunksize in Pool', default=100)
     args = parser.parse_args()
 
 
