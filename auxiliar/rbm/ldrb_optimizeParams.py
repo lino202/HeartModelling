@@ -12,7 +12,6 @@ import os
 import argparse
 import time
 import numpy as np
-from tqdm import tqdm
 import meshio
 from scipy.spatial import KDTree
 import matplotlib.pyplot as plt
@@ -24,6 +23,8 @@ parser.add_argument('--dataPath',type=str, required=True, help='path to data')
 args = parser.parse_args()
 
 # Volume Mesh, Mesh DTI fibers and FacetFunction reading
+print("Optimizing fibers for sample in {0:s}".format(args.dataPath))
+
 mesh = df.Mesh()
 with df.XDMFFile(os.path.join(args.dataPath, "mesh.xdmf")) as xdmf:
     xdmf.read(mesh)
@@ -33,6 +34,9 @@ with df.XDMFFile(os.path.join(args.dataPath, "ffun.xdmf")) as xdmf:
 dtiMesh = meshio.read(os.path.join(args.dataPath, "tetmesh_dtifibs.vtk"))
 dtiFibers = dtiMesh.point_data["dti_fibers"]
 dtiPoints = dtiMesh.points
+if "scar_nodes" in dtiMesh.point_data.keys():
+    healthyIdxs = np.where(dtiMesh.point_data["scar_nodes"]==0)[0]
+    dtiFibers = dtiFibers[healthyIdxs,:]
 
 # Settings 
 markers = ldrb.utils.default_markers() 
@@ -46,54 +50,52 @@ small_range_width = 10
 
 # Get RV Endo and Epi BIG Steps in Degrees--------------------------------------------------------------
 print("------------+/-90 RV Optimization -------------------")
-indexs = np.meshgrid(np.arange(-big_range_width, big_range_width+big_step, big_step), np.arange(-big_range_width, big_range_width+big_step, big_step))
+indexs = np.meshgrid(np.arange(-big_range_width, big_range_width, big_step), np.arange(-big_range_width, big_range_width, big_step))
 indexs = np.array([indexs[0].flatten(), indexs[1].flatten()])
 
 thetaMeans = np.zeros(indexs.shape[1])
 start = time.time()
-for i in tqdm(range(indexs.shape[1])):
+for i in range(indexs.shape[1]):
 
-        # Compute the microstructure
-        endo = indexs[0,i]; epi = indexs[1,i]
-        angles = dict(
-            alpha_endo_lv=60,      # Fiber angle on the LV endocardium
-            alpha_epi_lv=-60,        # Fiber angle on the LV epicardium
-            beta_endo_lv=0,          # Sheet angle on the LV endocardium
-            beta_epi_lv=0,           # Sheet angle on the LV epicardium
-            # beta_endo_sept=0,      # Sheet angle on the Septum endocardium
-            # beta_epi_sept=0,       # Sheet angle on the Septum epicardium
-            alpha_endo_rv=endo,        # Fiber angle on the RV endocardium
-            alpha_epi_rv=epi,        # Fiber angle on the RV epicardium
-            beta_endo_rv=0,          # Sheet angle on the RV endocardium
-            beta_epi_rv=0
-        )
-        fiber, _, _ = ldrb.dolfin_ldrb(mesh=mesh, fiber_space=fiber_space, ffun=ffun, markers=markers, log_level=30, **angles)
+    start_sub = time.time()
+    # Compute the microstructure
+    endo = indexs[0,i]; epi = indexs[1,i]
+    angles = dict(
+        alpha_endo_lv=60,      # Fiber angle on the LV endocardium
+        alpha_epi_lv=-60,        # Fiber angle on the LV epicardium
+        beta_endo_lv=0,          # Sheet angle on the LV endocardium
+        beta_epi_lv=0,           # Sheet angle on the LV epicardium
+        # beta_endo_sept=0,      # Sheet angle on the Septum endocardium
+        # beta_epi_sept=0,       # Sheet angle on the Septum epicardium
+        alpha_endo_rv=endo,        # Fiber angle on the RV endocardium
+        alpha_epi_rv=epi,        # Fiber angle on the RV epicardium
+        beta_endo_rv=0,          # Sheet angle on the RV endocardium
+        beta_epi_rv=0
+    )
+    fiber, _, _ = ldrb.dolfin_ldrb(mesh=mesh, fiber_space=fiber_space, ffun=ffun, markers=markers, log_level=30, **angles)
 
-        # Get versors without saving as the ldrb package does it
-        V = fiber.function_space()
-        gs = fiber.split(deepcopy=True)
-        W = V.sub(0).collapse()
-        dim = V.mesh().geometry().dim()
-        coords_tmp = W.tabulate_dof_coordinates()
-        rbmPoints = coords_tmp.reshape((-1, dim))
-        us = [g.vector().get_local() for g in gs]
-        rbmVersors = np.array(us).T
+    # Get versors without saving as the ldrb package does it
+    V = fiber.function_space()
+    gs = fiber.split(deepcopy=True)
+    W = V.sub(0).collapse()
+    dim = V.mesh().geometry().dim()
+    coords_tmp = W.tabulate_dof_coordinates()
+    rbmPoints = coords_tmp.reshape((-1, dim))
+    us = [g.vector().get_local() for g in gs]
+    rbmVersors = np.array(us).T
 
-        # Compute the difference as in Bayer et al, we need to match the nodes from the dti mesh and with the rbm results
-        tree = KDTree(rbmPoints)
-        _ , idxs = tree.query(dtiPoints, k=1)
-        rbmVersors = rbmVersors[idxs,:]
-        if "scar_nodes" in dtiMesh.point_data.keys():
-            healthyIdxs = np.where(dtiMesh.point_data["scar_nodes"]==0)[0]
-            dtiFibers = dtiFibers[healthyIdxs,:]
-            rbmVersors = rbmVersors[healthyIdxs,:]
+    # Compute the difference as in Bayer et al, we need to match the nodes from the dti mesh and with the rbm results
+    tree = KDTree(rbmPoints)
+    _ , idxs = tree.query(dtiPoints, k=1)
+    rbmVersors = rbmVersors[idxs,:]
+    if "scar_nodes" in dtiMesh.point_data.keys():
+        rbmVersors = rbmVersors[healthyIdxs,:]
+    
+    dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
+    normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
+    thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
 
-        
-        dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
-        normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
-        thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
-
-        print("Endo {0}, Epi {1}, thetaMean {2:.2f}".format(endo, epi, thetaMeans[i]))
+    print("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
 
 
 # Get the minimum pair
@@ -122,48 +124,47 @@ indexs = np.array([indexs[0].flatten(), indexs[1].flatten()])
 
 thetaMeans = np.zeros(indexs.shape[1])
 start = time.time()
-for i in tqdm(range(indexs.shape[1])):
+for i in range(indexs.shape[1]):
 
-        # Compute the microstructure
-        endo = indexs[0,i]; epi = indexs[1,i]
-        angles = dict(
-            alpha_endo_lv=60,      # Fiber angle on the LV endocardium
-            alpha_epi_lv=-60,        # Fiber angle on the LV epicardium
-            beta_endo_lv=0,          # Sheet angle on the LV endocardium
-            beta_epi_lv=0,           # Sheet angle on the LV epicardium
-            # beta_endo_sept=0,      # Sheet angle on the Septum endocardium
-            # beta_epi_sept=0,       # Sheet angle on the Septum epicardium
-            alpha_endo_rv=endo,        # Fiber angle on the RV endocardium
-            alpha_epi_rv=epi,        # Fiber angle on the RV epicardium
-            beta_endo_rv=0,          # Sheet angle on the RV endocardium
-            beta_epi_rv=0
-        )
-        fiber, _, _ = ldrb.dolfin_ldrb(mesh=mesh, fiber_space=fiber_space, ffun=ffun, markers=markers, log_level=30, **angles)
+    start_sub = time.time()
+    # Compute the microstructure
+    endo = indexs[0,i]; epi = indexs[1,i]
+    angles = dict(
+        alpha_endo_lv=60,      # Fiber angle on the LV endocardium
+        alpha_epi_lv=-60,        # Fiber angle on the LV epicardium
+        beta_endo_lv=0,          # Sheet angle on the LV endocardium
+        beta_epi_lv=0,           # Sheet angle on the LV epicardium
+        # beta_endo_sept=0,      # Sheet angle on the Septum endocardium
+        # beta_epi_sept=0,       # Sheet angle on the Septum epicardium
+        alpha_endo_rv=endo,        # Fiber angle on the RV endocardium
+        alpha_epi_rv=epi,        # Fiber angle on the RV epicardium
+        beta_endo_rv=0,          # Sheet angle on the RV endocardium
+        beta_epi_rv=0
+    )
+    fiber, _, _ = ldrb.dolfin_ldrb(mesh=mesh, fiber_space=fiber_space, ffun=ffun, markers=markers, log_level=30, **angles)
 
-        # Get versors without saving as the ldrb package does it
-        V = fiber.function_space()
-        gs = fiber.split(deepcopy=True)
-        W = V.sub(0).collapse()
-        dim = V.mesh().geometry().dim()
-        coords_tmp = W.tabulate_dof_coordinates()
-        rbmPoints = coords_tmp.reshape((-1, dim))
-        us = [g.vector().get_local() for g in gs]
-        rbmVersors = np.array(us).T
+    # Get versors without saving as the ldrb package does it
+    V = fiber.function_space()
+    gs = fiber.split(deepcopy=True)
+    W = V.sub(0).collapse()
+    dim = V.mesh().geometry().dim()
+    coords_tmp = W.tabulate_dof_coordinates()
+    rbmPoints = coords_tmp.reshape((-1, dim))
+    us = [g.vector().get_local() for g in gs]
+    rbmVersors = np.array(us).T
 
-        # Compute the difference as in Bayer et al
-        tree = KDTree(rbmPoints)
-        _ , idxs = tree.query(dtiPoints, k=1)
-        rbmVersors = rbmVersors[idxs,:]
-        if "scar_nodes" in dtiMesh.point_data.keys():
-            healthyIdxs = np.where(dtiMesh.point_data["scar_nodes"]==0)[0]
-            dtiFibers = dtiFibers[healthyIdxs,:]
-            rbmVersors = rbmVersors[healthyIdxs,:]
-        
-        dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
-        normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
-        thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
+    # Compute the difference as in Bayer et al
+    tree = KDTree(rbmPoints)
+    _ , idxs = tree.query(dtiPoints, k=1)
+    rbmVersors = rbmVersors[idxs,:]
+    if "scar_nodes" in dtiMesh.point_data.keys():
+        rbmVersors = rbmVersors[healthyIdxs,:]
+    
+    dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
+    normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
+    thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
 
-        print("Endo {0}, Epi {1}, thetaMean {2:.2f}".format(endo, epi, thetaMeans[i]))
+    print("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
 
 
 # Get the minimum pair
@@ -189,53 +190,52 @@ with open(os.path.join(args.dataPath, "rv_smallReso.pickle"), 'wb') as handle:
 
 # Get LV Endo and Epi BIG Steps in Degrees--------------------------------------------------------------
 print("------------+/-90 LV Optimization -------------------")
-indexs = np.meshgrid(np.arange(-big_range_width, big_range_width+big_step, big_step), np.arange(-big_range_width, big_range_width+big_step, big_step))
+indexs = np.meshgrid(np.arange(-big_range_width, big_range_width, big_step), np.arange(-big_range_width, big_range_width, big_step))
 indexs = np.array([indexs[0].flatten(), indexs[1].flatten()])
 
 thetaMeans = np.zeros(indexs.shape[1])
 start = time.time()
-for i in tqdm(range(indexs.shape[1])):
+for i in range(indexs.shape[1]):
 
-        # Compute the microstructure
-        endo = indexs[0,i]; epi = indexs[1,i]
-        angles = dict(
-            alpha_endo_lv=endo,      # Fiber angle on the LV endocardium
-            alpha_epi_lv=epi,        # Fiber angle on the LV epicardium
-            beta_endo_lv=0,          # Sheet angle on the LV endocardium
-            beta_epi_lv=0,           # Sheet angle on the LV epicardium
-            # beta_endo_sept=0,      # Sheet angle on the Septum endocardium
-            # beta_epi_sept=0,       # Sheet angle on the Septum epicardium
-            alpha_endo_rv=RV_ENDO,        # Fiber angle on the RV endocardium
-            alpha_epi_rv=RV_EPI,        # Fiber angle on the RV epicardium
-            beta_endo_rv=0,          # Sheet angle on the RV endocardium
-            beta_epi_rv=0
-        )
-        fiber, _, _ = ldrb.dolfin_ldrb(mesh=mesh, fiber_space=fiber_space, ffun=ffun, markers=markers, log_level=30, **angles)
+    start_sub = time.time()
+    # Compute the microstructure
+    endo = indexs[0,i]; epi = indexs[1,i]
+    angles = dict(
+        alpha_endo_lv=endo,      # Fiber angle on the LV endocardium
+        alpha_epi_lv=epi,        # Fiber angle on the LV epicardium
+        beta_endo_lv=0,          # Sheet angle on the LV endocardium
+        beta_epi_lv=0,           # Sheet angle on the LV epicardium
+        # beta_endo_sept=0,      # Sheet angle on the Septum endocardium
+        # beta_epi_sept=0,       # Sheet angle on the Septum epicardium
+        alpha_endo_rv=RV_ENDO,        # Fiber angle on the RV endocardium
+        alpha_epi_rv=RV_EPI,        # Fiber angle on the RV epicardium
+        beta_endo_rv=0,          # Sheet angle on the RV endocardium
+        beta_epi_rv=0
+    )
+    fiber, _, _ = ldrb.dolfin_ldrb(mesh=mesh, fiber_space=fiber_space, ffun=ffun, markers=markers, log_level=30, **angles)
 
-        # Get versors without saving as the ldrb package does it
-        V = fiber.function_space()
-        gs = fiber.split(deepcopy=True)
-        W = V.sub(0).collapse()
-        dim = V.mesh().geometry().dim()
-        coords_tmp = W.tabulate_dof_coordinates()
-        rbmPoints = coords_tmp.reshape((-1, dim))
-        us = [g.vector().get_local() for g in gs]
-        rbmVersors = np.array(us).T
+    # Get versors without saving as the ldrb package does it
+    V = fiber.function_space()
+    gs = fiber.split(deepcopy=True)
+    W = V.sub(0).collapse()
+    dim = V.mesh().geometry().dim()
+    coords_tmp = W.tabulate_dof_coordinates()
+    rbmPoints = coords_tmp.reshape((-1, dim))
+    us = [g.vector().get_local() for g in gs]
+    rbmVersors = np.array(us).T
 
-        # Compute the difference as in Bayer et al
-        tree = KDTree(rbmPoints)
-        _ , idxs = tree.query(dtiPoints, k=1)
-        rbmVersors = rbmVersors[idxs,:]
-        if "scar_nodes" in dtiMesh.point_data.keys():
-            healthyIdxs = np.where(dtiMesh.point_data["scar_nodes"]==0)[0]
-            dtiFibers = dtiFibers[healthyIdxs,:]
-            rbmVersors = rbmVersors[healthyIdxs,:]
-        
-        dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
-        normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
-        thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
+    # Compute the difference as in Bayer et al
+    tree = KDTree(rbmPoints)
+    _ , idxs = tree.query(dtiPoints, k=1)
+    rbmVersors = rbmVersors[idxs,:]
+    if "scar_nodes" in dtiMesh.point_data.keys():
+        rbmVersors = rbmVersors[healthyIdxs,:]
+    
+    dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
+    normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
+    thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
 
-        print("Endo {0}, Epi {1}, thetaMean {2:.2f}".format(endo, epi, thetaMeans[i]))
+    print("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
 
 
 # Get the minimum pair
@@ -264,48 +264,47 @@ indexs = np.array([indexs[0].flatten(), indexs[1].flatten()])
 
 thetaMeans = np.zeros(indexs.shape[1])
 start = time.time()
-for i in tqdm(range(indexs.shape[1])):
+for i in range(indexs.shape[1]):
 
-        # Compute the microstructure
-        endo = indexs[0,i]; epi = indexs[1,i]
-        angles = dict(
-            alpha_endo_lv=endo,      # Fiber angle on the LV endocardium
-            alpha_epi_lv=epi,        # Fiber angle on the LV epicardium
-            beta_endo_lv=0,          # Sheet angle on the LV endocardium
-            beta_epi_lv=0,           # Sheet angle on the LV epicardium
-            # beta_endo_sept=0,      # Sheet angle on the Septum endocardium
-            # beta_epi_sept=0,       # Sheet angle on the Septum epicardium
-            alpha_endo_rv=RV_ENDO,        # Fiber angle on the RV endocardium
-            alpha_epi_rv=RV_EPI,        # Fiber angle on the RV epicardium
-            beta_endo_rv=0,          # Sheet angle on the RV endocardium
-            beta_epi_rv=0
-        )
-        fiber, _, _ = ldrb.dolfin_ldrb(mesh=mesh, fiber_space=fiber_space, ffun=ffun, markers=markers, log_level=30, **angles)
+    start_sub = time.time()
+    # Compute the microstructure
+    endo = indexs[0,i]; epi = indexs[1,i]
+    angles = dict(
+        alpha_endo_lv=endo,      # Fiber angle on the LV endocardium
+        alpha_epi_lv=epi,        # Fiber angle on the LV epicardium
+        beta_endo_lv=0,          # Sheet angle on the LV endocardium
+        beta_epi_lv=0,           # Sheet angle on the LV epicardium
+        # beta_endo_sept=0,      # Sheet angle on the Septum endocardium
+        # beta_epi_sept=0,       # Sheet angle on the Septum epicardium
+        alpha_endo_rv=RV_ENDO,        # Fiber angle on the RV endocardium
+        alpha_epi_rv=RV_EPI,        # Fiber angle on the RV epicardium
+        beta_endo_rv=0,          # Sheet angle on the RV endocardium
+        beta_epi_rv=0
+    )
+    fiber, _, _ = ldrb.dolfin_ldrb(mesh=mesh, fiber_space=fiber_space, ffun=ffun, markers=markers, log_level=30, **angles)
 
-        # Get versors without saving as the ldrb package does it
-        V = fiber.function_space()
-        gs = fiber.split(deepcopy=True)
-        W = V.sub(0).collapse()
-        dim = V.mesh().geometry().dim()
-        coords_tmp = W.tabulate_dof_coordinates()
-        rbmPoints = coords_tmp.reshape((-1, dim))
-        us = [g.vector().get_local() for g in gs]
-        rbmVersors = np.array(us).T
+    # Get versors without saving as the ldrb package does it
+    V = fiber.function_space()
+    gs = fiber.split(deepcopy=True)
+    W = V.sub(0).collapse()
+    dim = V.mesh().geometry().dim()
+    coords_tmp = W.tabulate_dof_coordinates()
+    rbmPoints = coords_tmp.reshape((-1, dim))
+    us = [g.vector().get_local() for g in gs]
+    rbmVersors = np.array(us).T
 
-        # Compute the difference as in Bayer et al
-        tree = KDTree(rbmPoints)
-        _ , idxs = tree.query(dtiPoints, k=1)
-        rbmVersors = rbmVersors[idxs,:]
-        if "scar_nodes" in dtiMesh.point_data.keys():
-            healthyIdxs = np.where(dtiMesh.point_data["scar_nodes"]==0)[0]
-            dtiFibers = dtiFibers[healthyIdxs,:]
-            rbmVersors = rbmVersors[healthyIdxs,:]
-        
-        dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
-        normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
-        thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
+    # Compute the difference as in Bayer et al
+    tree = KDTree(rbmPoints)
+    _ , idxs = tree.query(dtiPoints, k=1)
+    rbmVersors = rbmVersors[idxs,:]
+    if "scar_nodes" in dtiMesh.point_data.keys():
+        rbmVersors = rbmVersors[healthyIdxs,:]
+    
+    dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
+    normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
+    thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
 
-        print("Endo {0}, Epi {1}, thetaMean {2:.2f}".format(endo, epi, thetaMeans[i]))
+    print("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
 
 
 # Get the minimum pair
