@@ -2,7 +2,7 @@
 import numpy as np
 from scipy.spatial.distance import cdist
 from tqdm import tqdm
-import psutil
+# import psutil
 
 def isMemberIdxsRowWise(arr1, arr2, tol = 1E-6, showMem=False):
     if showMem: 

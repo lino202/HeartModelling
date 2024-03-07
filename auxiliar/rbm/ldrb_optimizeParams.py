@@ -23,7 +23,8 @@ parser.add_argument('--dataPath',type=str, required=True, help='path to data')
 args = parser.parse_args()
 
 # Volume Mesh, Mesh DTI fibers and FacetFunction reading
-print("Optimizing fibers for sample in {0:s}".format(args.dataPath))
+with open(os.path.join(args.dataPath, "output.txt"), 'w') as file:
+    file.write("Optimizing fibers for sample in {0:s}\n".format(args.dataPath))
 
 mesh = df.Mesh()
 with df.XDMFFile(os.path.join(args.dataPath, "mesh.xdmf")) as xdmf:
@@ -38,8 +39,8 @@ if "scar_nodes" in dtiMesh.point_data.keys():
     healthyIdxs = np.where(dtiMesh.point_data["scar_nodes"]==0)[0]
     dtiFibers = dtiFibers[healthyIdxs,:]
 
-# Settings 
-markers = ldrb.utils.default_markers() 
+# Settings
+markers = ldrb.utils.default_markers()
 # if we want to use the LV only
 # markers.pop("rv", None)
 fiber_space = "Lagrange_1"
@@ -49,7 +50,8 @@ big_range_width = 90
 small_range_width = 10
 
 # Get RV Endo and Epi BIG Steps in Degrees--------------------------------------------------------------
-print("------------+/-90 RV Optimization -------------------")
+with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+    file.write("------------+/-90 RV Optimization -------------------\n")
 indexs = np.meshgrid(np.arange(-big_range_width, big_range_width, big_step), np.arange(-big_range_width, big_range_width, big_step))
 indexs = np.array([indexs[0].flatten(), indexs[1].flatten()])
 
@@ -90,20 +92,21 @@ for i in range(indexs.shape[1]):
     rbmVersors = rbmVersors[idxs,:]
     if "scar_nodes" in dtiMesh.point_data.keys():
         rbmVersors = rbmVersors[healthyIdxs,:]
-    
+
     dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
     normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
     thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
-
-    print("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
+    with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+        file.write("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s\n".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
 
 
 # Get the minimum pair
 idxMin  = np.argmin(thetaMeans)
 RV_ENDO = indexs[0,idxMin]
 RV_EPI  = indexs[1,idxMin]
-print("The min mean theta is {0:.2f}, for alpha_endo_rv {1} and alpha_epi_rv {2}".format(thetaMeans[idxMin], RV_ENDO, RV_EPI))
-print("Time of entire operation: {} seconds".format(time.time()-start))
+with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+    file.write("The min mean theta is {0:.2f}, for alpha_endo_rv {1} and alpha_epi_rv {2}\n".format(thetaMeans[idxMin], RV_ENDO, RV_EPI))
+    file.write("Time of entire operation: {} seconds\n".format(time.time()-start))
 
 
 # Save a figure and the thetas
@@ -115,10 +118,11 @@ plt.savefig(os.path.join(args.dataPath, "rv_bigReso.png"))
 results = {"indexs": indexs, "thetaMeans": thetaMeans}
 with open(os.path.join(args.dataPath, "rv_bigReso.pickle"), 'wb') as handle:
     pickle.dump(results, handle)
-        
+
 
 # Get RV Endo and Epi SMALL Steps in Degrees--------------------------------------------------------------
-print("------------+/-10 from previous min RV Optimization -------------------")
+with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+    file.write("------------+/-10 from previous min RV Optimization -------------------\n")
 indexs = np.meshgrid(np.arange(RV_ENDO-small_range_width, RV_ENDO+small_range_width+small_step, small_step), np.arange(RV_EPI-small_range_width, RV_EPI+small_range_width+small_step, small_step))
 indexs = np.array([indexs[0].flatten(), indexs[1].flatten()])
 
@@ -159,20 +163,22 @@ for i in range(indexs.shape[1]):
     rbmVersors = rbmVersors[idxs,:]
     if "scar_nodes" in dtiMesh.point_data.keys():
         rbmVersors = rbmVersors[healthyIdxs,:]
-    
+
     dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
     normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
     thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
 
-    print("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
+    with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+        file.write("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s\n".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
 
 
 # Get the minimum pair
 idxMin  = np.argmin(thetaMeans)
 RV_ENDO = indexs[0,idxMin]
 RV_EPI  = indexs[1,idxMin]
-print("The min mean theta is {0:.2f}, for alpha_endo_rv {1} and alpha_epi_rv {2}".format(thetaMeans[idxMin], RV_ENDO, RV_EPI))
-print("Time of entire operation: {} seconds".format(time.time()-start))
+with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+    file.write("The min mean theta is {0:.2f}, for alpha_endo_rv {1} and alpha_epi_rv {2}\n".format(thetaMeans[idxMin], RV_ENDO, RV_EPI))
+    file.write("Time of entire operation: {} seconds\n".format(time.time()-start))
 
 
 # Save a figure and the thetas
@@ -189,7 +195,8 @@ with open(os.path.join(args.dataPath, "rv_smallReso.pickle"), 'wb') as handle:
 
 
 # Get LV Endo and Epi BIG Steps in Degrees--------------------------------------------------------------
-print("------------+/-90 LV Optimization -------------------")
+with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+    file.write("------------+/-90 LV Optimization -------------------\n")
 indexs = np.meshgrid(np.arange(-big_range_width, big_range_width, big_step), np.arange(-big_range_width, big_range_width, big_step))
 indexs = np.array([indexs[0].flatten(), indexs[1].flatten()])
 
@@ -230,20 +237,22 @@ for i in range(indexs.shape[1]):
     rbmVersors = rbmVersors[idxs,:]
     if "scar_nodes" in dtiMesh.point_data.keys():
         rbmVersors = rbmVersors[healthyIdxs,:]
-    
+
     dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
     normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
     thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
 
-    print("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
+    with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+        file.write("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s\n".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
 
 
 # Get the minimum pair
 idxMin  = np.argmin(thetaMeans)
 LV_ENDO = indexs[0,idxMin]
 LV_EPI  = indexs[1,idxMin]
-print("The min mean theta is {0:.2f}, for alpha_endo_lv {1} and alpha_epi_lv {2}".format(thetaMeans[idxMin], LV_ENDO, LV_EPI))
-print("Time of entire operation: {} seconds".format(time.time()-start))
+with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+    file.write("The min mean theta is {0:.2f}, for alpha_endo_lv {1} and alpha_epi_lv {2}\n".format(thetaMeans[idxMin], LV_ENDO, LV_EPI))
+    file.write("Time of entire operation: {} seconds\n".format(time.time()-start))
 
 
 # Save a figure and the thetas
@@ -255,10 +264,11 @@ plt.savefig(os.path.join(args.dataPath, "lv_bigReso.png"))
 results = {"indexs": indexs, "thetaMeans": thetaMeans}
 with open(os.path.join(args.dataPath, "lv_bigReso.pickle"), 'wb') as handle:
     pickle.dump(results, handle)
-        
+
 
 # Get LV Endo and Epi SMALL Steps in Degrees--------------------------------------------------------------
-print("------------+/-10 from previous min LV Optimization -------------------")
+with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+    file.write("------------+/-10 from previous min LV Optimization -------------------\n")
 indexs = np.meshgrid(np.arange(LV_ENDO-small_range_width, LV_ENDO+small_range_width+small_step, small_step), np.arange(LV_EPI-small_range_width, LV_EPI+small_range_width+small_step, small_step))
 indexs = np.array([indexs[0].flatten(), indexs[1].flatten()])
 
@@ -299,20 +309,22 @@ for i in range(indexs.shape[1]):
     rbmVersors = rbmVersors[idxs,:]
     if "scar_nodes" in dtiMesh.point_data.keys():
         rbmVersors = rbmVersors[healthyIdxs,:]
-    
+
     dotProduct = np.sum(np.multiply(dtiFibers, rbmVersors), axis=1)
     normProduct = np.multiply(np.linalg.norm(dtiFibers, axis=1), np.linalg.norm(rbmVersors, axis=1))
     thetaMeans[i] = np.mean(np.rad2deg(np.arccos(np.abs(dotProduct / normProduct))))
 
-    print("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
+    with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+        file.write("Step {0}/{1}: Endo {2}, Epi {3}, thetaMean {4:.2f}, took {5:.2f} s\n".format(i, indexs.shape[1]-1, endo, epi, thetaMeans[i], time.time()-start_sub))
 
 
 # Get the minimum pair
 idxMin  = np.argmin(thetaMeans)
 LV_ENDO = indexs[0,idxMin]
 LV_EPI  = indexs[1,idxMin]
-print("The min mean theta is {0:.2f}, for alpha_endo_lv {1} and alpha_epi_lv {2}".format(thetaMeans[idxMin], LV_ENDO, LV_EPI))
-print("Time of entire operation: {} seconds".format(time.time()-start))
+with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+    file.write("The min mean theta is {0:.2f}, for alpha_endo_lv {1} and alpha_epi_lv {2}\n".format(thetaMeans[idxMin], LV_ENDO, LV_EPI))
+    file.write("Time of entire operation: {} seconds\n".format(time.time()-start))
 
 
 # Save a figure and the thetas
@@ -326,8 +338,8 @@ with open(os.path.join(args.dataPath, "lv_smallReso.pickle"), 'wb') as handle:
     pickle.dump(results, handle)
 
 
-res_string = "The final angles should be LV_ENDO {0}, LV_EPI {1}, RV_ENDO {2}, RV_EPI {3}".format(LV_ENDO, LV_EPI, RV_ENDO, RV_EPI)
-print(res_string)
+res_string = "The final angles should be LV_ENDO {0}, LV_EPI {1}, RV_ENDO {2}, RV_EPI {3}\n".format(LV_ENDO, LV_EPI, RV_ENDO, RV_EPI)
+with open(os.path.join(args.dataPath, "output.txt"), 'a') as file:
+    file.write(res_string)
 with open(os.path.join(args.dataPath, "final_results.txt"), 'w') as file:
     file.write(res_string)
-
