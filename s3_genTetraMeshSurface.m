@@ -2,17 +2,17 @@
 % when a docker image with ubuntu is used for tetgen. For now it uses
 % WSL for using tetgen in linux that seems to generate better results
 clear; close all; clc;
-addpath('matlabFunctions', 'libraries/iso2mesh-1.9.6');
+addpath('matlabFunctions', 'Libraries/iso2mesh-1.9.6');
 
 % Input filenames
-tetgenPath = '/mnt/c/Maxi/Programs/tetgen1.6.0/tetgen';
-dataPath   = 'D:\Paper3\DWI\mi\sample8\';
-surfMesh   = append(dataPath, 'rm\surfMesh.obj');
-workdir    = append(dataPath, 'mesh\');
+tetgenPath = '/home/maxi/Programs/tetgen1.6.0/tetgen';
+dataPath   = '/home/maxi/Documents/PhD/Paper3/sample1/mesh/';
+surfMesh   = append(dataPath, 'surfMesh.obj');
+workdir    = append(dataPath, '');
 outmesh    = append(workdir, 'tetmesh');
 
 tetMaxVol = 0;
-edgeLength = 0.8; %0.32 for opencarp
+edgeLength = 0.4; %0.32 for opencarp
 wsl = 1;
 
 % Read heart surface mesh and normalize normals

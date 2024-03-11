@@ -3,7 +3,7 @@ import random
 import meshio
 import numpy as np 
 import argparse
-from lib.utils import checkEndBranchesOrder, getBranches, getOutliersTh, getProjectionDir, getProjectionMag, getLinearPath, getEdges, reorderPurkMesh, saveVtkInpMesh1D
+from lib.utils import checkEndBranchesOrder, getBranches, getProjectionDir, getProjectionMag, getLinearPath, getEdges, reorderPurkMesh, saveVtkInpMesh1D
 from lib.utils import checkRepeatedPoints, smoothProjection, updatePointsEdgesBranches
 
 parser = argparse.ArgumentParser(description="Options")
@@ -24,12 +24,12 @@ parser.add_argument('--domainType',type=str, required=True, help='BiV (Biventric
 args = parser.parse_args()
 
 #Inputs
-lvSurfMesh = meshio.read(os.path.join(args.data_path, "mesh", "lv_endo.obj"))  #normals corrected
-if args.domainType == "BiV": rvSurfMesh = meshio.read(os.path.join(args.data_path, "mesh", "rv_endo.obj"))
-csBundle = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "mainCSBundle.vtk"))
-if args.domainType == "BiV": transDistRV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distRV.vtu"))
-transDistLV = meshio.read(os.path.join(args.data_path, "layers", "transmural_distLV.vtu"))
-outPath = os.path.join(args.data_path, "stim", "stim_cs")
+lvSurfMesh     = meshio.read(os.path.join(args.data_path, "mesh", "lv_endo.obj"))  #normals corrected
+laplaciansMesh = meshio.read(os.path.join(args.data_path, "layers", "laplacians.vtk"))
+csBundle       = meshio.read(os.path.join(args.data_path, "stim", "cs", "mainCSBundle.vtk"))
+if args.domainType == "BiV":   
+    rvSurfMesh = meshio.read(os.path.join(args.data_path, "mesh", "rv_endo.obj"))
+outPath = os.path.join(args.data_path, "stim", "cs")
 outName = args.out_name
 
 #Perrotti definitions, must be consistent with the ones used
@@ -72,7 +72,7 @@ for key in branches2Project:
 
     #Calculate projection dir and magnitude for projection points and new edges
     dirs = getProjectionDir(csBundleNodes[branchIdxs,:], lvSurfMesh if "lv" in key else rvSurfMesh, k=args.meanNor)
-    mags = getProjectionMag(csBundleNodes[branchIdxs,:], transDistLV if "lv" in key else transDistRV, subendoWindow, k=args.meanMag)
+    mags = getProjectionMag(csBundleNodes[branchIdxs,:], laplaciansMesh, subendoWindow, "lv" if "lv" in key else "rv", k=args.meanMag)
     mags = np.expand_dims(mags, axis=1)
     mags = np.repeat(mags, repeats=3, axis=1)
     tmpPoints = csBundleNodes[branchIdxs,:] + dirs * mags
@@ -141,7 +141,7 @@ tmpPurkBranches = {}
 for key in branches2Project:
     #Load mesh points and edges
     print("Processing {}".format(key))
-    meshPurk = meshio.read(os.path.join(args.data_path, "stim", "stim_cs", "finalBundles", "{}.vtu".format(key)))
+    meshPurk = meshio.read(os.path.join(args.data_path, "stim", "cs", "finalBundles", "{}.vtu".format(key)))
     tmpPoints = meshPurk.points
     tmpEdges = meshPurk.cells_dict["line"]
 
@@ -151,7 +151,7 @@ for key in branches2Project:
     #Calculate projection dir and magnitude for projection points
     if args.projectRV or key!="rvb":
         dirs = getProjectionDir(tmpPoints, lvSurfMesh if "lv" in key else rvSurfMesh, k=args.meanNor)
-        mags = getProjectionMag(tmpPoints, transDistLV if "lv" in key else transDistRV, subendoWindow, k=args.meanMag)
+        mags = getProjectionMag(tmpPoints, laplaciansMesh, subendoWindow, "lv" if "lv" in key else "rv", k=args.meanMag)
         mags = np.expand_dims(mags, axis=1)
         mags = np.repeat(mags, repeats=3, axis=1)
         tmpPoints = tmpPoints + dirs * mags    
@@ -215,7 +215,7 @@ if args.project_intramyo:
             branchPoints = sorted(purkBranches[key][branchName])
             endNodePoint = np.expand_dims(points[max(branchPoints),:], axis=0)
             dirs = getProjectionDir(endNodePoint, lvSurfMesh if "lv" in key else rvSurfMesh, k=args.meanNor)
-            mags = getProjectionMag(endNodePoint, transDistLV if "lv" in key else transDistRV, intramyoWindow, k=args.meanMag)
+            mags = getProjectionMag(endNodePoint, laplaciansMesh, intramyoWindow, "lv" if "lv" in key else "rv", k=args.meanMag)
             
             #Reference de joint, create projection and update Points and Edges
             jointNodeIdx = min(branchPoints)

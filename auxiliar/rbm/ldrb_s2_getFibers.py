@@ -18,11 +18,11 @@ def main():
 
     # Volume Mesh and FacetFunction reading
     mesh = df.Mesh()
-    with df.XDMFFile(os.path.join(args.dataPath, "mesh.xdmf")) as xdmf:
+    with df.XDMFFile(os.path.join(args.dataPath, "mesh", "mesh.xdmf")) as xdmf:
         xdmf.read(mesh)
 
     ffun = df.MeshFunction("size_t", mesh, 2)
-    with df.XDMFFile(os.path.join(args.dataPath, "ffun.xdmf")) as xdmf:
+    with df.XDMFFile(os.path.join(args.dataPath, "mesh", "ffun.xdmf")) as xdmf:
         xdmf.read(ffun)
 
     markers = ldrb.utils.default_markers()
@@ -30,21 +30,22 @@ def main():
     # Choose space for the fiber fields
     # This is a string on the form {family}_{degree}
     fiber_space = "Lagrange_1"
-
+    outPath = os.path.join(args.dataPath, "RBM_LDRB")
+    if not os.path.exists(outPath): os.mkdir(outPath)
 
     if args.domainType == "BiV":
         angles = dict(
-            alpha_endo_lv=60,  # Fiber angle on the LV endocardium
-            alpha_epi_lv=-60,  # Fiber angle on the LV epicardium
-            beta_endo_lv=0,  # Sheet angle on the LV endocardium
-            beta_epi_lv=0,  # Sheet angle on the LV epicardium
-            # alpha_endo_sept=60,  # Fiber angle on the Septum endocardium
-            # alpha_epi_sept=-60,  # Fiber angle on the Septum epicardium
-            beta_endo_sept=0,  # Sheet angle on the Septum endocardium
-            beta_epi_sept=0,  # Sheet angle on the Septum epicardium
-            alpha_endo_rv=90,  # Fiber angle on the RV endocardium
-            alpha_epi_rv=-15,  # Fiber angle on the RV epicardium
-            beta_endo_rv=0,  # Sheet angle on the RV endocardium
+            alpha_endo_lv=args.alpha_endo_lv,  # Fiber angle on the LV endocardium
+            alpha_epi_lv=args.alpha_epi_lv,    # Fiber angle on the LV epicardium
+            beta_endo_lv=0,                    # Sheet angle on the LV endocardium
+            beta_epi_lv=0,                     # Sheet angle on the LV epicardium
+            # alpha_endo_sept=60,              # Fiber angle on the Septum endocardium
+            # alpha_epi_sept=-60,              # Fiber angle on the Septum epicardium
+            beta_endo_sept=0,                  # Sheet angle on the Septum endocardium
+            beta_epi_sept=0,                   # Sheet angle on the Septum epicardium
+            alpha_endo_rv=args.alpha_endo_rv,  # Fiber angle on the RV endocardium
+            alpha_epi_rv=args.alpha_epi_rv,    # Fiber angle on the RV epicardium
+            beta_endo_rv=0,                    # Sheet angle on the RV endocardium
             beta_epi_rv=0
         )
     elif args.domainType == "LV":
@@ -57,7 +58,7 @@ def main():
     fiber, sheet, sheet_normal = ldrb.dolfin_ldrb(mesh=mesh, fiber_space=fiber_space, ffun=ffun, markers=markers, **angles)
 
     # Store the results
-    with df.HDF5File(mesh.mpi_comm(), os.path.join(args.dataPath,"{}.h5".format(args.domainType)), "w") as h5file:
+    with df.HDF5File(mesh.mpi_comm(), os.path.join(outPath, "{}.h5".format(args.domainType)), "w") as h5file:
         h5file.write(fiber, "/fiber")
         h5file.write(sheet, "/sheet")
         h5file.write(sheet_normal, "/sheet_normal")
@@ -73,7 +74,7 @@ def main():
     sheet = df.Function(V)
     sheet_normal = df.Function(V)
 
-    with df.HDF5File(mesh.mpi_comm(), os.path.join(args.dataPath,"{}.h5".format(args.domainType)), "r") as h5file:
+    with df.HDF5File(mesh.mpi_comm(), os.path.join(outPath, "{}.h5".format(args.domainType)), "r") as h5file:
         h5file.read(fiber, "/fiber")
         h5file.read(sheet, "/sheet")
         h5file.read(sheet_normal, "/sheet_normal")
@@ -85,9 +86,9 @@ def main():
     # and T should be more or less radial to the epicardial plane: 
     # Nico/LeGrice "Laminar structure of the heart: ventricular myocyte arrangement and connective tissue architecture in the dog" 
     # and Bayer et al see pictures) 
-    ldrb.fiber_to_xdmf(fiber, os.path.join(args.dataPath,"{}_fiber_{}".format(args.domainType, args.addName)))
-    ldrb.fiber_to_xdmf(sheet, os.path.join(args.dataPath,"{}_sheet_normal_N_{}".format(args.domainType, args.addName)))
-    ldrb.fiber_to_xdmf(sheet_normal, os.path.join(args.dataPath,"{}_sheet_S_{}".format(args.domainType, args.addName)))
+    ldrb.fiber_to_xdmf(fiber,        os.path.join(outPath,"{}_fiber_{}".format(args.domainType, args.addName)))
+    ldrb.fiber_to_xdmf(sheet,        os.path.join(outPath,"{}_sheet_normal_N_{}".format(args.domainType, args.addName)))
+    ldrb.fiber_to_xdmf(sheet_normal, os.path.join(outPath,"{}_sheet_S_{}".format(args.domainType, args.addName)))
 
     #TODO the scalar computation is the angle with respect to z. So if the geometry is not aligned with its LA
     # in x this angle/scalar would not represent the angle put as input correctly

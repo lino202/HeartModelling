@@ -11,15 +11,15 @@ import argparse
 # that is the reason why I am using .vtu
 
 parser = argparse.ArgumentParser(description="Options")
-parser.add_argument('--data_path',required=True, help='path to data')
+parser.add_argument('--dataPath',required=True, help='path to data')
 parser.add_argument('--domainType',type=str, required=True, help='BiV (Biventricular) or LV')
 args = parser.parse_args()
 
 #Inputs
-dataPath = args.data_path
-if args.domainType == "BiV": rvEndoSurf = os.path.join(dataPath, "rv_endo.obj")
-lvEndoSurf = os.path.join(dataPath, "lv_endo.obj")
-purkInitNodes =  os.path.join(dataPath, "purkInitNodes.json")
+dataPath = args.dataPath
+if args.domainType == "BiV": rvEndoSurf = os.path.join(dataPath, "mesh", "rv_endo.obj")
+lvEndoSurf = os.path.join(dataPath, "mesh", "lv_endo.obj")
+purkInitNodes =  os.path.join(dataPath, "stim", "cs", "purkInitNodes.json")
 
 #Outputs
 outName = "mainCSBundle"    # generates .inp and .vtk
@@ -132,8 +132,8 @@ for key in nsets.keys():
 
 
 meshOut = meshio.Mesh(points, cells, point_data=point_data)
-meshOut.write(os.path.join(dataPath, "{}.vtk".format(outName)))
+meshOut.write(os.path.join(dataPath, "stim", "cs", "{}.vtk".format(outName)))
 # meshio.vtk.write(os.path.join(dataPath, "{}.vtk".format(outName)), meshOut,  binary=False) #Debugging
 
 meshOut = meshio.Mesh(points, cells, point_sets=nsets)
-meshOut.write(os.path.join(dataPath, "{}.inp".format(outName)))
+meshOut.write(os.path.join(dataPath, "stim", "cs", "{}.inp".format(outName)))

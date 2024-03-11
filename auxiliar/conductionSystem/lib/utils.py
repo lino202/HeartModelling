@@ -76,8 +76,8 @@ def getProjectionDir(nodes, mesh, k=5):
         return -1 * normals[nearSurfaceNodes,:]
 
 
-def getProjectionMag(nodes, mesh, subendoWindow, k=1):
-    subendoNodesIdxs = np.where((mesh.point_data['f_20']>subendoWindow[0]) & (mesh.point_data['f_20']<subendoWindow[1]))[0]
+def getProjectionMag(nodes, mesh, subendoWindow, name, k=1):
+    subendoNodesIdxs = np.where((mesh.point_data[name]>subendoWindow[0]) & (mesh.point_data[name]<subendoWindow[1]))[0]
     dist = cdist(nodes, mesh.points[subendoNodesIdxs,:], 'euclidean')
     if k>1:
         sortedIdxs = np.argsort(dist, axis=1)
@@ -327,12 +327,3 @@ def checkEndBranchesOrder(endBranchesDict, branchType):
 
     if len(idxsEndBad) !=0: raise ValueError("Wrong branch percentage: {}".format(100*len(idxsEndBad)/len(idxs)))
     return idxs
-
-
-def getOutliersTh(data):
-    df = pd.DataFrame(data)
-    q25 = df.quantile(0.25)
-    q75 = df.quantile(0.75)
-    IQR = q75-q25
-    th = q75 + 1.5 * IQR
-    return th[0]

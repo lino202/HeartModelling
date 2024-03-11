@@ -12,14 +12,16 @@ args = parser.parse_args()
 
 #Inputs
 
-csBundle = meshio.read(os.path.join(args.data_path, "mainCSBundle.inp"))
+csBundle = meshio.read(os.path.join(args.data_path, "mainCSBundle.vtk"))
 outPath = args.data_path
 outName = args.outName
 
 points = csBundle.points
 edges = csBundle.cells_dict['line']
-nsets = csBundle.point_sets
-
+nsets = {}
+for key in csBundle.point_data.keys():
+    idxs = np.where(csBundle.point_data[key]!=0)[0]
+    nsets[key] = idxs
 
 # Unify all
 if args.domainType == "BiV":

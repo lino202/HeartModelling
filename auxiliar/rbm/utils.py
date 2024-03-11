@@ -47,7 +47,9 @@ def readFibersfromElectraPre(filePath):
 
 def writeFibers4JSON(filePath, rbmVersors):
     with open(filePath, "w") as file:
-        file.write('"fibers":[[{0:.15f}, {1:.15f}, {2:.15f}],\n'.format(rbmVersors[0,0], rbmVersors[0,1], rbmVersors[0,2]))
+        file.write('{\n')
+        file.write('\t"fibers":[[{0:.15f}, {1:.15f}, {2:.15f}],\n'.format(rbmVersors[0,0], rbmVersors[0,1], rbmVersors[0,2]))
         for i in range(1,rbmVersors.shape[0]-1):
             file.write("\t\t\t[{0:.15f}, {1:.15f}, {2:.15f}],\n".format(rbmVersors[i,0], rbmVersors[i,1], rbmVersors[i,2]))
-        file.write("\t\t\t[{0:.15f}, {1:.15f}, {2:.15f}]]".format(rbmVersors[-1,0], rbmVersors[-1,1], rbmVersors[-1,2]))
+        file.write("\t\t\t[{0:.15f}, {1:.15f}, {2:.15f}]]\n".format(rbmVersors[-1,0], rbmVersors[-1,1], rbmVersors[-1,2]))
+        file.write('}')

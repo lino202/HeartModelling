@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Dec  1 11:02:34 2015
-@author: fsc
-"""
 
 from lib.FractalTree import *
 from lib.parameters import Parameters
@@ -24,7 +20,7 @@ args = parser.parse_args()
 dataPath = args.data_path
 endnode_name = args.endnode_name
 
-bb_infile    = os.path.join(dataPath, 'mainCSBundle.inp')
+bb_infile    = os.path.join(dataPath, 'mainCSBundle.vtk')
 surf_file    = os.path.join(dataPath, '{}_endo.obj'.format('rv' if "rv" in endnode_name else 'lv'))
 output_path  = os.path.join(dataPath, 'finalBundles')
 if not os.path.isdir(output_path): os.mkdir(output_path)
@@ -37,8 +33,10 @@ if not os.path.isdir(output_path):
 mesh = meshio.read(bb_infile)
 vertexs = mesh.points
 connectivity = mesh.cells_dict['line']
-nsets = mesh.point_sets
-# vertexs, connectivity, nsets = loadInp(bb_infile)
+nsets = {}
+for key in mesh.point_data.keys():
+    idxs = np.where(mesh.point_data[key]!=0)[0]
+    nsets[key] = idxs
 
 # Get branch end node
 end_node = vertexs[nsets[endnode_name][0]]
