@@ -173,6 +173,7 @@ for branchName in scarEndBranches2Epi:
 uniqueEdges, count = np.unique(edges, return_counts=True)   
 uniqueEdges = uniqueEdges[count==1]
 #TODO calculate branch specific endpoints using the dict branches and the enpoints values
+#TODO there is a reduction in the amount of PMJs, so implement that
 nsets["purk_endnodes"] = uniqueEdges[uniqueEdges!=nsets["av_node"]] 
 
 

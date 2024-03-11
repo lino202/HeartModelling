@@ -1,4 +1,5 @@
 import math
+from statistics import mean
 import numpy as np
 import pygeodesic.geodesic as geodesic
 from scipy.spatial.distance import cdist, pdist
@@ -79,17 +80,39 @@ def getProjectionDir(nodes, mesh, k=5):
 def getProjectionMag(nodes, mesh, subendoWindow, name, k=1):
     subendoNodesIdxs = np.where((mesh.point_data[name]>subendoWindow[0]) & (mesh.point_data[name]<subendoWindow[1]))[0]
     dist = cdist(nodes, mesh.points[subendoNodesIdxs,:], 'euclidean')
+    meanMag = np.zeros(nodes.shape[0])
     if k>1:
         sortedIdxs = np.argsort(dist, axis=1)
         sortedIdxs = sortedIdxs[:,:k]
-        meanMag = np.array([])
         for i in range(sortedIdxs.shape[0]):
-            currentMag = np.mean(dist[i,sortedIdxs[i,:]], axis=0)
-            meanMag = np.concatenate((meanMag, np.expand_dims(currentMag, axis=0)), axis=0) if meanMag.size else np.expand_dims(currentMag, axis=0)
+            meanMag[i] = np.mean(dist[i,sortedIdxs[i,:]], axis=0)
         return meanMag
     else:
         return np.min(dist, axis=1)
 
+
+def getProjectionMagLowMemory(nodes, mesh, subendoWindow, name, k=1, divisions=10):
+    subendoNodesIdxs = np.where((mesh.point_data[name]>subendoWindow[0]) & (mesh.point_data[name]<subendoWindow[1]))[0]
+    steps = int(np.ceil(nodes.shape[0] / divisions))
+    meanMag = np.zeros(nodes.shape[0])
+    for i in range(steps):
+        if i == steps-1:
+            currentIdxs = np.arange(i*divisions, nodes.shape[0])
+        else:
+            currentIdxs = np.arange(i*divisions, (i+1)*divisions)
+    
+        dist = cdist(nodes[currentIdxs,:], mesh.points[subendoNodesIdxs,:], 'euclidean')
+        if k>1:
+            sortedIdxs = np.argsort(dist, axis=1)
+            sortedIdxs = sortedIdxs[:,:k]
+
+            for j in range(sortedIdxs.shape[0]):
+                meanMag[currentIdxs[j]] = np.mean(dist[j,sortedIdxs[j,:]], axis=0)
+    
+        else:
+            meanMag[currentIdxs] = np.min(dist, axis=1)
+    
+    return meanMag
 
 def checkRepeatedPoints(points):
     _, counts = np.unique(points, axis=0, return_counts=True)
