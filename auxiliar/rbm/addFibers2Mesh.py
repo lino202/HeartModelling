@@ -42,7 +42,7 @@ mesh.point_data["rbm_{}".format(args.dataPointName)] = rbmVersors
 # point_data["{}_angle".format(args.dataPointName)] = angles
 
 
-# mesh.write(os.path.join(args.mesh3DPath))
+mesh.write(os.path.join(args.mesh3DPath))
 
 if args.writeFibersElectra:
     writeFibers4JSON(os.path.join(args.dataPath, "rbm_{}.json".format(args.dataPointName)), rbmVersors)

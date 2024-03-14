@@ -135,5 +135,5 @@ meshOut = meshio.Mesh(points, cells, point_data=point_data)
 meshOut.write(os.path.join(dataPath, "stim", "cs", "{}.vtk".format(outName)))
 # meshio.vtk.write(os.path.join(dataPath, "{}.vtk".format(outName)), meshOut,  binary=False) #Debugging
 
-meshOut = meshio.Mesh(points, cells, point_sets=nsets)
-meshOut.write(os.path.join(dataPath, "stim", "cs", "{}.inp".format(outName)))
+# meshOut = meshio.Mesh(points, cells, point_sets=nsets)
+# meshOut.write(os.path.join(dataPath, "stim", "cs", "{}.inp".format(outName)))
