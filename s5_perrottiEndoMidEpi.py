@@ -28,6 +28,7 @@ def main():
     phi1 = 1
 
     #Read Data
+    baseMesh       = meshio.read(os.path.join(args.dataPath, 'mesh', "tetmesh.vtk") )
     meshLaplacians = meshio.read(os.path.join(args.dataPath, 'layers', "laplacians.vtk") )
     #Change data reference points for incorporating endo mid and epi
     if "layers_mi" in meshLaplacians.point_data.keys():
@@ -115,10 +116,10 @@ def main():
         nsets["epibz_nodes"] = np.where(epiBZ_points==1)[0]
 
     #SaveData
-    meshOutVtk = meshio.Mesh(meshLaplacians.points, meshLaplacians.cells, point_data=point_data)
+    meshOutVtk = meshio.Mesh(baseMesh.points, baseMesh.cells, point_data=point_data)
     meshOutVtk.write(os.path.join(args.dataPath, "{}.vtk".format(args.outName)))
 
-    meshOutInp = meshio.Mesh(meshLaplacians.points, meshLaplacians.cells, point_sets=nsets)
+    meshOutInp = meshio.Mesh(baseMesh.points, baseMesh.cells, point_sets=nsets)
     meshOutInp.write(os.path.join(args.dataPath, "{}.inp".format(args.outName)))
 
 if __name__ == '__main__':

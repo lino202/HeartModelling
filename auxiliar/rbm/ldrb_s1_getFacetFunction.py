@@ -1,3 +1,8 @@
+'''This code needs several improvements but it works,
+It is slow for high resolution meshes 4 hour for 1.5M nodes and 9M tet cells for example
+Also it distort the jacobian of a mesh as it saves the mesh cells differently'''
+
+
 import dolfin as df
 import ldrb
 import os
@@ -97,6 +102,9 @@ def main():
     #     idxs = isMemberIdxsRowWise(vertexsCoords, mesh.coordinates(), showMem=False)
     #     ffun[f] = np.median(all_markers[idxs]).astype(int)
 
+    # TODO here this mesh has wrong saving of cells as jacobian are changed drastically to have negative numbers,
+    # now you can avoid this by using tetmesh.vtk from tetgen as final mesh and the point data definitions obtained from this
+    # mesh as layers and fiber fields
     with df.XDMFFile(mesh.mpi_comm(), os.path.join(outPath, "mesh.xdmf")) as xdmf:
         xdmf.write(mesh)
 
