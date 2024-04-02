@@ -12,7 +12,7 @@ def main():
     parser.add_argument('--infAsHealthy', action='store_true', help='if especified, MI is not taken into account')
     args = parser.parse_args()
 
-    validKeys = ["endo", "mid", "epi", "myo", "scar", "uncertain", "bz"]
+    validKeys = ["endo", "mid", "epi", "myo", "scar", "bz"]
     myo_flag = 1
     scar_flag = 8
     endo_flag = 3

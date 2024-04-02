@@ -10,12 +10,12 @@ import time
 def main():
 
     parser = argparse.ArgumentParser(description="Options")
-    parser.add_argument('--dataPath1',type=str, required=True, help='path to data')
-    parser.add_argument('--dataPath2',type=str, required=True, help='path to data')
+    parser.add_argument('--dataPath1',  type=str, required=True, help='path to data')
+    parser.add_argument('--dataPath2',  type=str, required=True, help='path to data')
     parser.add_argument('--interpType', type=str, required=True, help='nearest or rbf')
     parser.add_argument('--neighbours', type=int, required=True, help='neighbours to take into account, only used in rbf')
-    parser.add_argument('--nameValue', type=str, required=True, help='value to interp, layers_mi for GE/MI model or dti_fibers for exvivo dwi model')
-    parser.add_argument('--outPath',type=str, required=True)
+    parser.add_argument('--nameValue',  type=str, required=True, help='value to interp, layers_mi for GE/MI model or dti_fibers for exvivo dwi model')
+    parser.add_argument('--outPath',    type=str, required=True)
     args = parser.parse_args()
 
     mesh1 = meshio.read(args.dataPath1)

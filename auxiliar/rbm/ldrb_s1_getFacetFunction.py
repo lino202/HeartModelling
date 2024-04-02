@@ -39,7 +39,7 @@ def main():
     args = parser.parse_args()
 
 
-    outPath = os.path.join(args.dataPath, "RBM_LDRB")
+    outPath = os.path.join(args.dataPath, "mesh")
     if not os.path.exists(outPath): os.mkdir(outPath)
 
     # Volume Mesh reading
