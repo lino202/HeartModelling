@@ -10,6 +10,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Options")
     parser.add_argument('--dataPath',   type=str, required=True, help='path to data')
+    parser.add_argument('--full', action='store_true')
     args = parser.parse_args()
 
     # Get the anatomy and maps data
@@ -33,8 +34,9 @@ def main():
     point_data['activation_unipolar'] = activation_unipolar
 
     # Get the time series (dynamic point data)
-    mapping_sigs_uni = surfElectrodes['se_mappingsigs_unipolar']
-    mapping_sigs_bi = surfElectrodes['se_mappingsigs_bipolar']
+    if args.full:
+        mapping_sigs_uni = surfElectrodes['se_mappingsigs_unipolar']
+        mapping_sigs_bi = surfElectrodes['se_mappingsigs_bipolar']
 
     # # Save the mesh data
     mesh = meshio.Mesh(points, cells=cellsMeshio, point_data=point_data)
@@ -42,12 +44,13 @@ def main():
 
     
     # Save a point cloud with the actual surface measurements
-    times = np.arange(mapping_sigs_uni.shape[1]) * (1/surfElectrodes['sampleFreq'])
-    with meshio.xdmf.TimeSeriesWriter(os.path.join(args.dataPath, 'surfElectrodes_dynamic.xdmf')) as writer:
-        writer.write_points_cells(points, cellsMeshio)
-        for i,t in enumerate(times):
-            writer.write_data(t, point_data={"mapping_sigs_uni": mapping_sigs_uni[:,i],
-                                            "mapping_sigs_bi": mapping_sigs_bi[:,i]})
+    if args.full:
+        times = np.arange(mapping_sigs_uni.shape[1]) * (1/surfElectrodes['sampleFreq'])
+        with meshio.xdmf.TimeSeriesWriter(os.path.join(args.dataPath, 'surfElectrodes_dynamic.xdmf')) as writer:
+            writer.write_points_cells(points, cellsMeshio)
+            for i,t in enumerate(times):
+                writer.write_data(t, point_data={"mapping_sigs_uni": mapping_sigs_uni[:,i],
+                                                "mapping_sigs_bi": mapping_sigs_bi[:,i]})
 
     # Pay attention that .h5 file was saved in wrong place in previous meshio versions
     
