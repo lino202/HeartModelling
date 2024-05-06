@@ -205,13 +205,6 @@ def smoothCurve3Points(points, nodeIdx, uEdges, vEdges, angleThreshold):
         return points[nodeIdx,:]
 
 
-def removeNearNodesPurk(points, edges, thresholdDist=0.3):
-    newPoints = np.array([points[0,:]])
-    newEdges = np.array([])
-    #TODO better separate in branches
-    return newPoints, newEdges
-
-
 def getBranches(edges, endpointRef, purkBranch):
     #We have triple, double joints and the endpoints
     #the first node, idx=0, should be the init point of the purk tree
@@ -258,7 +251,7 @@ def reorderPurkMesh(points, edges):
     endpoints = unique[count==1]
     joints = unique[count==3]
     mapJoints = np.expand_dims(np.array([0,0]), axis=0)
-    idxPointA = 0 #firs not in purk must be the one initiating the purk fractal algo
+    idxPointA = 0 #first node in purk must be the one initiating the purk fractal algo
     newPoints = np.expand_dims(points[idxPointA,:], axis=0)
     while edges.size:   
         connectionIdx = np.where(edges[:,0]==idxPointA)[0]

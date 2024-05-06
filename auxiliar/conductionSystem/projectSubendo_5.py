@@ -45,8 +45,9 @@ def main():
     phi1 = 1
     phiEndo = (1-endoPer) * phi0 + endoPer * phi1    # thresholds
     phiEpi = epiPer * phi0 + (1-epiPer) * phi1
+    #Windows
     subendoWindow = [phi0 - ((phi0 - phiEndo) * subendoWindow)  , phiEpi]
-    intramyoWindow = [phiEndo , phiEpi] 
+    intramyoWindow = [phiEndo , phiEpi] # we use the whole mid-myocardium as intramyocardium due to taking only the mid-myocardium middle third could give few points and bad projection if mesh resolution is too poor
     # intramyoWindow = [phiEndo + (abs(phiEndo - phiEpi) / intramyoWindow)  , phiEndo + 2*(abs(phiEndo - phiEpi) / intramyoWindow)]
 
     #MAIN BUNDLE------------------------------------------------------------------------

@@ -3,7 +3,7 @@ import pygeodesic.geodesic as geodesic
 import meshio
 import os
 import json
-from lib.utils import checkRepeatedPoints, getLinearPath, getLinearPath, getGeodesicPath, resampleGeodesic
+from lib.utils import checkRepeatedPoints, getLinearPath, getGeodesicPath, resampleGeodesic
 import argparse
 
 #XDMF from paraview has time attribute which does not work with meshio
