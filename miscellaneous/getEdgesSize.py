@@ -2,7 +2,7 @@ import os
 import argparse
 import numpy as np
 import vtk
-from vtk.util import numpy_support 
+from vtk.util import numpy_support  # type: ignore
 import time
 
 
