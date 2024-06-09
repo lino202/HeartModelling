@@ -1,7 +1,7 @@
 
 
-data_path = 'D:/Paper3/Cell_sims/final/mi/gaur_endo_mi_scar_3000s/';
-experiment_name = 'gaur_endo_mi_scar_3000s_Vm';
+data_path = 'D:/Paper3/Cell_sims/final/he/transmural_gaur/';
+experiment_name = 'gaur_endo_he_gk1_plus15_3000s_Vm';
 
 % load(append(data_path, experiment_name, '.mat'));
 % V = vms;

@@ -7,15 +7,15 @@ function [median_beat]=median_beat_func(positionqrs,ecg_nm_f, fs)
     mRR=round(median(RR)); % if there are several nans is better the median rather than mean
     no=(240/1000)*fs;
     if (mRR/fs)*1000 <=720
-        ne=round((2/3)*mRR);
+        ne=(2/3)*mRR;
     else
         ne=min([(684/1000)*fs,mRR-(240/1000)*fs]);
     end
     
     % cardiac beat template
-    mat = zeros(no+ne+1,length(R)-2);
+    mat = zeros(round(no+ne+1),length(R)-2);
     for k=2:1:length(R)-1
-        mat(:,k-1) = ecg_nm_f(R(k)-no:R(k)+ne); %cardiac beats in columns
+        mat(:,k-1) = ecg_nm_f(R(k)-round(no):R(k)+round(ne)); %cardiac beats in columns
     end
     C = corrcoef(mat);
     Csum=[sum(C);1:1:length(C)];

@@ -2,12 +2,12 @@ close  all;
 clear all;
 clc;
 
-data_path_mi = '/home/maxi/Documents/PhD/Paper3/Study_2023_09_11_03-39/results/map2/';
+data_path_mi = 'D:/Paper3/Experimental/Mapping/Study_13_12_2023/map2/';
 load(append(data_path_mi, 'median_beats/median_beats.mat'));
 ECG_time_mi = ECG_time;
 fs_mi = fs;
 median_beats_mi = median_beats;
-data_path_he = '/home/maxi/Documents/PhD/Paper3/ecg_cerdo_sano_dylan/';
+data_path_he = 'D:/Paper3/Experimental/ECGs/ecg_cerdo_sano_dylan/';
 load(append(data_path_he, 'median_beats/median_beats.mat'));
 
 plot_path = append(data_path_mi, 'median_beats/');
