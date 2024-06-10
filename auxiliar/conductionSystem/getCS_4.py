@@ -7,6 +7,7 @@ from lib.utils import checkRepeatedPoints, reorderPurkMesh, saveVtkInpMesh1D
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--data_path',type=str, required=True, help='path to data')
 parser.add_argument('--domainType',type=str, required=True, help='BiV (Biventricular) or LV')
+parser.add_argument('--cs_name',type=str, required=True, help='Name of the cs subfolder withe final data for cs construction')
 parser.add_argument('--outName',   type=str, default='cs_endo')
 args = parser.parse_args()
 
@@ -25,13 +26,13 @@ for key in csBundle.point_data.keys():
 
 # Unify all
 if args.domainType == "BiV":
-    purkTrees = ["lva", "lvp", "rvb"] 
+    purkTrees = ["lva", "lvp", "lvs", "rvb"] 
 elif args.domainType == "LV":
-    purkTrees = ["lva", "lvp"]
+    purkTrees = ["lva", "lvp", "lvs"]
 else: raise ValueError("Domain type should be BiV or LV") 
 
 for key in purkTrees:
-    meshPurk = meshio.read(os.path.join(args.data_path, "finalBundles", "{}.vtu".format(key)))
+    meshPurk = meshio.read(os.path.join(args.data_path, args.cs_name, "{}.vtu".format(key)))
     meshPurkPoints = meshPurk.points
     meshPurkEdges = meshPurk.cells_dict['line']
 

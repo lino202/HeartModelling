@@ -12,6 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description="Options")
     parser.add_argument('--data_path',type=str, required=True, help='path to data')
     parser.add_argument('--out_name',type=str, required=True, help='output file name')
+    parser.add_argument('--cs_name',type=str, required=True, help='Name of the cs subfolder withe final data for cs construction')
     parser.add_argument('--endo_per',type=int, required=True, help='endo percentage')
     parser.add_argument('--epi_per',type=int, required=True, help='epi percentage')
     parser.add_argument('--subendo_window',type=int, required=True, help='subendo goes from mid-endo threshold to this percentage of endo')
@@ -30,11 +31,10 @@ def main():
     #Inputs
     lvSurfMesh     = meshio.read(os.path.join(args.data_path, "mesh", "lv_endo.obj"))  #normals corrected
     laplaciansMesh = meshio.read(os.path.join(args.data_path, "layers", "laplacians.vtk"))
-    csBundle       = meshio.read(os.path.join(args.data_path, "stim", "cs", "mainCSBundle.vtk"))
+    csBundle       = meshio.read(os.path.join(args.data_path, "stim", "cs", args.cs_name, "mainCSBundle.vtk"))
     if args.domainType == "BiV":   
         rvSurfMesh = meshio.read(os.path.join(args.data_path, "mesh", "rv_endo.obj"))
-    outPath = os.path.join(args.data_path, "stim", "cs")
-    outName = args.out_name
+    outPath = os.path.join(args.data_path, "stim", "cs", args.cs_name)
 
     #Perrotti definitions, must be consistent with the ones used
     endoPer = args.endo_per / 100
@@ -64,9 +64,9 @@ def main():
     # First project the geodesic bundles into subendo
     print("---------Projecting Main Bundles-----------")
     if args.domainType == "BiV":
-        branches2Project = ["rvb", "lva", "lvp", "his_rv_geo", "his_lv_geo"]
+        branches2Project = ["rvb", "lva", "lvp", "lvs", "his_rv_geo", "his_lv_geo"]
     elif args.domainType == "LV":
-        branches2Project = ["lva", "lvp", "his_lv_geo"]
+        branches2Project = ["lva", "lvp", "lvs", "his_lv_geo"]
     else: raise ValueError("domainType must be BiV or LV") 
 
     for key in branches2Project:
@@ -92,6 +92,7 @@ def main():
         nsetsSimple[key] = [nodeIdx for nodeIdx in range(points.shape[0] , points.shape[0] + tmpPoints.shape[0])]
         if key == "lva": LVAfirstIdx = np.min(tmpEdges); LVAlastIdx = np.max(tmpEdges)
         elif key == "lvp": LVPfirstIdx = np.min(tmpEdges); LVPlastIdx = np.max(tmpEdges)
+        elif key == "lvs": LVSfirstIdx = np.min(tmpEdges); LVSlastIdx = np.max(tmpEdges)
         elif key == "rvb": RVBfirstIdx = np.min(tmpEdges); RVBlastIdx = np.max(tmpEdges)
         elif key == "his_rv_geo":
             hisRVGeoInitIdx = np.min(tmpEdges)
@@ -101,6 +102,7 @@ def main():
             maxEdge = np.max(tmpEdges)
             tmpEdges = np.concatenate((tmpEdges, np.array([[LVAfirstIdx, maxEdge]])), axis=0)
             tmpEdges = np.concatenate((tmpEdges, np.array([[LVPfirstIdx, maxEdge]])), axis=0)
+            tmpEdges = np.concatenate((tmpEdges, np.array([[LVSfirstIdx, maxEdge]])), axis=0)
         else: raise ValueError("Branch not implemented") 
 
 
@@ -139,9 +141,9 @@ def main():
     # Make the projection for every Purkinje tree and unify all
     print("----------Making Purkinje Tree Projection----------")
     if args.domainType == "BiV":
-        branches2Project = ["lva", "lvp", "rvb"]
+        branches2Project = ["lva", "lvp", "lvs", "rvb"]
     elif args.domainType == "LV":
-        branches2Project = ["lva", "lvp"]
+        branches2Project = ["lva", "lvp", "lvs"]
     else: raise ValueError("domainType must be BiV or LV") 
 
     purkBranches = {}
@@ -150,7 +152,7 @@ def main():
     for key in branches2Project:
         #Load mesh points and edges
         print("Processing {}".format(key))
-        meshPurk = meshio.read(os.path.join(args.data_path, "stim", "cs", "finalBundles", "{}.vtu".format(key)))
+        meshPurk = meshio.read(os.path.join(args.data_path, "stim", "cs", args.cs_name, "{}.vtu".format(key)))
         tmpPoints = meshPurk.points
         tmpEdges = meshPurk.cells_dict["line"]
 
@@ -174,6 +176,7 @@ def main():
         idxs = np.where(tmpEdges == (points.shape[0] - 1))
         if key == "lva": endpointRefIdx = LVAlastIdx
         elif key == "lvp": endpointRefIdx = LVPlastIdx
+        elif key == "lvs": endpointRefIdx = LVSlastIdx
         elif key == "rvb": endpointRefIdx = RVBlastIdx
         else: raise ValueError("Branch not implemented") 
         
@@ -275,7 +278,7 @@ def main():
 
     # Save
     print("-----------Saving------------")
-    saveVtkInpMesh1D(points, edges, nsets, outPath, outName)
+    saveVtkInpMesh1D(points, edges, nsets, outPath, args.out_name)
 
 
 if __name__ == '__main__':
