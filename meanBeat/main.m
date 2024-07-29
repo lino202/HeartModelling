@@ -62,7 +62,7 @@ for i=1:length(ECG_headers)
     plot(ECG_time, ecg_preprocessed(:,i))
     title(ECG_headers(i))
 end
-saveas(gcf,append(res_path, 'filtered.png'))
+%saveas(gcf,append(res_path, 'filtered.png'))
 
 %% Get the qrs positions - findpeaks
 % qrslocs = cell(1,length(ECG_headers));
@@ -94,7 +94,7 @@ for i=1:length(ECG_headers)
     qrslocs{i} = positionqrs.qrs;
     rrs(i)     = mean(diff(qrslocs{i})/fs * 1000);
 end
-saveas(gcf,append(res_path, 'qrs_delination.png'))
+%saveas(gcf,append(res_path, 'qrs_delination.png'))
 
 %% Get median beats
 median_beats = cell(1,length(ECG_headers));

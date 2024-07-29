@@ -64,7 +64,8 @@ def main():
     # First project the geodesic bundles into subendo
     print("---------Projecting Main Bundles-----------")
     if args.domainType == "BiV":
-        branches2Project = ["rvb", "lva", "lvp", "lvs", "his_rv_geo", "his_lv_geo"]
+        # branches2Project = ["rvb", "lva", "lvp", "lvs", "his_rv_geo", "his_lv_geo"]
+        branches2Project = ["rvb", "lva", "lvp", "his_rv_geo", "his_lv_geo"] # "lvp", 
     elif args.domainType == "LV":
         branches2Project = ["lva", "lvp", "lvs", "his_lv_geo"]
     else: raise ValueError("domainType must be BiV or LV") 
@@ -102,7 +103,7 @@ def main():
             maxEdge = np.max(tmpEdges)
             tmpEdges = np.concatenate((tmpEdges, np.array([[LVAfirstIdx, maxEdge]])), axis=0)
             tmpEdges = np.concatenate((tmpEdges, np.array([[LVPfirstIdx, maxEdge]])), axis=0)
-            tmpEdges = np.concatenate((tmpEdges, np.array([[LVSfirstIdx, maxEdge]])), axis=0)
+            # tmpEdges = np.concatenate((tmpEdges, np.array([[LVSfirstIdx, maxEdge]])), axis=0)
         else: raise ValueError("Branch not implemented") 
 
 
@@ -141,7 +142,8 @@ def main():
     # Make the projection for every Purkinje tree and unify all
     print("----------Making Purkinje Tree Projection----------")
     if args.domainType == "BiV":
-        branches2Project = ["lva", "lvp", "lvs", "rvb"]
+        # branches2Project = ["lva", "lvp", "lvs", "rvb"]
+        branches2Project = ["lva", "lvp", "rvb"]  
     elif args.domainType == "LV":
         branches2Project = ["lva", "lvp", "lvs"]
     else: raise ValueError("domainType must be BiV or LV") 
