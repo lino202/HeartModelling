@@ -2,8 +2,8 @@ clear all;
 clc;
 close all;
 
-data_path = 'D:/Paper3/Cell_sims/final/he/Gaur/transmural_gaur/';
-experiment_name = 'gaur_gk1plus15_2307s_CL769_Vm';
+data_path = 'D:/Paper3/Cell_sims/final/he/Gaur/transmural_gaur/meijbord/';
+experiment_name = 'gaur_gk1_0135_650CL_1300s_Vm';
 
 % matlab_scripts
 % load(append(data_path, experiment_name, '.mat'));
