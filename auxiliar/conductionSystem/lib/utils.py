@@ -8,7 +8,6 @@ import itertools
 import copy
 import meshio
 import os
-import pandas as pd
 
 def getLinearPath(sourcePoint, targetPoint, step = 1):
     if type(sourcePoint) != np.ndarray: sourcePoint = np.array(sourcePoint)
