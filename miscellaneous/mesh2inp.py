@@ -13,9 +13,9 @@ validKeys = ["endo", "endoBZ", "mid", "midBZ", "epi", "epiBZ", "myo", "scar", "b
              "mid_endo", "mid_mid", "mid_epi", "apex_endo", "apex_mid", "apex_epi"]
 myo_flag = 1
 scar_flag = 8
-endo_flag = 3; base_endo_flag = 30; mid_endo_flag = 31; apex_endo_flag = 32
-mid_flag = 4;  base_mid_flag = 40; mid_mid_flag = 41; apex_mid_flag = 42
-epi_flag = 5;  base_epi_flag = 50; mid_epi_flag = 51; apex_epi_flag = 52
+endo_flag = 3; base_endo_flag = 11; mid_endo_flag = 12; apex_endo_flag = 13
+mid_flag = 4;  base_mid_flag = 14; mid_mid_flag = 15; apex_mid_flag = 16
+epi_flag = 5;  base_epi_flag = 17; mid_epi_flag = 18; apex_epi_flag = 19
 uncertain_flag = 6
 bz_flag = 7
 patch_flag = 9

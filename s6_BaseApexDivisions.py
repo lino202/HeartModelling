@@ -8,6 +8,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Options")
     parser.add_argument('--dataPath',type=str, required=True,  help='path to data')
+    parser.add_argument('--meshName',type=str, required=True,  help='Name of the .vtk mesh to use')
     parser.add_argument('--mid_base_perc',type=float, default=48, help="the percentage of the maximum value in the gradient for the mid_base threshold")
     parser.add_argument('--mid_apex_perc',type=float, default=83, help="the percentage of the maximum value in the gradient for the mid_apex threshold")
     args = parser.parse_args()
@@ -15,15 +16,15 @@ def main():
     validKeys = ["endo", "mid", "epi", "myo", "scar", "bz"]
     myo_flag = 1
     scar_flag = 8
-    endo_flag = 3; base_endo_flag = 30; mid_endo_flag = 31; apex_endo_flag = 32
-    mid_flag = 4;  base_mid_flag = 40; mid_mid_flag = 41; apex_mid_flag = 42
-    epi_flag = 5;  base_epi_flag = 50; mid_epi_flag = 51; apex_epi_flag = 52
+    endo_flag = 3; base_endo_flag = 11; mid_endo_flag = 12; apex_endo_flag = 13
+    mid_flag = 4;  base_mid_flag = 14; mid_mid_flag = 15; apex_mid_flag = 16
+    epi_flag = 5;  base_epi_flag = 17; mid_epi_flag = 18; apex_epi_flag = 19
     uncertain_flag = 6
     bz_flag = 7
 
     
     #Read Data
-    mesh       = meshio.read(os.path.join(args.dataPath, "mesh.vtk") )  #Mesh with layers point_data
+    mesh       = meshio.read(os.path.join(args.dataPath, "{}.vtk".format(args.meshName)) )  #Mesh with layers point_data
     meshLaplacians = meshio.read(os.path.join(args.dataPath, 'layers', "laplacians.vtk") )
     
     base_apex = meshLaplacians.point_data['base_apex']
@@ -53,7 +54,7 @@ def main():
 
     #SaveData
     mesh.point_data['layers'] = layers
-    mesh.write(os.path.join(args.dataPath, "mesh.vtk"))
+    mesh.write(os.path.join(args.dataPath, "{}.vtk".format(args.meshName)))
 
 if __name__ == '__main__':
     start = time.time()

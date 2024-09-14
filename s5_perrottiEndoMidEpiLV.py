@@ -101,5 +101,5 @@ if not args.infAsHealthy:
 meshOutVtk = meshio.Mesh(meshVtk.points, meshVtk.cells, point_data=point_data)
 meshOutVtk.write(os.path.join(args.dataPath, "{}.vtk".format(args.outName)))
 
-meshOutInp = meshio.Mesh(meshVtk.points, meshVtk.cells, point_sets=nsets)
-meshOutInp.write(os.path.join(args.dataPath, "{}.inp".format(args.outName)))
+# meshOutInp = meshio.Mesh(meshVtk.points, meshVtk.cells, point_sets=nsets)
+# meshOutInp.write(os.path.join(args.dataPath, "{}.inp".format(args.outName)))

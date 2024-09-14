@@ -31,7 +31,7 @@ def getGeodesicPath(meshPoints, meshFaces, sourcePoint, targetPoint):
     geoalg = geodesic.PyGeodesicAlgorithmExact(meshPoints, meshFaces)
     sourceIndex = isMemberIdxsRowWise(sourcePoint, meshPoints, tol=0.01)
     targetIndex = isMemberIdxsRowWise(targetPoint, meshPoints, tol=0.01)
-    if sourceIndex.size != 1 or targetIndex.size != 1: raise ValueError("More than one point indentified, tweak tol") 
+    if sourceIndex.size != 1 or targetIndex.size != 1: raise ValueError("More than one point indentified, are you using the right mesh for selecting the points?") 
 
     _, points = geoalg.geodesicDistance(targetIndex, sourceIndex)
     edges =  getEdges(points)

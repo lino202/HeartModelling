@@ -16,6 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description="Options")
     parser.add_argument('--data_path',type=str, required=True, help='path to data')
     parser.add_argument('--out_name',type=str, required=True, help='output file name')
+    parser.add_argument('--cs_name',type=str, required=True, help='Name of the cs subfolder withe final data for cs construction')
     parser.add_argument('--endo_per',type=int, required=True, help='endo percentage')
     parser.add_argument('--epi_per',type=int, required=True, help='epi percentage')
     parser.add_argument('--meanMag',type=int, required=True, help='number of nodes to average for magnitud of the projection')
@@ -29,11 +30,11 @@ def main():
     #Inputs
     lvSurfMesh         = meshio.read(os.path.join(args.data_path, "mesh", "lv_endo.obj"))  #normals corrected
     rvSurfMesh         = meshio.read(os.path.join(args.data_path, "mesh", "rv_endo.obj"))
-    csSubEndoMesh      = meshio.read(os.path.join(args.data_path, "stim", "cs", "cs_subendo.inp"))
-    csSubEndoIntraMesh = meshio.read(os.path.join(args.data_path, "stim", "cs", "cs_subendo_intramyo.inp"))
-    mesh               = meshio.read(os.path.join(args.data_path, "mesh.vtk"))
+    csSubEndoMesh      = meshio.read(os.path.join(args.data_path, "stim", "cs", args.cs_name, "cs_subendo.inp"))
+    csSubEndoIntraMesh = meshio.read(os.path.join(args.data_path, "stim", "cs", args.cs_name, "cs_subendo_intramyo.inp"))
+    mesh               = meshio.read(os.path.join(args.data_path, "mesh_mi.vtk"))
     laplaciansMesh     = meshio.read(os.path.join(args.data_path, "layers", "laplacians.vtk"))
-    outPath            = os.path.join(args.data_path, "stim", "cs")
+    outPath            = os.path.join(args.data_path, "stim", "cs", args.cs_name)
     outName            = args.out_name
 
 

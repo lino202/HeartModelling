@@ -119,8 +119,8 @@ def main():
     meshOutVtk = meshio.Mesh(baseMesh.points, baseMesh.cells, point_data=point_data)
     meshOutVtk.write(os.path.join(args.dataPath, "{}.vtk".format(args.outName)))
 
-    meshOutInp = meshio.Mesh(baseMesh.points, baseMesh.cells, point_sets=nsets)
-    meshOutInp.write(os.path.join(args.dataPath, "{}.inp".format(args.outName)))
+    # meshOutInp = meshio.Mesh(baseMesh.points, baseMesh.cells, point_sets=nsets)
+    # meshOutInp.write(os.path.join(args.dataPath, "{}.inp".format(args.outName)))
 
 if __name__ == '__main__':
     start = time.time()
