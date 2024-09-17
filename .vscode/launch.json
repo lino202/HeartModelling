@@ -14,7 +14,7 @@
             "program": "${workspaceFolder}/auxiliar/conductionSystem/getInitBundle_2.py",
             "console": "integratedTerminal",
             "args": [
-                "--dataPath",    "D:/Paper3/Models/invivo/mi/cx/sample7",
+                "--dataPath",    "D:/Paper3/Models/invivo/mi/cx/sample5",
                 "--domainType",  "BiV"
             ] 
         },
@@ -27,13 +27,38 @@
             "program": "${workspaceFolder}/auxiliar/conductionSystem/createPurkinjeBranch_3.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",    "D:/Paper3/Models/invivo/mi/cx/sample7/stim/cs",
+                "--data_path",    "D:/Paper3/Models/invivo/mi/cx/sample5/stim/cs",
                 "--endnode_name", "rvb_end",
                 "--length",       "4.5",
                 "--seglength",    "0.5",
                 "--repulsion",    "0.1",
                 "--angle",        "0.2",
                 "--iterations",   "30"
+            ] 
+        },
+
+
+        {
+            "name": "projectSubendo_5",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/auxiliar/conductionSystem/projectSubendo_5.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--data_path",           "D:/Paper3/Models/invivo/mi/cx/sample5",
+                "--cs_name",             "final",
+                "--out_name",            "cs_subendo",
+                "--endo_per",            "40",
+                "--epi_per",             "25",
+                "--subendo_window",      "50",
+                "--intramyo_window",     "3",
+                "--meanMag",             "5",
+                "--meanNor",             "15",
+                "--intramyo_percentage", "75",
+                "--lowMemoryDivision",   "10",
+                "--projectRV",
+                "--domainType",          "BiV",
+                "--debug_vtk"
             ] 
         },
 

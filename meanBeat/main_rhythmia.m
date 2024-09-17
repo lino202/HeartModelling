@@ -11,7 +11,7 @@ clc;
 % inspection, then you can create a .mat file with the variable segments
 % in samples for chopping the final signals
 
-data_path = '/home/maxi/Documents/PhD/Paper3/Study_2023_09_11_03-39/results/map2/';
+data_path = 'D:/Paper3/Experimental/Mapping/Study_13_12_2023/map2/';
 res_path = append(data_path, 'median_beats/');
 sample = append(data_path, 'beats.mat');
 load(sample);
@@ -95,6 +95,54 @@ for i=1:nLeads
 end
 saveas(gcf,append(res_path, 'median_beats.png'))
 
+
+%% Try to get a measure for the RR
+% We took the time_s which is the start of the signal and append contiguous
+% signals if they exist and the anterior overlaps the posterior and we use
+% the median per Lead which afterward we average.
+
+max_discrepancy_s = 0.2; % check accurately empirically this variable with the measured
+                         % computed percentage, for the rhythmia sample of
+                         % 12/2023 the accurate value is 0.2 as it seems
+                         % there is 1 beat/s, when we put 2 here the RR
+                         % increased and the computed percentage was 100%
+                         % as we are lacking one intermidiate beat in the
+                         % middle.
+
+rrs = zeros(1,nLeads);
+computed_perc = zeros(1,nLeads);
+for i=1:nLeads
+    idxs = find(similar_idxs(:,i));
+    contiguous_idxs = idxs((diff(idxs)==1));
+    
+    lead_rr = [];
+    for j=1:size(contiguous_idxs,1)
+        idx = contiguous_idxs(j);
+        
+        overlap_s = ((be_time_s(idx)+(size(ecg_preprocessed,2)/fs)) - be_time_s(idx+1)); % in seconds        
+        if abs(overlap_s) < max_discrepancy_s
+            [~, loc1] = max(abs(ecg_preprocessed(idx,:,i)));
+            [~, loc2] = max(abs(ecg_preprocessed(idx+1,:,i)));
+            rr = (be_time_s(idx+1)-be_time_s(idx)) + (loc2/fs) - (loc1/fs);
+            lead_rr = [lead_rr; rr];
+               
+        end
+        
+    end
+    computed_perc(i) = size(lead_rr,1)/size(contiguous_idxs,1)*100;
+    rrs(i) = median(lead_rr);
+    
+    
+end
+
+
+fprintf("The rrs are:")
+rrs
+fprintf("The mean rr is: %.6f\n", mean(rrs))
+fprintf("The computed percentage is:")
+computed_perc
+
+
 %% Homogeneize and save
 median_beats = (median_beats - min(median_beats,[],1)) ./ (max(median_beats,[],1)-min(median_beats,[],1));
 median_beats = median_beats - mean(median_beats);
@@ -111,4 +159,4 @@ ECG_time = 1:nSampleBeat;
 ECG_time = (ECG_time / fs) * 1000;
 ECG_headers = be_ecg_uni_channels(1,:);
 
-save(strcat(res_path,'median_beats.mat'),'median_beats','ECG_time','ECG_headers', 'fs', '-mat');
+save(strcat(res_path,'median_beats.mat'),'median_beats','ECG_time','ECG_headers', 'fs', 'rrs', '-mat');
