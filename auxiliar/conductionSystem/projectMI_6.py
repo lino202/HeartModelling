@@ -22,8 +22,8 @@ def main():
     parser.add_argument('--meanMag',type=int, required=True, help='number of nodes to average for magnitud of the projection')
     parser.add_argument('--meanNor',type=int, required=True, help='number of nodes to average for normal direction of the projection')
     parser.add_argument('--intramyo_percentage',type=int, help='percentage of endpoints to project to intramyo')
-    parser.add_argument('--epi_percentage',type=int, help='percentage of PMJs reduction')
-    parser.add_argument('--pmjs_reduction_percentage',type=int, help='percentage of endpoints to project to epi')
+    parser.add_argument('--epi_percentage',type=int, help='percentage of endpoints to project to epi')
+    parser.add_argument('--pmjs_reduction_percentage',type=int, help='percentage of PMJs reduction')
     parser.add_argument('--proj_linear', action='store_true', help='if especified, linear projection into intramid otherwise folows the already curved branch')
     args = parser.parse_args()
 

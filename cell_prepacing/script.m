@@ -3,7 +3,7 @@ clc;
 close all;
 
 data_path = 'D:/Paper3/Cell_sims/final/mi/';
-experiment_name = 'gaur_bz_gk1_550_1000CL_2000s_Vm';
+experiment_name = 'gaur_scar_898CL_4490s_Vm';
 
 % matlab_scripts
 % load(append(data_path, experiment_name, '.mat'));
@@ -12,6 +12,7 @@ experiment_name = 'gaur_bz_gk1_550_1000CL_2000s_Vm';
 % eletra_cell
 t = readtable(append(data_path, experiment_name, '.txt'), 'ReadVariableNames', false);
 V = t.Var2;
+% V = V(1:10:end);
 % time = t.Var1;
 
 % opencarp - bench
@@ -21,11 +22,11 @@ V = t.Var2;
 
 
 dt                      = 0.01;                                % ms
-stimPeriod              = 1000;                               % Stimulus period in ms
+stimPeriod              = 898;                               % Stimulus period in ms
 stimPeriod_samples      = (stimPeriod/dt);
 replevel                = 0.9;                                % repolarization level - APDX
 
-total_sim_time          = 2000; %s
+total_sim_time          = 4490; %s
 total_samples           = total_sim_time*1000/dt;
 
 V = V(1:total_samples)';

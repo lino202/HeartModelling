@@ -14,7 +14,7 @@
             "program": "${workspaceFolder}/auxiliar/conductionSystem/getInitBundle_2.py",
             "console": "integratedTerminal",
             "args": [
-                "--dataPath",    "D:/Paper3/Models/invivo/mi/cx/sample5",
+                "--dataPath",    "D:/Paper3/Models/invivo/he/sample3",
                 "--domainType",  "BiV"
             ] 
         },
@@ -122,5 +122,48 @@
                 "--useLayers"
             ] 
         },
+
+        {
+            "name": "segmentMIIntoAPDHeter",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/miscellaneous/segmentMIIntoAPDHeter.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshHE",    "D:/Paper3/Models/invivo/mi/cx/sample6/mesh_he.vtk",
+                "--meshMI",    "D:/Paper3/Models/invivo/mi/cx/sample6/mesh_mi.vtk",
+                "--outPath",   "D:/Paper3/Models/invivo/mi/cx/sample6/",
+            ] 
+        },
+
+
+        {
+            "name": "s7_cleanScar",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/s7_cleanScar.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshPath",   "D:/Paper3/Models/invivo/mi/cx/sample6/mesh_full_segmented.vtk",
+                "--outPath",    "D:/Paper3/Models/invivo/mi/cx/sample6",
+            ] 
+        },
+
+        {
+            "name": "addFibers2Mesh",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/auxiliar/rbm/addFibers2Mesh.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--dataPath",           "D:/Paper3/Models/invivo/mi/cx/sample6",
+                "--mesh3DPath",         "D:/Paper3/Models/invivo/mi/cx/sample6/mesh_mi_noscar.vtk",
+                "--fiberMeshName",      "BiV_fiber_60_minus60_60_minus60",
+                "--dataPointName",      "60_minus60_60_minus60_noscar",
+                "--writeFibersElectra",  
+            ] 
+        },
+
+
     ]
 }
