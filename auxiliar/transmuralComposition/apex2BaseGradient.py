@@ -9,7 +9,6 @@ import os
 import argparse
 import time
 import meshio
-from mpi4py import MPI
 
 def main():
     parser = argparse.ArgumentParser(description="Options")

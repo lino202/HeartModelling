@@ -5,6 +5,42 @@
     "version": "0.2.0",
     "configurations": [
 
+        {
+            "name": "ge_s1_getGEGeometry",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/ge_s1_getGEGeometry.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--dataPath",           "D:/Paper3/Models/invivo/mi/cx/sample6_X",
+                "--save", 
+            ] 
+        },
+
+
+        {
+            "name": "getShellandXDMF",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/auxiliar/getShellandXDMF.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--data_path",    "/mnt/d/Paper3/Models/invivo/mi/cx/sample6_X/mesh",
+                "--out_format",   "pvd"
+            ] 
+        },
+
+        {
+            "name": "fromVtu2Obj",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/auxiliar/fromVtu2Obj.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--data_path",    "/mnt/d/Paper3/Models/invivo/mi/cx/sample6_X/mesh"
+            ] 
+        },
+
         // ------------------------------------------------- CS -------------------------------------------------------------
 
         {
