@@ -44,13 +44,37 @@
         // ------------------------------------------------- CS -------------------------------------------------------------
 
         {
+            "name": "genPurkInitNodes_1",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/auxiliar/conductionSystem/genPurkInitNodes_1.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--data_path",           "/mnt/d/Paper3/Models/invivo/mi/cx/sample6_x/stim/cs",
+                
+                "--av_node",             "-25.7272","-80.8624805", "-10.1312665",
+                "--his_node",            "-27.7141","-83.3444","-13.9903",
+
+                "--rv_init_node",        "-31.4023","-88.7469","-16.5537",
+                "--rv_join_node",        "-34.287","-92.5892","-21.0941",
+                "--rvb",                 "-40.6466","-102.932","-31.8554",
+                
+                "--lv_init_node",        "-28.6849","-82.9917","-20.9949",
+                "--lv_join_node",        "-33.5747","-87.4816","-27.5169",
+                "--lva",                 "-49.7811","-99.0351","-62.025",
+                "--lvp",                 "-56.6048","-79.7293","-66.8594",
+            ] 
+        },
+
+
+        {
             "name": "getInitBundle_2",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/auxiliar/conductionSystem/getInitBundle_2.py",
             "console": "integratedTerminal",
             "args": [
-                "--dataPath",    "D:/Paper3/Models/invivo/he/sample3",
+                "--dataPath",    "/mnt/d/Paper3/Models/invivo/mi/cx/sample6_x",
                 "--domainType",  "BiV"
             ] 
         },
@@ -63,13 +87,13 @@
             "program": "${workspaceFolder}/auxiliar/conductionSystem/createPurkinjeBranch_3.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",    "D:/Paper3/Models/invivo/mi/cx/sample5/stim/cs",
-                "--endnode_name", "rvb_end",
-                "--length",       "4.5",
+                "--data_path",    "/mnt/d/Paper3/Models/invivo/mi/cx/sample6_x/stim/cs",
+                "--endnode_name", "lva_end",
+                "--length",       "5.",
                 "--seglength",    "0.5",
                 "--repulsion",    "0.1",
                 "--angle",        "0.2",
-                "--iterations",   "30"
+                "--iterations",   "18"
             ] 
         },
 
@@ -166,9 +190,9 @@
             "program": "${workspaceFolder}/miscellaneous/segmentMIIntoAPDHeter.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshHE",    "D:/Paper3/Models/invivo/mi/cx/sample6/mesh_he.vtk",
-                "--meshMI",    "D:/Paper3/Models/invivo/mi/cx/sample6/mesh_mi.vtk",
-                "--outPath",   "D:/Paper3/Models/invivo/mi/cx/sample6/",
+                "--meshHE",    "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh_he.vtk",
+                "--meshMI",    "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh_mi.vtk",
+                "--outPath",   "D:/Paper3/Models/invivo/mi/cx/sample6_x/",
             ] 
         },
 
@@ -180,8 +204,8 @@
             "program": "${workspaceFolder}/s7_cleanScar.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshPath",   "D:/Paper3/Models/invivo/mi/cx/sample6/mesh_full_segmented.vtk",
-                "--outPath",    "D:/Paper3/Models/invivo/mi/cx/sample6",
+                "--meshPath",   "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh_full_segmented.vtk",
+                "--outPath",    "D:/Paper3/Models/invivo/mi/cx/sample6_x",
             ] 
         },
 

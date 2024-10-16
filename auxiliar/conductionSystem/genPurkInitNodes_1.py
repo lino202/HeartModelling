@@ -13,7 +13,7 @@ parser.add_argument("--lv_init_node", type=float, required=True, nargs=3, help="
 parser.add_argument("--lv_join_node", type=float, required=True, nargs=3, help="lv bifurcation node coords 3D in the endo")
 parser.add_argument("--lva", type=float, required=True, nargs=3, help="lva endpoint")
 parser.add_argument("--lvp", type=float, required=True, nargs=3, help="lvp endpoint")
-parser.add_argument("--lvs", type=float, required=True, nargs=3, help="lv septum endpoint")
+# parser.add_argument("--lvs", type=float, required=True, nargs=3, help="lv septum endpoint")
 args = parser.parse_args()
 
 purkInitNodes =  os.path.join(args.data_path, "purkInitNodes.json")
@@ -35,7 +35,7 @@ Nodes = {
         "Join": args.lv_join_node,
         "lva": args.lva,
         "lvp": args.lvp,
-        "lvs": args.lvs,
+        # "lvs": args.lvs,
     }
 }
 

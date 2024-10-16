@@ -5,7 +5,7 @@ import meshio
 import numpy as np
 import copy
 import os
-from regions import regions
+from regions import regions, bz_flag, scar_flag
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--meshHE',type=str, required=True, help='path to data')
