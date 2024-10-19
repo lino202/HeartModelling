@@ -19,10 +19,10 @@ wsl = 1;
 [snodes, sfaces, snormals] = ReadObj(surfMesh); %from Meshlab
 
 regions=surfseeds(snodes(:,1:3),sfaces(:,1:3));
-cmdopt = '-q1.414 -V';
+cmdopt = '-p -q1.414 -V -D';
 tic
 if tetMaxVol>0 && edgeLength<=0
-    cmdopt = append(cmdopt, ' -a');
+    cmdopt = append(cmdopt, ' -a', num2str(tetMaxVol));
     if wsl
         cmdopt = append(cmdopt, ' -k');
         surf2meshWSL(snodes,sfaces,[],[],1,tetMaxVol,regions,[], 0, 'tetgen', cmdopt, outmesh, tetgenPath);
@@ -60,3 +60,5 @@ if ~wsl
     toc
 end
 
+
+%/mnt/c/Maxi/Programs/tetgen1.6.0/tetgen -pq1.2/30 -D -m -V -k -o/120 -O 2/7/9 /mnt/e/HeartModelling/Data_1/sampleLE_Control2/invivo/F19_Nico/cover/mi_smooth/mesh/tetmesh_new.poly

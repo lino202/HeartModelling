@@ -11,8 +11,8 @@ surfMesh   = append(dataPath, 'surface_F19_cover_super_smooth2.obj');
 workdir    = append(dataPath, 'mesh\');
 outmesh    = append(workdir, 'tetmesh_new');
 
-tetMaxVol = 0;
-edgeLength = 2;
+tetMaxVol = 2;
+edgeLength = 0;
 wsl = 1;
 
 % Read heart surface mesh and normalize normals
@@ -30,10 +30,10 @@ else                    %BiV
 end
 regions = regions(2,:);
 
-cmdopt = '-q1.414 -V';
+cmdopt = '-p -q1.414 -V -D';
 tic
 if tetMaxVol>0 && edgeLength<=0
-    cmdopt = append(cmdopt, ' -a');
+    cmdopt = append(cmdopt, ' -a', num2str(tetMaxVol));
     if wsl
         cmdopt = append(cmdopt, ' -k');
         surf2meshWSL(snodes,sfaces,[],[],1,tetMaxVol,regions,holes, 0, 'tetgen', cmdopt, outmesh, tetgenPath);

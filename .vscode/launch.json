@@ -40,6 +40,21 @@
                 "--data_path",    "/mnt/d/Paper3/Models/invivo/mi/cx/sample6_X/mesh"
             ] 
         },
+        
+        
+        {
+            "name": "mesh2inp",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/miscellaneous/mesh2inp.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--inPath",           "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/cs/final/cs_subendo_intramyo_rv.vtu",
+                "--outPath",          "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/cs/final/cs_subendo_intramyo_rv.inp",
+                // "--isMyo",
+                // "--useLayers", 
+            ] 
+        },
 
         // ------------------------------------------------- CS -------------------------------------------------------------
 
@@ -216,13 +231,48 @@
             "program": "${workspaceFolder}/auxiliar/rbm/addFibers2Mesh.py",
             "console": "integratedTerminal",
             "args": [
-                "--dataPath",           "D:/Paper3/Models/invivo/mi/cx/sample6",
-                "--mesh3DPath",         "D:/Paper3/Models/invivo/mi/cx/sample6/mesh_mi_noscar.vtk",
+                "--dataPath",           "D:/Paper3/Models/invivo/mi/cx/sample6_x",
+                "--mesh3DPath",         "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh_mi_noscar.vtk",
                 "--fiberMeshName",      "BiV_fiber_60_minus60_60_minus60",
                 "--dataPointName",      "60_minus60_60_minus60_noscar",
                 "--writeFibersElectra",  
             ] 
         },
+
+
+        // -----------------------------------Rhythmia Electro anatomical mapping (EAM)----------------------------------------------------------
+
+        {
+            "name": "generateModelStimulation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/rhythmia_analysis/generateModelStimulation.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--dataPath",          "D:/Paper3/Models/invivo/mi/cx/sample6_x", //Main data path
+                "--meshBiVvtk",        "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/EAM/mesh_mi_noscar_lv_eam_stim.vtk",
+                "--meshBiVinp",        "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/EAM/mesh_mi_noscar_lv_eam_stim.inp",
+                "--pointCloudPath",    "D:/Paper3/Experimental/Mapping/Study_13_12_2023/lvendo_map_pc_sample6_x.vtk", //point cloud from EAM aligned with the model and with points of interest
+                "--LVendoPath",        "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh/lv_endo_model_sample6_x.vtk",  //LV endo mesh with the scar zone as single scar_flag/zone
+                "--outPath",           "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/EAM", // where things are saved
+                "--uniActivationMin",  "-80",    // cut down activation 
+                "--uniActivationMax",  "50",     // cut up activation 
+                "--initial_stim_time", "18",   // this can be 0 or not depending when we want this to start, can be not zero if we use the RV CS
+                
+                // Projection
+                "--project_intramyo",
+                "--endo_per",            "40",
+                "--epi_per",             "25",
+                "--intramyo_window",     "3",
+                "--meanMag",             "5",
+                "--meanNor",             "15",
+
+                // Dropping points with uni activation lower than -80 which is percentile 1.0716925351071693
+                // Dropping points with uni activation greater than 50 which is percentile 98.85439763488544
+
+            ] 
+        },
+
 
 
     ]
