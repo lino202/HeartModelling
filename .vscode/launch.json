@@ -43,7 +43,7 @@
         
         
         {
-            "name": "mesh2inp",
+            "name": "mesh2inp_main",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/miscellaneous/mesh2inp.py",
@@ -185,7 +185,7 @@
 
 
         {
-            "name": "mesh2inp",
+            "name": "mesh2inp_paper3",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/miscellaneous/mesh2inp.py",
@@ -270,6 +270,51 @@
                 // Dropping points with uni activation lower than -80 which is percentile 1.0716925351071693
                 // Dropping points with uni activation greater than 50 which is percentile 98.85439763488544
 
+            ] 
+        },
+
+        // -------------------------------------------- Nico-Fany LV model -------------------------------------------- 
+
+        {
+            "name": "getMyriamCover",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/coverMyriam/getMyriamCover.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--coveredMeshPath",      "E:/HeartModelling/Data_1/sampleLE_Control2/invivo/F19_Nico/cover/mi_smooth/mesh/tetmesh.vtk",
+                "--layersMeshPath",       "E:/HeartModelling/Data_1/sampleLE_Control2/invivo/F19_Nico/no_cover/layers_he.vtk",
+                "--outPath",              "E:/HeartModelling/Data_1/sampleLE_Control2/invivo/F19_Nico/cover/mi_smooth/tetmesh_mi_smooth.vtk",
+                // "--atsMeshPath",          "",
+                "--fibsMeshPath",         "E:/HeartModelling/Data_1/sampleLE_Control2/invivo/F19_Nico/no_cover/RBM_LDRB/tetmesh_ldrb_v2023.3.0_endo60_epiminus60.vtk",
+                // "--pointDataMeshPath",    "",
+                "--infarctedcellDataMeshPath",     "E:/HeartModelling/Data_1/sampleLE_Control2/invivo/F19_Nico/cover/mi_smooth/tetmesh_ldrb_v2023.3.0_endo60_epiminus60_2mm.vtk",
+                
+                "--layersName",           "layers_tissues",
+                "--fibersNames",          "rbm_fibers_long", "rbm_fibers_sheet", "rbm_fibers_sheet_normal",
+                // "--atName",               "",
+                // "--pointDataNames",       "",
+                "--infarctedCellDataName",       "infarcted_cells",
+                
+                // "--usePlane",             "",
+                // "--planeOrigin",          "",
+                // "--planeNormal",          "",
+                "--tolDist",              "5",
+            ] 
+        },
+
+
+        {
+            "name": "mesh2inp_nicofany",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/miscellaneous/mesh2inp.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--inPath",    "E:/HeartModelling/Data_1/sampleLE_Control2/invivo/F19_Nico/cover/mi_smooth/tetmesh_mi_smooth.vtk",
+                "--outPath",    "E:/HeartModelling/Data_1/sampleLE_Control2/invivo/F19_Nico/cover/mi_smooth/tetmesh_mi_smooth.inp",
+                "--isMyo",
+                "--useLayers"
             ] 
         },
 

@@ -111,15 +111,15 @@ def main():
     # No Idxs in scar
     activation_idxs = activation_idxs[meshLVendo.point_data['layers'][activation_idxs]!=scar_flag]
 
-    activation_values = griddata(pc_mesh.points, pc_mesh.point_data['activation_unipolar'], meshLVendo.points[activation_idxs,:], method='nearest')
-    # activation_values = RBFInterpolator(pc_mesh.points, pc_mesh.point_data['activation_unipolar'])(meshLVendo.points[activation_idxs,:]) # this makes things smooth but last depolarization happens in another place
+    # activation_values = griddata(pc_mesh.points, pc_mesh.point_data['activation_unipolar'], meshLVendo.points[activation_idxs,:], method='nearest')
+    activation_values = RBFInterpolator(pc_mesh.points, pc_mesh.point_data['activation_unipolar'], neighbors=None)(meshLVendo.points[activation_idxs,:]) # this makes things smooth but last depolarization happens in another place
     activation_values = activation_values - np.min(activation_values) + args.initial_stim_time # Make zero and put to the initial start time desired
 
     # For Debugging 
-    # tmp = np.ones(meshLVendo.points.shape[0]) * -1
-    # tmp[activation_idxs] = activation_values
-    # meshOut = meshio.Mesh(meshLVendo.points, meshLVendo.cells, point_data={'interp_unipolar_activation': tmp})
-    # meshOut.write(os.path.join(args.dataPath, "test.vtk"))
+    tmp = np.ones(meshLVendo.points.shape[0]) * -1
+    tmp[activation_idxs] = activation_values
+    meshOut = meshio.Mesh(meshLVendo.points, meshLVendo.cells, point_data={'interp_unipolar_activation': tmp})
+    meshOut.write(os.path.join(args.dataPath, "test.vtk"))
 
     stim_points = meshLVendo.points[activation_idxs]
 

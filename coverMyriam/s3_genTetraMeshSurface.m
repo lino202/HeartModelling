@@ -71,3 +71,4 @@ if ~wsl
     toc
 end
 
+%/mnt/c/Maxi/Programs/tetgen1.6.0/tetgen -pq1.2/30 -D -m -V -k -o/120 -O 2/7/9 /mnt/e/HeartModelling/Data_1/sampleLE_Control2/invivo/F19_Nico/cover/mi_smooth/mesh/tetmesh_new.poly

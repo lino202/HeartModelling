@@ -12,11 +12,14 @@ parser.add_argument('--outPath',           type=str,   required=True, help='path
 parser.add_argument('--atsMeshPath',       type=str,   help='path to data')
 parser.add_argument('--fibsMeshPath',      type=str,   help='path to data')
 parser.add_argument('--pointDataMeshPath', type=str,   help='path to data')
+parser.add_argument('--infarctedcellDataMeshPath', type=str,   help='path to data')
+
 
 parser.add_argument('--layersName',        type=str)
 parser.add_argument('--fibersNames',       type=str, nargs='+')
 parser.add_argument('--atName',            type=str)
-parser.add_argument('--pointDataNames', type=str, nargs='+')
+parser.add_argument('--pointDataNames',    type=str, nargs='+')
+parser.add_argument('--infarctedCellDataName',    type=str)
 
 parser.add_argument('--usePlane',          action='store_true')
 parser.add_argument('--planeOrigin',       type=float, nargs=3)
@@ -52,10 +55,10 @@ coverElems = np.zeros(meshCovered.cells_dict["tetra"].shape[0])
 coverElems[coverElemsIdxs] = 1
 meshCovered.cell_data["cover_atLeastOneCoverNode"] = coverElems
 
-coverElemsIdxs = coverElemsIdxs[counts==4]
-coverElems = np.zeros(meshCovered.cells_dict["tetra"].shape[0])
-coverElems[coverElemsIdxs] = 1
-meshCovered.cell_data["cover_allCoverNodes"] = coverElems
+# coverElemsIdxs = coverElemsIdxs[counts==4]
+# coverElems = np.zeros(meshCovered.cells_dict["tetra"].shape[0])
+# coverElems[coverElemsIdxs] = 1
+# meshCovered.cell_data["cover_allCoverNodes"] = coverElems
 
 meshCovered.point_data["cover"] = coverNodes
 
@@ -100,6 +103,7 @@ if args.pointDataNames:
         layers2[realMyoIdxs] = values2
         meshCovered.point_data[pointDataName] = layers2
 
+
 #Interpolate ATs into coarse covered mesh
 if args.atName:
     meshAT = meshio.read(args.atsMeshPath)
@@ -109,6 +113,31 @@ if args.atName:
     ats2[:] = np.nan 
     ats2[realMyoIdxs] =  values2
     meshCovered.point_data["LAT"] = ats2 - np.nanmin(ats2)
+
+
+# Cell data interpolation can be use to interpolate cell data info for example the MI 
+# Here we suppose we only have one type of cells and that type is tets
+if args.infarctedCellDataName:
+
+    infarctedMeshCellData = meshio.read(args.infarctedcellDataMeshPath)
+    cells1 = infarctedMeshCellData.cells_dict["tetra"]
+    values1 = infarctedMeshCellData.cell_data[args.infarctedCellDataName][0]
+    points1 = np.mean(infarctedMeshCellData.points[cells1,:], axis=1)  # cell centers
+    values2 = RBFInterpolator(points1, values1, neighbors=100)(meshCovered.points)
+    
+    values2[values2<np.nanmin(values1)] = np.nanmin(values1)
+    values2[values2>np.nanmax(values1)] = np.nanmax(values1)
+    values2 = np.round(values2)
+        
+    # We have cell data on points of the covered mesh so pass to cells
+    # we make the cells with at least one node infarcted as infarcted 
+    cells2 = meshCovered.cells[0].data
+    idxs = np.unique(np.where(values2[cells2].astype(int)==1)[0])
+    idxs_cover = np.isin(idxs, np.where(meshCovered.cell_data["cover_atLeastOneCoverNode"]==1 )[0])
+    idxs = idxs[~idxs_cover]
+    infarcted_cells = np.zeros(cells2.shape[0])
+    infarcted_cells[idxs] = 1 
+    meshCovered.cell_data[args.infarctedCellDataName] = infarcted_cells
 
 
 meshCovered.write(args.outPath)
