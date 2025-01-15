@@ -37,8 +37,8 @@ def main():
     parser.add_argument('--pointCloudPath',       type=str, required=True, help='path to data')
     parser.add_argument('--LVendoPath',           type=str, required=True, help='path to data')
     parser.add_argument('--outPath',             type=str, required=True, help='path to data')
-    parser.add_argument('--uniActivationMin',     type=int, required=False)
-    parser.add_argument('--uniActivationMax',     type=int, required=False)
+    parser.add_argument('--biActivationMin',     type=int, required=False)
+    parser.add_argument('--biActivationMax',     type=int, required=False)
     parser.add_argument('--pmjRadious',           type=float, default=0.5, help='Pmj radious default is 0.5 which is good for tetgen created meshes of mean edge length 0.39 mm')
     parser.add_argument('--initial_stim_time',    type=float, default=0.0, help='This is the time of start the stim of the nodes activating first in th electro-anatomical mapping')
     
@@ -85,25 +85,25 @@ def main():
     pc_mesh = eraseFromPC(pc_mesh, 'voltage_bipolar', 1, pc_mesh.point_data['voltage_bipolar'].max()+1)
     # pc_mesh.write(os.path.join(args.dataPath, "cleanPC.vtk"))
 
-    # Delete points regarding min and max values of unipolar activation
-    if args.uniActivationMin and args.uniActivationMax == None:
-        percentile = (pc_mesh.point_data['activation_unipolar']<args.uniActivationMin).nonzero()[0].size / pc_mesh.point_data['activation_unipolar'].shape[0] * 100
-        print("Dropping points with uni activation lower than {} which is percentile {}".format(args.uniActivationMin, percentile))
-        pc_mesh = eraseFromPC(pc_mesh, 'activation_unipolar', args.uniActivationMin, pc_mesh.point_data['activation_unipolar'].max()+1)
+    # Delete points regarding min and max values of bipolar activation
+    if args.biActivationMin and args.biActivationMax == None:
+        percentile = (pc_mesh.point_data['activation_bipolar']<args.biActivationMin).nonzero()[0].size / pc_mesh.point_data['activation_bipolar'].shape[0] * 100
+        print("Dropping points with bipolar activation lower than {} which is percentile {}".format(args.biActivationMin, percentile))
+        pc_mesh = eraseFromPC(pc_mesh, 'activation_bipolar', args.biActivationMin, pc_mesh.point_data['activation_bipolar'].max()+1)
 
-    if args.uniActivationMax and args.uniActivationMin == None:
-        percentile = 100 - ((pc_mesh.point_data['activation_unipolar']>args.uniActivationMax).nonzero()[0].size / pc_mesh.point_data['activation_unipolar'].shape[0] * 100)
-        print("Dropping points with uni activation greater than {} which is percentile {}".format(args.uniActivationMax, percentile))
-        pc_mesh = eraseFromPC(pc_mesh, 'activation_unipolar', pc_mesh.point_data['activation_unipolar'].min()-1, args.uniActivationMax)
+    if args.biActivationMax and args.biActivationMin == None:
+        percentile = 100 - ((pc_mesh.point_data['activation_bipolar']>args.biActivationMax).nonzero()[0].size / pc_mesh.point_data['activation_bipolar'].shape[0] * 100)
+        print("Dropping points with bipolar activation greater than {} which is percentile {}".format(args.biActivationMax, percentile))
+        pc_mesh = eraseFromPC(pc_mesh, 'activation_bipolar', pc_mesh.point_data['activation_bipolar'].min()-1, args.biActivationMax)
 
-    if args.uniActivationMax and args.uniActivationMin:
-        percentilemin = (pc_mesh.point_data['activation_unipolar']<args.uniActivationMin).nonzero()[0].size / pc_mesh.point_data['activation_unipolar'].shape[0] * 100
-        percentilemax = 100 - ((pc_mesh.point_data['activation_unipolar']>args.uniActivationMax).nonzero()[0].size / pc_mesh.point_data['activation_unipolar'].shape[0] * 100)
-        print("Dropping points with uni activation lower than {} which is percentile {}".format(args.uniActivationMin, percentilemin))
-        print("Dropping points with uni activation greater than {} which is percentile {}".format(args.uniActivationMax, percentilemax))
-        pc_mesh = eraseFromPC(pc_mesh, 'activation_unipolar', args.uniActivationMin, args.uniActivationMax)
+    if args.biActivationMax and args.biActivationMin:
+        percentilemin = (pc_mesh.point_data['activation_bipolar']<args.biActivationMin).nonzero()[0].size / pc_mesh.point_data['activation_bipolar'].shape[0] * 100
+        percentilemax = 100 - ((pc_mesh.point_data['activation_bipolar']>args.biActivationMax).nonzero()[0].size / pc_mesh.point_data['activation_bipolar'].shape[0] * 100)
+        print("Dropping points with bipolar activation lower than {} which is percentile {}".format(args.biActivationMin, percentilemin))
+        print("Dropping points with bipolar activation greater than {} which is percentile {}".format(args.biActivationMax, percentilemax))
+        pc_mesh = eraseFromPC(pc_mesh, 'activation_bipolar', args.biActivationMin, args.biActivationMax)
 
-    # We now take the cleaned unipolar activation and select the nearest nodes in the mesh, then make an inteprolation of the activation unipolar from pc_mesh to
+    # We now take the cleaned bipolar activation and select the nearest nodes in the mesh, then make an inteprolation of the activation bipolar from pc_mesh to
     # the nearest nodes in the LV endo
     tree = KDTree(meshLVendo.points)
     _ , activation_idxs = tree.query(pc_mesh.points, k=1)
@@ -111,15 +111,24 @@ def main():
     # No Idxs in scar
     activation_idxs = activation_idxs[meshLVendo.point_data['layers'][activation_idxs]!=scar_flag]
 
-    # activation_values = griddata(pc_mesh.points, pc_mesh.point_data['activation_unipolar'], meshLVendo.points[activation_idxs,:], method='nearest')
-    activation_values = RBFInterpolator(pc_mesh.points, pc_mesh.point_data['activation_unipolar'], neighbors=None)(meshLVendo.points[activation_idxs,:]) # this makes things smooth but last depolarization happens in another place
+    # If we use the nearest neighbour
+    # activation_values = griddata(pc_mesh.points, pc_mesh.point_data['activation_bipolar'], meshLVendo.points[activation_idxs,:], method='nearest')
+    
+    # If we use the RBF
+    # with RBF we need to normalize the range to the one found in the experimental EAM
+    activation_values = RBFInterpolator(pc_mesh.points, pc_mesh.point_data['activation_bipolar'], neighbors=None)(meshLVendo.points[activation_idxs,:]) # this makes things smooth but last depolarization happens in another place
+    activation_values = (activation_values - np.min(activation_values)) / (np.max(activation_values) - np.min(activation_values))
+    activation_values = activation_values * (pc_mesh.point_data['activation_bipolar'].max() - pc_mesh.point_data['activation_bipolar'].min() )
+    
+
     activation_values = activation_values - np.min(activation_values) + args.initial_stim_time # Make zero and put to the initial start time desired
 
+
     # For Debugging 
-    tmp = np.ones(meshLVendo.points.shape[0]) * -1
-    tmp[activation_idxs] = activation_values
-    meshOut = meshio.Mesh(meshLVendo.points, meshLVendo.cells, point_data={'interp_unipolar_activation': tmp})
-    meshOut.write(os.path.join(args.dataPath, "test.vtk"))
+    # tmp = np.ones(meshLVendo.points.shape[0]) * -1
+    # tmp[activation_idxs] = activation_values
+    # meshOut = meshio.Mesh(meshLVendo.points, meshLVendo.cells, point_data={'interp_bipolar_activation': tmp})
+    # meshOut.write(os.path.join(args.outPath, "test.vtk"))
 
     stim_points = meshLVendo.points[activation_idxs]
 

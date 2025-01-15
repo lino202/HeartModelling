@@ -1,5 +1,6 @@
-scar_flag = 8
 bz_flag = 7
+scar_flag = 8
+patch_flag = 9
 
 regions = {"base_endo_flag": 11, "mid_endo_flag": 12, "apex_endo_flag": 13,
            "base_mid_flag": 14,  "mid_mid_flag": 15,  "apex_mid_flag": 16,

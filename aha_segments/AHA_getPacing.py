@@ -10,7 +10,7 @@ parser.add_argument('--meshIn',type=str, required=True, help='path to data')
 parser.add_argument('--outPath',type=str, required=True, help='output path')
 parser.add_argument('--endoLV',type=str, required=True)
 parser.add_argument('--endoRV',type=str, required=True)
-parser.add_argument('--stimRadious',type=float, default=1.5)
+parser.add_argument('--stimRadious',type=float, default=1.)
 parser.add_argument('--rvPacingCite',type=float, nargs=3, help="The unit is the same that the points of the mesh have")
 args = parser.parse_args()
 

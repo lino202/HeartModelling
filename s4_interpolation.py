@@ -54,7 +54,7 @@ def main():
         fibersNorm = np.linalg.norm(finalValues2, axis=1)
         finalValues2 = finalValues2 /  np.array([fibersNorm, fibersNorm, fibersNorm]).T
         outPath = "/".join(args.outPath.split("/")[:-1])
-        writeFibers4JSON(os.path.join(outPath, "fibersJsonElectra.txt"), finalValues2)
+        writeFibers4JSON(os.path.join(outPath, "fibersJsonElectra.json"), finalValues2)
     else: raise ValueError("Wrong valueName")
 
     mesh2.point_data[args.nameValue] = finalValues2

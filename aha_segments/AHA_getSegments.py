@@ -14,9 +14,18 @@ import os
 import copy
 from scipy.spatial.transform import Rotation as R
 from scipy.interpolate import griddata
+from scipy.spatial.distance import cdist
 import cv2 as cv
 sys.path.append(os.path.join(os.path.dirname(sys.path[0])))
-from auxiliar.conductionSystem.lib.utils import isMemberIdxsRowWise
+# from auxiliar.conductionSystem.lib.utils import isMemberIdxsRowWise
+
+def isMemberIdxsRowWise(arr1, arr2, tol = 1E-6, showMem=False):
+    if showMem: 
+        print("Required Memory: {} GB".format(4 *(arr1.shape[0]) * (arr2.shape[0]) / 1e9))
+    else:
+        arr1 = np.reshape(arr1, (-1,3))
+    idxs = np.min(cdist(arr2,arr1), axis=1) < tol
+    return idxs.nonzero()[0]
 
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--segLVRV',type=str, required=True, help='path to data')

@@ -19,6 +19,22 @@
 
 
         {
+            "name": "s4_interpolation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/s4_interpolation.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--dataPath1",           "E:/HeartModelling/Britt_ideal_ellipsoide/tetmesh_complete.vtk",
+                "--dataPath2",           "E:/HeartModelling/Britt_ideal_ellipsoide/only_part.vtk",
+               "--interpType",           "rbf",
+               "--neighbours",           "100",
+               "--nameValue",            "fibers_long",
+               "--outPath",              "E:/HeartModelling/Britt_ideal_ellipsoide/only_part_2.vtk",
+            ] 
+        },
+
+        {
             "name": "getShellandXDMF",
             "type": "debugpy",
             "request": "launch",
@@ -49,10 +65,10 @@
             "program": "${workspaceFolder}/miscellaneous/mesh2inp.py",
             "console": "integratedTerminal",
             "args": [
-                "--inPath",           "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/cs/final/cs_subendo_intramyo_rv.vtu",
-                "--outPath",          "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/cs/final/cs_subendo_intramyo_rv.inp",
-                // "--isMyo",
-                // "--useLayers", 
+                "--inPath",           "E:/HeartModelling/Britt_ideal_ellipsoide/mesh.vtk",
+                "--outPath",          "E:/HeartModelling/Britt_ideal_ellipsoide/mesh.inp",
+                "--isMyo",
+                "--useLayers", 
             ] 
         },
 
@@ -205,9 +221,9 @@
             "program": "${workspaceFolder}/miscellaneous/segmentMIIntoAPDHeter.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshHE",    "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh_he.vtk",
-                "--meshMI",    "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh_mi.vtk",
-                "--outPath",   "D:/Paper3/Models/invivo/mi/cx/sample6_x/",
+                "--meshHE",    "D:/Paper3/Models/invivo/mi/cx/sample7/mesh_he.vtk",
+                "--meshMI",    "D:/Paper3/Models/invivo/mi/cx/sample7/mesh_mi.vtk",
+                "--outPath",   "D:/Paper3/Models/invivo/mi/cx/sample7/",
             ] 
         },
 
@@ -219,8 +235,8 @@
             "program": "${workspaceFolder}/s7_cleanScar.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshPath",   "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh_full_segmented.vtk",
-                "--outPath",    "D:/Paper3/Models/invivo/mi/cx/sample6_x",
+                "--meshPath",   "D:/Paper3/Models/invivo/mi/la/sample8/mesh_full_segmented.vtk",
+                "--outPath",    "D:/Paper3/Models/invivo/mi/la/sample8",
             ] 
         },
 
@@ -231,8 +247,8 @@
             "program": "${workspaceFolder}/auxiliar/rbm/addFibers2Mesh.py",
             "console": "integratedTerminal",
             "args": [
-                "--dataPath",           "D:/Paper3/Models/invivo/mi/cx/sample6_x",
-                "--mesh3DPath",         "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh_mi_noscar.vtk",
+                "--dataPath",           "D:/Paper3/Models/invivo/mi/la/sample12",
+                "--mesh3DPath",         "D:/Paper3/Models/invivo/mi/la/sample12/mesh_mi_noscar.vtk",
                 "--fiberMeshName",      "BiV_fiber_60_minus60_60_minus60",
                 "--dataPointName",      "60_minus60_60_minus60_noscar",
                 "--writeFibersElectra",  
@@ -250,14 +266,14 @@
             "console": "integratedTerminal",
             "args": [
                 "--dataPath",          "D:/Paper3/Models/invivo/mi/cx/sample6_x", //Main data path
-                "--meshBiVvtk",        "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/EAM/mesh_mi_noscar_lv_eam_stim.vtk",
-                "--meshBiVinp",        "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/EAM/mesh_mi_noscar_lv_eam_stim.inp",
+                "--meshBiVvtk",        "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/EAM_RBF/mesh_mi_noscar_lv_eam_stim.vtk",
+                "--meshBiVinp",        "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/EAM_RBF/mesh_mi_noscar_lv_eam_stim.inp",
                 "--pointCloudPath",    "D:/Paper3/Experimental/Mapping/Study_13_12_2023/lvendo_map_pc_sample6_x.vtk", //point cloud from EAM aligned with the model and with points of interest
                 "--LVendoPath",        "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh/lv_endo_model_sample6_x.vtk",  //LV endo mesh with the scar zone as single scar_flag/zone
-                "--outPath",           "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/EAM", // where things are saved
-                "--uniActivationMin",  "-80",    // cut down activation 
-                "--uniActivationMax",  "50",     // cut up activation 
-                "--initial_stim_time", "18",   // this can be 0 or not depending when we want this to start, can be not zero if we use the RV CS
+                "--outPath",           "D:/Paper3/Models/invivo/mi/cx/sample6_x/stim/EAM_RBF", // where things are saved
+                "--biActivationMin",  "-80",    // cut down activation 
+                "--biActivationMax",  "60",     // cut up activation 
+                "--initial_stim_time", "32",   // this can be 0 or not depending when we want this to start, can be not zero if we use the RV CS
                 
                 // Projection
                 "--project_intramyo",
@@ -269,6 +285,9 @@
 
                 // Dropping points with uni activation lower than -80 which is percentile 1.0716925351071693
                 // Dropping points with uni activation greater than 50 which is percentile 98.85439763488544
+
+                // Dropping points with bipolar activation lower than -80 which is percentile 1.5890613451589062
+                // Dropping points with bipolar activation greater than 60 which is percentile 98.78048780487805
 
             ] 
         },
@@ -319,6 +338,83 @@
         },
 
 
+        //  --------------------------------- AHA segments --------------------------------------------------------------
+        {
+            "name": "AHA_getSegments",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/aha_segments/AHA_getSegments.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--segLVRV",    "D:/Paper3/Models/invivo/mi/cx/sample4/init/lvrv.seg.nrrd",
+                "--outPath",    "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/pc_aha.vtk",
+                // "--flippedLA",
+                "--show",
+            ] 
+        },
+
+
+        {
+            "name": "AHA_s4_interpolation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/s4_interpolation.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--dataPath1",           "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/pc_aha.vtk",
+                "--dataPath2",           "D:/Paper3/Models/invivo/mi/cx/sample4/mesh_full_segmented.vtk",
+               "--interpType",           "nearest",
+               "--neighbours",           "100",
+               "--nameValue",            "AHASegs",
+               "--outPath",              "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh.vtk",
+            ] 
+        },
+
+
+        
+        {
+            "name": "AHA_getPacing",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/aha_segments/AHA_getPacing.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshIn",          "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh.vtk",
+                "--outPath",         "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh.vtk",
+               "--endoLV",           "D:/Paper3/Models/invivo/mi/cx/sample4/mesh/lv_endo.obj",
+               "--endoRV",           "D:/Paper3/Models/invivo/mi/cx/sample4/mesh/rv_endo.obj",
+               "--rvPacingCite",     "-34.2593", "-17.2348", "-8.65834",   //mi/cx/sample4
+            ] 
+        },
+
+
+        {
+            "name": "AHA_getNoScar",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/aha_segments/AHA_getNoScar.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshNoScarVtk",   "D:/Paper3/Models/invivo/mi/cx/sample4/mesh_mi_noscar.vtk",
+                "--meshNoScarInp",   "D:/Paper3/Models/invivo/mi/cx/sample4/mesh_mi_noscar.inp",
+                "--meshAHA",      "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh.vtk",
+                "--outPath",      "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments",
+            ] 
+        },
+
+
+        {
+            "name": "AHA_getSimInVtk",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/aha_segments/AHA_getSimInVtk.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshIn",          "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh_no_scar.vtk",
+                "--outPath",         "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh_no_scar.vtk",
+               
+            ] 
+        },
 
     ]
 }

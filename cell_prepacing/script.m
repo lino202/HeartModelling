@@ -2,12 +2,12 @@ clear all;
 clc;
 close all;
 
-data_path = 'D:/MariaFlandes/Cellsims/';
-experiment_name = 'ohara_inatt_epi_1000CL_2000s_Vm';
+data_path = 'D:/Paper4/Cell_sims/paci2020/';
+experiment_name = 'electra_paci2020_stim_800s_dt0001_dtout001_noprepaced_Vm';
 
 % matlab_scripts
 % load(append(data_path, experiment_name, '.mat'));
-% V = vms;
+% V = Vm;
 
 % eletra_cell
 t = readtable(append(data_path, experiment_name, '.txt'), 'ReadVariableNames', false);
@@ -26,7 +26,7 @@ stimPeriod              = 1000;                               % Stimulus period 
 stimPeriod_samples      = (stimPeriod/dt);
 replevel                = 0.9;                                % repolarization level - APDX
 
-total_sim_time          = 2000; %s
+total_sim_time          = 800; %s
 total_samples           = total_sim_time*1000/dt;
 
 V = V(1:total_samples)';

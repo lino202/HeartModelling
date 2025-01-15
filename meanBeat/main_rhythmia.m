@@ -46,20 +46,20 @@ saveas(gcf,append(res_path, 'mid_beat_filtered.png'))
 
 %% Join signals and plot for selecting or get the correlation coeff
 
-% joined_ecgs = zeros(nBeats*nSampleBeat, nLeads);
-% for i=1:nBeats
-%     for j=1:nLeads
-%         joined_ecgs((i-1)*nSampleBeat+1:nSampleBeat*i,j) = ecg_preprocessed(i,:,j);
-%     end
-% end
+joined_ecgs = zeros(nBeats*nSampleBeat, nLeads);
+for i=1:nBeats
+    for j=1:nLeads
+        joined_ecgs((i-1)*nSampleBeat+1:nSampleBeat*i,j) = ecg_preprocessed(i,:,j);
+    end
+end
 
 % Plot for maybe selecting a window, this seems unfeasible in Rhythmia ECGs
 % as one beat is good and the following is chopped
-% for i=1:nLeads
-%     figure; % Open a new figure
-%     plot(joined_ecgs(:,i)); % Example plot command
-%     title(num2str(i))
-% end
+for i=1:nLeads
+    figure; % Open a new figure
+    plot(joined_ecgs(:,i)); % Example plot command
+    title(num2str(i))
+end
 
 % Use corr instead of xcorr as the crosscorrelation is also near 1 por
 % signals with different phase as in our case when we have the qrs and t or
