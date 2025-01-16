@@ -13,9 +13,9 @@ mesh = meshio.read(args.meshIn)
 
 stim_all_AHA = np.zeros(mesh.points.shape[0])
 for key in mesh.point_data.keys():
-    if 'stim_AHA' in key:
+    if 'stim_nodes_aha' in key:
         idxs = np.where(mesh.point_data[key]==1)[0]
-        stim_all_AHA[idxs] = int(key.split('stim_AHA')[-1])
+        stim_all_AHA[idxs] = int(key.split('stim_nodes_aha')[-1])
 
 mesh.point_data['stim_all_AHA'] = stim_all_AHA
 mesh.write(args.outPath)

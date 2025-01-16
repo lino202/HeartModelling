@@ -23,7 +23,7 @@ _ , idxs = tree.query(meshNoScarVtk.points, k=1)
 
 point_data_aha = meshAHA.point_data
 for key in point_data_aha.keys():
-    if 'stim_AHA' in key:
+    if 'stim_nodes_aha' in key:
         tmp = point_data_aha[key][idxs]
         meshNoScarVtk.point_data[key] = tmp
         meshNoScarInp.point_sets[key] = np.where(tmp == 1)[0]

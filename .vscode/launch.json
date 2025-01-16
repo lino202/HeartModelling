@@ -346,8 +346,8 @@
             "program": "${workspaceFolder}/aha_segments/AHA_getSegments.py",
             "console": "integratedTerminal",
             "args": [
-                "--segLVRV",    "D:/Paper3/Models/invivo/mi/cx/sample4/init/lvrv.seg.nrrd",
-                "--outPath",    "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/pc_aha.vtk",
+                "--segLVRV",    "D:/Paper3/Models/invivo/mi/la/sample12/init/lvrv.seg.nrrd",
+                "--outPath",    "D:/Paper3/Models/invivo/mi/la/sample12/aha_segments/pc_aha.vtk",
                 // "--flippedLA",
                 "--show",
             ] 
@@ -361,12 +361,12 @@
             "program": "${workspaceFolder}/s4_interpolation.py",
             "console": "integratedTerminal",
             "args": [
-                "--dataPath1",           "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/pc_aha.vtk",
-                "--dataPath2",           "D:/Paper3/Models/invivo/mi/cx/sample4/mesh_full_segmented.vtk",
+                "--dataPath1",           "D:/Paper3/Models/invivo/mi/la/sample10/aha_segments/pc_aha.vtk",
+                "--dataPath2",           "D:/Paper3/Models/invivo/mi/la/sample10/mesh_full_segmented.vtk",
                "--interpType",           "nearest",
                "--neighbours",           "100",
                "--nameValue",            "AHASegs",
-               "--outPath",              "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh.vtk",
+               "--outPath",              "D:/Paper3/Models/invivo/mi/la/sample10/aha_segments/mesh.vtk",
             ] 
         },
 
@@ -379,11 +379,12 @@
             "program": "${workspaceFolder}/aha_segments/AHA_getPacing.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshIn",          "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh.vtk",
-                "--outPath",         "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh.vtk",
-               "--endoLV",           "D:/Paper3/Models/invivo/mi/cx/sample4/mesh/lv_endo.obj",
-               "--endoRV",           "D:/Paper3/Models/invivo/mi/cx/sample4/mesh/rv_endo.obj",
-               "--rvPacingCite",     "-34.2593", "-17.2348", "-8.65834",   //mi/cx/sample4
+                "--meshIn",          "D:/Paper3/Models/invivo/mi/cx/sample6_x/aha_segments/mesh.vtk",
+                "--outPath",         "D:/Paper3/Models/invivo/mi/cx/sample6_x/aha_segments/mesh.vtk",
+               "--endoLV",           "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh/lv_endo.obj",
+               "--endoRV",           "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh/rv_endo.obj",
+            //    "--rvPacingCite",     "-34.2593", "-17.2348", "-8.65834",   //mi/cx/sample4
+                "--rvPacingCite",     "-29.9884", "-25.9971", "17.9299",   //mi/cx/sample5
             ] 
         },
 
@@ -395,10 +396,10 @@
             "program": "${workspaceFolder}/aha_segments/AHA_getNoScar.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshNoScarVtk",   "D:/Paper3/Models/invivo/mi/cx/sample4/mesh_mi_noscar.vtk",
-                "--meshNoScarInp",   "D:/Paper3/Models/invivo/mi/cx/sample4/mesh_mi_noscar.inp",
-                "--meshAHA",      "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh.vtk",
-                "--outPath",      "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments",
+                "--meshNoScarVtk",   "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh_mi_noscar.vtk",
+                "--meshNoScarInp",   "D:/Paper3/Models/invivo/mi/cx/sample6_x/mesh_mi_noscar.inp",
+                "--meshAHA",      "D:/Paper3/Models/invivo/mi/cx/sample6_x/aha_segments/mesh.vtk",
+                "--outPath",      "D:/Paper3/Models/invivo/mi/cx/sample6_x/aha_segments",
             ] 
         },
 
@@ -410,8 +411,8 @@
             "program": "${workspaceFolder}/aha_segments/AHA_getSimInVtk.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshIn",          "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh_no_scar.vtk",
-                "--outPath",         "D:/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh_no_scar.vtk",
+                "--meshIn",          "D:/Paper3/Models/invivo/mi/cx/sample6_x/aha_segments/mesh_no_scar.vtk",
+                "--outPath",         "D:/Paper3/Models/invivo/mi/cx/sample6_x/aha_segments/mesh_no_scar.vtk",
                
             ] 
         },

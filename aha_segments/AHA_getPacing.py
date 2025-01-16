@@ -47,7 +47,7 @@ pacingNodesLists = treeMesh.query_ball_point(pacingCites, r=args.stimRadious)
 for i, pacingList in enumerate(pacingNodesLists):
     tmp = np.zeros(mesh.points.shape[0])
     tmp[pacingList] = 1
-    mesh.point_data["stim_AHA{}".format(i+1)] = tmp
+    mesh.point_data["stim_nodes_aha{}".format(i+1)] = tmp
 
 #SAVE you can take to inp with mesh2inp
 mesh.write(args.outPath)
