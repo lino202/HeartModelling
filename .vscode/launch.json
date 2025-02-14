@@ -417,5 +417,34 @@
             ] 
         },
 
+
+        {
+            "name": "genS2AHA",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/generateSimFiles/genS2AHA.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--filePath",        "D:/Paper4/Simulations/invivo/mi/sample4/settings_mi_CL600_1800ms_stimAHA1_first3beats.json",
+                "--outPath",         "D:/Paper4/Simulations/invivo/mi/sample4/S2_280/settings_mi_CL600_1800ms_stimAHA1_S2_280.json",
+                "--S2_time",         "295"   
+               
+            ] 
+        },
+
+
+        {
+            "name": "genS2AHA_continue",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/generateSimFiles/genS2AHA_continue.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--filePath",        "D:/Paper4/Simulations/invivo/mi/sample4/S2_265/settings_mi_CL600_1800ms_stimAHA1_S2_265.json",
+                "--outPath",         "D:/Paper4/Simulations/invivo/mi/sample4/S2_265/settings_mi_CL600_1800ms_stimAHA1_S2_265_continue.json",
+               
+            ] 
+        },
+
     ]
 }
