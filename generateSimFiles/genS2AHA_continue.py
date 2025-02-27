@@ -9,6 +9,8 @@ import copy
 parser = argparse.ArgumentParser(description="Options")
 parser.add_argument('--filePath',type=str, required=True, help='path to data')
 parser.add_argument('--outPath',type=str, required=True, help='path to data')
+parser.add_argument('--subfolder',type=str, required=True, help='generally the subfolder name where the data is saved')
+parser.add_argument('--simtime',type=int, required=True, help='duration of the continued simulation')
 args = parser.parse_args()
 
 
@@ -23,7 +25,7 @@ data['simulation']['load cells state'] = data['output']['cells state']
 del data['tissue']['stimuli']
 
 # Change simulation time 
-data['physics']['reaction-diffusion']['simulation time'] = 835
+data['physics']['reaction-diffusion']['simulation time'] = args.simtime
 
 # Change savings
 results_folder = args.outPath.split('/')[-1].split('.')[0].split('_')
@@ -35,14 +37,14 @@ for key in data['output']['ensight'].keys():
         tmp = data['output']['ensight'][key][key2]
         tmp = tmp.split('/')
         tmp[-3] = results_folder
-        tmp.insert(10, 'S2_265')
+        tmp.insert(10, args.subfolder)
         tmp = '/'.join(tmp)
         data['output']['ensight'][key][key2] = tmp
 
 tmp = data['output']['cells state']
 tmp = tmp.split('/')
 tmp[-2] = results_folder
-tmp.insert(10, 'S2_265')
+tmp.insert(10, args.subfolder)
 tmp = '/'.join(tmp)
 data['output']['cells state'] = tmp
 
