@@ -1,3 +1,6 @@
+'''This code gets different attachment percentage by using cell-wise division which leads to a sew-tooth heart patch interface
+the better code for doing this attachment separation is getAttachPercDupliPoints.py which uses nodes duplication on the interface'''
+
 import os 
 import numpy as np
 import argparse

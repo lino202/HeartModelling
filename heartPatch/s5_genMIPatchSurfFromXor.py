@@ -1,3 +1,17 @@
+'''Once you have the xor and previously or not of the cleanning of the triangles of the interface we erase the tris in the inner of the heart
+that were part of the patch.
+
+For this we need a surf_xor.ply mesh where the faces of the patch were added with a color in meshlab previous the xor 
+So we add both meshes in meshlab and add to the mesh scaffold a color with Filters -> Color Creation -> Per Face Color Function and select a RED patch,
+Then we apply the xor an set the transfer face color to true and save this xor mesh as .ply
+
+Also there when saving the .ply we need to uncheck byte encoding (and check color of course!) as it gives an error when reading with meshio.
+
+Moreover, the meshHeart and meshPatch should be the exact mesh of the xor without the patch or the heart, respectively. You can obtain this from the xor mesh
+using  on meshlab Filters -> Selection -> Conditional Face Selection and putting fr == 255 for the patch and deleting all vertexs and faces. Then you can recompute the normals
+with Filters -> Normals .. -> Recompute normals coherently and when the shades of the heart/patch meshes are correct you export them and it is done :P'''
+
+
 import os 
 import numpy as np
 import argparse
@@ -5,9 +19,9 @@ import meshio
 from utils import getPointsEnclosedByMesh, delElemsFromMesh
 
 parser = argparse.ArgumentParser(description="Options")
-parser.add_argument('--meshXor',type=str, required=True, help='path to data mesh in ply with patch faces labels')
-parser.add_argument('--meshHeart',type=str, required=True, help='path to data mesh')
-parser.add_argument('--meshPatch',type=str, required=True, help='path to data mesh')
+parser.add_argument('--meshXor',type=str, required=True, help='path to data mesh in ply with color red on the patch faces')
+parser.add_argument('--meshHeart',type=str, required=True, help='this is the EXACT SAME epi mesh of the xor WITHOUT the patch (normals must be ok)')
+parser.add_argument('--meshPatch',type=str, required=True, help='this is the EXACT SAME patch mesh of the xor WITHOUT the heart/epi (normals must be ok)')
 parser.add_argument('--outPath',type=str, required=True, help='path to output file')
 args = parser.parse_args()
 
@@ -18,8 +32,8 @@ meshHeart = meshio.read(args.meshHeart)
 meshPatch = meshio.read(args.meshPatch)
 
 xorCellCentroids = np.mean(meshXor.points[meshXor.cells_dict["triangle"]], axis=1)
-idxFacePatch = np.where(meshXor.cell_data["patch_faces"][0]==255)[0]
-idxFaceHeart = np.where(meshXor.cell_data["patch_faces"][0]!=255)[0]
+idxFacePatch = np.where(meshXor.cell_data["red"][0]==255)[0]
+idxFaceHeart = np.where(meshXor.cell_data["red"][0]!=255)[0]
 xorHeartCentroids = xorCellCentroids[idxFaceHeart,:]
 xorPatchCentroids = xorCellCentroids[idxFacePatch,:]
 

@@ -6,8 +6,8 @@ from utils import writeFibers4JSON
 from scipy.interpolate import RBFInterpolator
 
 parser = argparse.ArgumentParser(description="Options")
-parser.add_argument('--meshFixed',type=str, required=True, help='path to data')
-parser.add_argument('--meshMoving',type=str, required=True, help='path to data')
+parser.add_argument('--meshFixed',type=str, required=True, help='this usually is the heart')
+parser.add_argument('--meshMoving',type=str, required=True, help='this usually ')
 # parser.add_argument('--surfFibers',type=str, required=True, help='path to data')
 args = parser.parse_args()
 

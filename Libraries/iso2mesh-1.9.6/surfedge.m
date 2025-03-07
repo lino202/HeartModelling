@@ -59,6 +59,13 @@ else
         end
 end
 openedge=edges(ix(qx),:);
+
+if ~isempty(openedge)
+    [elemid, ~]=ind2sub(size(f),ix(qx));
+    fprintf(1,append('WARNING you have holes in your mesh, check elems (first idx = 1) ', elemid, '\n'));
+end
+
+
 if(nargout>=2)
     [elemid, iy]=ind2sub(size(f),ix(qx));
 end

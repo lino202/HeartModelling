@@ -1,4 +1,3 @@
-#Manolo Doblare suggested this,
 #Patch region is fill with patch elems, but the nodes at the interface are 
 #defined as myocardium (scar, bz or epi) which seems the most logical choice
 

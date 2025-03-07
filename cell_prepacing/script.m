@@ -2,8 +2,8 @@ clear all;
 clc;
 close all;
 
-data_path = 'D:/Paper4/Cell_sims/gaur_600CL_1200s/';
-experiment_name = 'gaur_mid_mid_600CL_1200s_Vm';
+data_path = 'D:/Paper4/Cell_sims/paci2020_600CL_1200s/';
+experiment_name = 'paci2020_dt0001_stimamp55e7_start0_dur5_1000CL_1200s_Vm';
 
 % matlab_scripts
 % load(append(data_path, experiment_name, '.mat'));
@@ -22,7 +22,7 @@ V = t.Var2;
 
 
 dt                      = 0.01;                                % ms
-stimPeriod              = 600;                               % Stimulus period in ms
+stimPeriod              = 1000;                               % Stimulus period in ms
 stimPeriod_samples      = (stimPeriod/dt);
 replevel                = 0.9;                                % repolarization level - APDX
 

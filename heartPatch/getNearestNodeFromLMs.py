@@ -1,3 +1,8 @@
+'''This code is used if landmarks where created with slicer's fiducials for getting the nodes nearer to this fiducials
+but this is deprecated as we use all nodes in one face of the patch and the correspond nodes in the heart epicardium are 
+calculated consequently'''
+
+
 import os 
 import numpy as np
 import argparse

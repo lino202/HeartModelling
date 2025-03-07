@@ -446,5 +446,222 @@
             ] 
         },
 
+
+        // ----------------------------------------------- HEART-PATCH ------------------------------------------------------------------------
+
+        {
+            "name": "s1_getInitialLMs_EHT1",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s1_getInitialLMs.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshHeart",        "/mnt/d/Paper4/Models/sample5/epi_refine.obj",
+                "--meshScaffold",     "/mnt/d/Paper4/Models/sample5/EHT1/scaffolds/scaffold_shell.vtk",
+                "--radious",          "0.5",
+                "--outPath",          "/mnt/d/Paper4/Models/sample5/EHT1"
+               
+            ] 
+        },
+
+
+        {
+            "name": "s2_createInpModel_EHT1",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s2_createInpModel.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshHeart",        "/mnt/d/Paper4/Models/sample5/epi_refine.obj",
+                "--meshOnHeart",      "/mnt/d/Paper4/Models/sample5/EHT1/epi_refine_lms.vtk",
+                "--meshScaffold",     "/mnt/d/Paper4/Models/sample5/EHT1/scaffolds/scaffold_shell_lms.vtk",
+                "--outPath",          "/mnt/d/Paper4/Models/sample5/EHT1/abaqus/eht_projection.inp",
+                "--heartSurface",
+                // "--scaffoldSurface",
+            ] 
+        },
+
+        {
+            "name": "s1_getInitialLMs_EHT2",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s1_getInitialLMs.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshHeart",        "/mnt/d/Paper4/Models/sample5/epi_refine.obj",
+                "--meshScaffold",     "/mnt/d/Paper4/Models/sample5/EHT2/scaffolds/scaffold_shell.vtk",
+                "--radious",          "0.5",
+                "--outPath",          "/mnt/d/Paper4/Models/sample5/EHT2"
+               
+            ] 
+        },
+
+
+        {
+            "name": "s2_createInpModel_EHT2",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s2_createInpModel.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshHeart",        "/mnt/d/Paper4/Models/sample5/epi_refine.obj",
+                "--meshOnHeart",      "/mnt/d/Paper4/Models/sample5/EHT2/epi_refine_lms.vtk",
+                "--meshScaffold",     "/mnt/d/Paper4/Models/sample5/EHT2/scaffolds/scaffold_shell_lms.vtk",
+                "--outPath",          "/mnt/d/Paper4/Models/sample5/EHT2/abaqus/eht_projection.inp",
+                "--heartSurface",
+                // "--scaffoldSurface",
+            ] 
+        },
+
+        {
+            "name": "s3_cleanMeshFromAbaqus",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s3_cleanMeshFromAbaqus.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mesh",        "/mnt/d/Paper4/Models/sample5/EHT2/scaffolds/deformed_scaffold_mesh.obj",
+
+            ] 
+        },
+
+        {
+            "name": "s4_embedPatch",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s4_embedPatch.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshHeart",        "/mnt/d/Paper4/Models/sample5/epi_refine.obj",
+                "--meshScaffold",     "/mnt/d/Paper4/Models/sample5/EHT2/scaffolds/deformed_scaffold_mesh.obj",
+
+            ] 
+        },
+
+
+        {
+            "name": "s5_genMIPatchSurfFromXor",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s5_genMIPatchSurfFromXor.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshXor",     "/mnt/d/Paper4/Models/sample5/EHT2/surf_xor.ply",
+                "--meshHeart",   "/mnt/d/Paper4/Models/sample5/EHT2/surf_xor_epi.obj", //"/mnt/d/Paper3/Models/invivo/mi/cx/sample4/mesh/surfMesh.obj",
+                "--meshPatch",   "/mnt/d/Paper4/Models/sample5/EHT2/surf_xor_patch.obj",
+                "--outPath",     "/mnt/d/Paper4/Models/sample5/EHT2",
+            ] 
+        },
+
+        {
+            "name": "s6_distinguishPatchHeart",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s6_distinguishPatchHeart.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshHeartPatch",   "/mnt/d/Paper4/Models/sample5/EHT2/final_mipatch_surfmesh.obj",
+                "--meshPatch",        "/mnt/d/Paper4/Models/sample5/EHT2/final_shell.obj",
+            ] 
+        },
+
+        //from here you can use a script as no manual interaction should be needed
+        {
+            "name": "s8_getLayersFibers",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s8_getLayersFibers.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--heartPatchMesh",   "/mnt/d/Paper4/Models/sample4/EHT/mesh/tetmesh.vtk",
+                "--layersMesh",       "/mnt/d/Paper3/Models/invivo/mi/cx/sample4/mesh_full_segmented.vtk",
+                "--fibsMesh",         "/mnt/d/Paper3/Models/invivo/mi/cx/sample4/mesh_mi.vtk",
+                "--outPath",          "/mnt/d/Paper4/Models/sample4/EHT/mesh/tetmesh.vtk",
+            ] 
+        },
+
+        {
+            "name": "s9_getPatchRandFibers",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s9_getPatchRandFibers.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshHeart",        "/mnt/d/Paper4/Models/sample4/EHT/epi_refine.obj",
+                "--meshMIPatch",      "/mnt/d/Paper4/Models/sample4/EHT/mesh/tetmesh.vtk",
+                "--outPath",          "/mnt/d/Paper4/Models/sample4/EHT/mesh/tetmesh.vtk",
+            ] 
+        },
+
+        // now we need to clean the scar, clean the fibers of the scar and make the AHA stim nodes for this mesh
+        {
+            "name": "s10_cleanScar",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/s7_cleanScar.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshPath",        "/mnt/d/Paper4/Models/sample4/EHT/mesh/tetmesh.vtk",
+                "--outPath",         "/mnt/d/Paper4/Models/sample4/EHT/mesh",
+            ] 
+        },
+
+        {
+            "name": "s11_getFibersNoScar",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s11_getFibersNoScar.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshNoScar",   "/mnt/d/Paper4/Models/sample4/EHT/mesh/mesh_mi_noscar.vtk",
+                "--meshFibers",   "/mnt/d/Paper4/Models/sample4/EHT/mesh/tetmesh.vtk",
+                "--outPath",      "/mnt/d/Paper4/Models/sample4/EHT/mesh",
+
+            ] 
+        },
+
+        {
+            "name": "s12_AHA_getNoScar",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s12_AHA_getNoScar.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshNoScarVtk",   "/mnt/d/Paper4/Models/sample4/EHT/mesh/mesh_mi_noscar.vtk",
+                "--meshNoScarInp",   "/mnt/d/Paper4/Models/sample4/EHT/mesh/mesh_mi_noscar.inp",
+                "--meshAHA",         "/mnt/d/Paper3/Models/invivo/mi/cx/sample4/aha_segments/mesh.vtk",
+                "--outPath",         "/mnt/d/Paper4/Models/sample4/EHT/mesh",
+            ] 
+        },
+
+
+        {
+            "name": "s13_AHA_getSimInVtk",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/aha_segments/AHA_getSimInVtk.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshIn",          "/mnt/d/Paper4/Models/sample4/EHT/mesh/mesh_no_scar.vtk",
+                "--outPath",         "/mnt/d/Paper4/Models/sample4/EHT/mesh/mesh_no_scar.vtk",
+               
+            ] 
+        },
+
+
+        {
+            "name": "s14_addPatch2inp",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/heartPatch/s14_addPatch2inp.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshNoScarVtk",          "/mnt/d/Paper4/Models/sample4/EHT1/mesh/mesh_no_scar.vtk",
+                "--meshNoScarInp",         "/mnt/d/Paper4/Models/sample4/EHT1/mesh/mesh_no_scar.inp",
+               
+            ] 
+        },
+
+
     ]
 }

@@ -1,12 +1,17 @@
-function [ nodes, faces, normals ] = ReadObj(filename)
+function [ nodes, faces, normals ] = ReadObj(filename, hasColor)
 %READSURFOBJ Summary of this function goes here
 %   Detailed explanation goes here
+% You need to pass a .obj from meshlab typically where the normals where
+% saved, and if you have colors remember your nodes will have 6 components
+% x,y,z and r,g,b
 
 % Check filepath's extension
 [~, ~, ext] = fileparts(filename);
 if (~strcmp(ext,'.obj'))
     error('Given filename should have .obj extension');
 end
+
+if nargin < 2, hasColor = false; end
 
 % Open the file
 fid=fopen(filename, 'rt');
@@ -25,7 +30,12 @@ for i = 1:11
     end
 end
 
-nodes = zeros(nodes_num,3);
+if hasColor
+    nodes = zeros(nodes_num,6);
+else
+    nodes = zeros(nodes_num,3);
+end
+
 normals = zeros(nodes_num,3);
 faces = zeros(faces_num,3);
 
@@ -33,7 +43,12 @@ for i = 1:nodes_num
     ln = fgets(fid);
     normals(i,:) = sscanf(ln, 'vn %f %f %f\n')';
     ln = fgets(fid);
-    nodes(i,:) = sscanf(ln, 'v %f %f %f\n')';
+    if hasColor
+        nodes(i,:) = sscanf(ln, 'v %f %f %f %f %f %f\n')';
+    else
+        nodes(i,:) = sscanf(ln, 'v %f %f %f\n')';
+    end
+    
 end
 ln = fgets(fid);
 ln = fgets(fid);

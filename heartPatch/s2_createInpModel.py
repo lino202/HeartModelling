@@ -7,15 +7,13 @@ parser.add_argument('--meshHeart',type=str, required=True, help='path to data')
 parser.add_argument('--meshOnHeart',type=str, required=True, help='path to data')
 parser.add_argument('--meshScaffold',type=str, required=True, help='path to data')
 parser.add_argument('--outPath',type=str, required=True, help='path to data')
-parser.add_argument('--heartSurface', action='store_true', help='path to data')
-parser.add_argument('--scaffoldSurface', action='store_true', help='path to data')
+parser.add_argument('--heartSurface', action='store_true', help='If heart is surface')
+parser.add_argument('--scaffoldSurface', action='store_true', help='If scaffold is surface')
 args = parser.parse_args()
 
 meshHeart = meshio.read(args.meshHeart)
 meshOnHeart = meshio.read(args.meshOnHeart)
 meshScaffold = meshio.read(args.meshScaffold)
-scaffoldPoints = meshScaffold.points
-heartPoints = meshHeart.points
 lmsDiff = {}
 for key in meshOnHeart.point_data.keys():
     if not "all" in key and ("LM" in key or "lm" in key) and not "lms" in key:
