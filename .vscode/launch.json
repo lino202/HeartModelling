@@ -417,6 +417,19 @@
             ] 
         },
 
+        // Generate simulation settings files for ELECTRA with stim AHA---------------------------------
+        {
+            "name": "genS1AHAFromTemplate",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/generateSimFiles/genS1AHAFromTemplate.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--templatePath",   "/mnt/d/Paper4/Simulations/invivo/mi_EHT1/sample4/settings_mi_CL600_1800ms_stimAHA1_first3beats.json",
+                "--stimAHA",         "2",  
+               
+            ] 
+        },
 
         {
             "name": "genS2AHA",
@@ -456,10 +469,10 @@
             "program": "${workspaceFolder}/heartPatch/s1_getInitialLMs.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshHeart",        "/mnt/d/Paper4/Models/sample5/epi_refine.obj",
-                "--meshScaffold",     "/mnt/d/Paper4/Models/sample5/EHT1/scaffolds/scaffold_shell.vtk",
+                "--meshHeart",        "/mnt/d/Paper4/Models/sample7/epi_refine.obj",
+                "--meshScaffold",     "/mnt/d/Paper4/Models/sample7/EHT1/scaffolds/scaffold_shell.vtk",
                 "--radious",          "0.5",
-                "--outPath",          "/mnt/d/Paper4/Models/sample5/EHT1"
+                "--outPath",          "/mnt/d/Paper4/Models/sample7/EHT1"
                
             ] 
         },
@@ -472,10 +485,10 @@
             "program": "${workspaceFolder}/heartPatch/s2_createInpModel.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshHeart",        "/mnt/d/Paper4/Models/sample5/epi_refine.obj",
-                "--meshOnHeart",      "/mnt/d/Paper4/Models/sample5/EHT1/epi_refine_lms.vtk",
-                "--meshScaffold",     "/mnt/d/Paper4/Models/sample5/EHT1/scaffolds/scaffold_shell_lms.vtk",
-                "--outPath",          "/mnt/d/Paper4/Models/sample5/EHT1/abaqus/eht_projection.inp",
+                "--meshHeart",        "/mnt/d/Paper4/Models/sample7/epi_refine.obj",
+                "--meshOnHeart",      "/mnt/d/Paper4/Models/sample7/EHT1/epi_refine_lms.vtk",
+                "--meshScaffold",     "/mnt/d/Paper4/Models/sample7/EHT1/scaffolds/scaffold_shell_lms.vtk",
+                "--outPath",          "/mnt/d/Paper4/Models/sample7/EHT1/abaqus/eht_projection.inp",
                 "--heartSurface",
                 // "--scaffoldSurface",
             ] 
@@ -488,10 +501,10 @@
             "program": "${workspaceFolder}/heartPatch/s1_getInitialLMs.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshHeart",        "/mnt/d/Paper4/Models/sample5/epi_refine.obj",
-                "--meshScaffold",     "/mnt/d/Paper4/Models/sample5/EHT2/scaffolds/scaffold_shell.vtk",
+                "--meshHeart",        "/mnt/d/Paper4/Models/sample7/epi_refine.obj",
+                "--meshScaffold",     "/mnt/d/Paper4/Models/sample7/EHT2/scaffolds/scaffold_shell.vtk",
                 "--radious",          "0.5",
-                "--outPath",          "/mnt/d/Paper4/Models/sample5/EHT2"
+                "--outPath",          "/mnt/d/Paper4/Models/sample7/EHT2"
                
             ] 
         },
@@ -504,10 +517,10 @@
             "program": "${workspaceFolder}/heartPatch/s2_createInpModel.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshHeart",        "/mnt/d/Paper4/Models/sample5/epi_refine.obj",
-                "--meshOnHeart",      "/mnt/d/Paper4/Models/sample5/EHT2/epi_refine_lms.vtk",
-                "--meshScaffold",     "/mnt/d/Paper4/Models/sample5/EHT2/scaffolds/scaffold_shell_lms.vtk",
-                "--outPath",          "/mnt/d/Paper4/Models/sample5/EHT2/abaqus/eht_projection.inp",
+                "--meshHeart",        "/mnt/d/Paper4/Models/sample7/epi_refine.obj",
+                "--meshOnHeart",      "/mnt/d/Paper4/Models/sample7/EHT2/epi_refine_lms.vtk",
+                "--meshScaffold",     "/mnt/d/Paper4/Models/sample7/EHT2/scaffolds/scaffold_shell_lms.vtk",
+                "--outPath",          "/mnt/d/Paper4/Models/sample7/EHT2/abaqus/eht_projection.inp",
                 "--heartSurface",
                 // "--scaffoldSurface",
             ] 
@@ -520,7 +533,7 @@
             "program": "${workspaceFolder}/heartPatch/s3_cleanMeshFromAbaqus.py",
             "console": "integratedTerminal",
             "args": [
-                "--mesh",        "/mnt/d/Paper4/Models/sample5/EHT2/scaffolds/deformed_scaffold_mesh.obj",
+                "--mesh",        "/mnt/d/Paper4/Models/sample7/EHT2/scaffolds/deformed_scaffold_mesh.obj",
 
             ] 
         },
@@ -532,8 +545,8 @@
             "program": "${workspaceFolder}/heartPatch/s4_embedPatch.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshHeart",        "/mnt/d/Paper4/Models/sample5/epi_refine.obj",
-                "--meshScaffold",     "/mnt/d/Paper4/Models/sample5/EHT2/scaffolds/deformed_scaffold_mesh.obj",
+                "--meshHeart",        "/mnt/d/Paper4/Models/sample7/epi_refine.obj",
+                "--meshScaffold",     "/mnt/d/Paper4/Models/sample7/EHT2/scaffolds/deformed_scaffold_mesh.obj",
 
             ] 
         },
@@ -546,10 +559,10 @@
             "program": "${workspaceFolder}/heartPatch/s5_genMIPatchSurfFromXor.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshXor",     "/mnt/d/Paper4/Models/sample5/EHT2/surf_xor.ply",
-                "--meshHeart",   "/mnt/d/Paper4/Models/sample5/EHT2/surf_xor_epi.obj", //"/mnt/d/Paper3/Models/invivo/mi/cx/sample4/mesh/surfMesh.obj",
-                "--meshPatch",   "/mnt/d/Paper4/Models/sample5/EHT2/surf_xor_patch.obj",
-                "--outPath",     "/mnt/d/Paper4/Models/sample5/EHT2",
+                "--meshXor",     "/mnt/d/Paper4/Models/sample7/EHT2/surf_xor.ply",
+                "--meshHeart",   "/mnt/d/Paper4/Models/sample7/EHT2/surf_xor_epi.obj", //"/mnt/d/Paper3/Models/invivo/mi/cx/sample4/mesh/surfMesh.obj",
+                "--meshPatch",   "/mnt/d/Paper4/Models/sample7/EHT2/surf_xor_patch.obj",
+                "--outPath",     "/mnt/d/Paper4/Models/sample7/EHT2",
             ] 
         },
 
@@ -560,8 +573,8 @@
             "program": "${workspaceFolder}/heartPatch/s6_distinguishPatchHeart.py",
             "console": "integratedTerminal",
             "args": [
-                "--meshHeartPatch",   "/mnt/d/Paper4/Models/sample5/EHT2/final_mipatch_surfmesh.obj",
-                "--meshPatch",        "/mnt/d/Paper4/Models/sample5/EHT2/final_shell.obj",
+                "--meshHeartPatch",   "/mnt/d/Paper4/Models/sample7/EHT2/final_mipatch_surfmesh.obj",
+                "--meshPatch",        "/mnt/d/Paper4/Models/sample7/EHT2/final_shell.obj",
             ] 
         },
 
