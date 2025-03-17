@@ -1,3 +1,7 @@
+'''This code project the nodes set as contacting nodes of a patch into the heart for being used with s2_createInpModel.py in order to pass
+this to abaqus and set imposed deformation
+BUT the script s1_2_deformPatch usually works betters and is simpler than do it what was described above'''
+
 import os 
 import numpy as np
 import argparse

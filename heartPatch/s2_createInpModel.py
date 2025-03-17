@@ -1,3 +1,6 @@
+'''This code makes the .inp file for launching an abaqus job from the command line for imposing deformations
+BUT the script s1_2_deformPatch usually works betters and is simpler than do this'''
+
 import numpy as np
 import argparse
 import meshio

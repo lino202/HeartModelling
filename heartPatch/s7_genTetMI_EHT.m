@@ -15,10 +15,10 @@ clear; close all; clc;
 addpath('../matlabFunctions', '../libraries/iso2mesh-1.9.6');
 
 tetgenPath    = '/home/maxi/Programs/tetgen1.6.0/tetgen';
-dataPath      = 'D:/Paper4/Models/sample7/EHT2/';
+dataPath      = 'D:/Paper4/Models/sample12/EHT2/';
 meshXorSurf   = append(dataPath, "mesh/final_mipatch_surfmesh.obj");
 meshScaffSurf = append(dataPath, "mesh/final_shell.obj");
-meshHeartSurf = 'D:/Paper3/Models/invivo/mi/cx/sample7/mesh/surfMesh.obj';
+meshHeartSurf = 'D:/Paper3/Models/invivo/mi/la/sample12/mesh/surfMesh.obj';
 outmesh       = append(dataPath, "mesh/tetmesh");
 
 edgeLength = [0.3, 0.13]; %0.3,0.13 for paper4, [heart, eht]

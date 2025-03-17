@@ -36,5 +36,5 @@ for key in point_data_aha.keys():
         meshNoScarInp.point_sets['stim_nodes_aha{}'.format(number)] = np.where(tmp == 1)[0]
 
 #SAVE
-meshNoScarVtk.write(os.path.join(args.outPath, 'mesh_no_scar.vtk'))
-meshNoScarInp.write(os.path.join(args.outPath, 'mesh_no_scar.inp'))
+meshNoScarVtk.write(args.outPath + '.vtk')
+meshNoScarInp.write(args.outPath + '.inp')
