@@ -41,7 +41,7 @@
             "program": "${workspaceFolder}/auxiliar/getShellandXDMF.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",    "/mnt/d/Paper3/Models/invivo/mi/cx/sample6_X/mesh",
+                "--data_path",    "/mnt/d/Cinc2025/mesh",
                 "--out_format",   "pvd"
             ] 
         },
@@ -53,7 +53,7 @@
             "program": "${workspaceFolder}/auxiliar/fromVtu2Obj.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",    "/mnt/d/Paper3/Models/invivo/mi/cx/sample6_X/mesh"
+                "--data_path",    "/mnt/d/Cinc2025/mesh"
             ] 
         },
         
