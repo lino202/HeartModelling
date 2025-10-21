@@ -257,13 +257,13 @@
         },
 
 
-        // -----------------------------------Rhythmia Electro anatomical mapping (EAM)----------------------------------------------------------
+        // ----------------------------------- Electro anatomical mapping (EAM) analysis----------------------------------------------------------
 
         {
             "name": "generateModelStimulation",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/rhythmia_analysis/generateModelStimulation.py",
+            "program": "${workspaceFolder}/eam_analysis/generateModelStimulation.py",
             "console": "integratedTerminal",
             "args": [
                 "--dataPath",          "D:/Paper3/Models/invivo/mi/cx/sample6_x", //Main data path
@@ -296,10 +296,10 @@
         // -------------------------------------------- Nico-Fany LV model -------------------------------------------- 
 
         {
-            "name": "getMyriamCover",
+            "name": "getCover",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/coverMyriam/getMyriamCover.py",
+            "program": "${workspaceFolder}/cover/getCover.py",
             "console": "integratedTerminal",
             "args": [
                 "--coveredMeshPath",      "E:/HeartModelling/Data_1/sampleLE_Control2/invivo/F19_Nico/cover/mi_smooth/mesh/tetmesh.vtk",

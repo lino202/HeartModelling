@@ -47,7 +47,7 @@ if args.usePlane:
     idxsNoCoverByPlane = np.where(dots < 0)[0]
     coverNodes[idxsNoCoverByPlane] = 0
 
-#As myriam needs cover elements we calculated the elems with all four nodes
+# As cover elements are needed, we calculated the elems with all four nodes
 #set as cover node
 coverNodesIdxs = np.where(coverNodes==1)[0]
 coverElemsIdxs, counts = np.unique(np.isin(meshCovered.cells_dict["tetra"], coverNodesIdxs).nonzero()[0], return_counts=True)

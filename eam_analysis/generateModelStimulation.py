@@ -1,5 +1,5 @@
-"""This code takes a point cloud (pc) of the measured bipolar and unipolar activation and voltages from Rhythmia and the BiV and the LV (for now) surface meshes 
-where the activation found in Rhytmia is going to be projected onto the mesh for activation. The Rhythmia's point cloud should be already aligned
+"""This code takes a point cloud (pc) of the measured bipolar and unipolar activation and voltages from EAM and the BiV and the LV (for now) surface meshes 
+where the activation found in EAM is going to be projected onto the mesh for activation. The EAM's point cloud should be already aligned
 with the other meshes and only points near the mesh should exist. The point cloud should not be neccesarily clean in terms of activation or voltage
 as we try somethings here for cleaning it"""
 
@@ -78,7 +78,7 @@ def main():
     del pc
 
     # First we clean the pc, we erase the low voltage arrays (bad contact or dense scar) using the bipolar voltage for avoiding the far-field effect on the 
-    # unipolar electrodes, also rhythmia's good interelectrode distance (2.6 mm) helps with other bipolar related errors 
+    # unipolar electrodes, also EAM's good interelectrode distance (2.6 mm) helps with other bipolar related errors 
     # doi: 10.1111/pace.12581 and doi: 10.1111/pace.12581
 
     # Erase <1mV in bipolar voltage

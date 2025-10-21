@@ -17,6 +17,8 @@ mesh. You can make this piece of heart epicardium filled with more triangles (re
 Then this code makes the inp file for from the Abaqus command line launch the deformation. Take into account the deformation cannot be a alot so somew parts of the patch can go inside the epi mesh 
 in order to allow a smaller deformation in other parts. For exmaple the patch centre go inside the epi mesh in order to put the corners nearer to the epi mesh and allow smaller deformations and not have a really small 
 deformation in the centre and huge in the corners which will not finish in the desired positions.
+
+```
 {
             "name": "s2_createInpModel",
             "type": "debugpy",
@@ -32,7 +34,8 @@ deformation in the centre and huge in the corners which will not finish in the d
                 // "--scaffoldSurface",
             ] 
         },
-		
+```
+
 Also we are using now only the scaffold shell and not the x_scaffold so the comment on param scaffoldSurface signals that we are using a volumetric mesh and no the surface mesh made of quads that is x_scaffold
 
 ## Projection / Embedding
@@ -77,3 +80,8 @@ Finally we have the tetmesh.vtk :DDD
 We apply different other scripts according to the application, for example we clean the scar, we clean the scar's fibers, we set the stimAHA nodes and so on.
 
 
+See:
+
+[10.22489/CinC.2023.275](https://doi.org/10.22489/CinC.2023.275)
+
+[10.22489/CinC.2024.376](https://doi.org/10.22489/CinC.2024.376)

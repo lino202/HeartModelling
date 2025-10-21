@@ -2,11 +2,11 @@ close  all;
 clear all;
 clc;
 
-% This code computes the median beat for the rhythmia data.
+% This code computes the median beat for the EAM data.
 % This code basically chops and join the segments of good moments of signal 
 % acquistion
 % And then applies the same algo as in main.m
-% We load the beats.mat originated by the parsing script under ~/rhytmia_analisis
+% We load the beats.mat originated by the parsing script under ~/eam_analisis
 % You can run the code with explore=1 and the II signal should be plot for
 % inspection, then you can create a .mat file with the variable segments
 % in samples for chopping the final signals
@@ -53,7 +53,7 @@ for i=1:nBeats
     end
 end
 
-% Plot for maybe selecting a window, this seems unfeasible in Rhythmia ECGs
+% Plot for maybe selecting a window, this seems unfeasible in EAM ECGs
 % as one beat is good and the following is chopped
 for i=1:nLeads
     figure; % Open a new figure
@@ -102,7 +102,7 @@ saveas(gcf,append(res_path, 'median_beats.png'))
 % the median per Lead which afterward we average.
 
 max_discrepancy_s = 0.2; % check accurately empirically this variable with the measured
-                         % computed percentage, for the rhythmia sample of
+                         % computed percentage, for the EAM sample of
                          % 12/2023 the accurate value is 0.2 as it seems
                          % there is 1 beat/s, when we put 2 here the RR
                          % increased and the computed percentage was 100%
