@@ -1,3 +1,7 @@
+'''This code projects the entire CS to the subendocardium and some of the pmjs into the intra-myocardium (mid-myocardium)
+it is necessary to use the lv and endo meshes wih correct normals and being these parts of (extracted from) the tetra mesh where 
+the laplacians where computed!!'''
+
 import os
 import random
 import meshio

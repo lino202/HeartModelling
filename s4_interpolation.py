@@ -37,7 +37,7 @@ def main():
 
     if "layers" in args.nameValue or "AHA" in args.nameValue or "LVRV" in args.nameValue or "nodes" in args.nameValue: 
         finalValues2 = np.zeros((mesh2.points.shape[0]))
-    if "fibers" in args.nameValue: 
+    if "fibers" in args.nameValue or 'rbm' in args.nameValue: 
         finalValues2 = np.zeros((mesh2.points.shape[0], 3))
     finalValues2[:] = np.nan 
     if "cover" in mesh2.point_data.keys():
@@ -50,7 +50,7 @@ def main():
         finalValues2[finalValues2<np.nanmin(values)] = np.nanmin(values)
         finalValues2[finalValues2>np.nanmax(values)] = np.nanmax(values)
         finalValues2 = np.round(finalValues2)
-    elif "fibers" in args.nameValue:
+    elif "fibers" in args.nameValue or 'rbm' in args.nameValue:
         fibersNorm = np.linalg.norm(finalValues2, axis=1)
         finalValues2 = finalValues2 /  np.array([fibersNorm, fibersNorm, fibersNorm]).T
         outPath = "/".join(args.outPath.split("/")[:-1])

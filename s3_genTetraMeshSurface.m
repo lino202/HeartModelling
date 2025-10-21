@@ -6,7 +6,7 @@ addpath('matlabFunctions', 'Libraries/iso2mesh-1.9.6');
 
 % Input filenames
 tetgenPath = '/home/maxi/Programs/tetgen1.6.0/tetgen';
-dataPath   = 'D:/Cinc2025/mesh/';
+dataPath   = 'D:/jimena/';
 surfMesh   = append(dataPath, 'surfMesh.obj');
 workdir    = append(dataPath, '');
 outmesh    = append(workdir, 'tetmesh');

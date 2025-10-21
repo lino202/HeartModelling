@@ -1,6 +1,6 @@
 import numpy as np
 
-meshioOCCellsMap = {"tetra": "Tt", "line": "Ln"}
+meshioOCCellsMap = {"tetra": "Tt", "line": "Ln", "hexahedron": "Hx"}
 
 def writeStimVtxFile(arr, outName, stimType="Intra"):
     with open(outName, 'w') as f:
@@ -38,6 +38,9 @@ def writeCellsFile(arr, outName, cellType="Tt", tags=1):
                 cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d} {4:d} {5:d}\n".format(cellType, x[0], x[1], x[2], x[3], tags),list(arr)))
             elif cellType=="Ln":
                 cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d}\n".format(cellType, x[0], x[1], tags),list(arr)))
+            elif cellType=="Hx":
+                # cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d} {4:d} {5:d} {6:d} {7:d} {8:d} {9:d}\n".format(cellType, x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], tags),list(arr)))
+                cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d} {4:d} {5:d} {6:d} {7:d} {8:d} {9:d}\n".format(cellType, x[7], x[6], x[5], x[4], x[3], x[0], x[1], x[2], tags),list(arr)))  #according to meshtool, opencarp wants the indexs in this format
             else: raise ValueError("Wrong cell type")
             f.writelines(cells)
 

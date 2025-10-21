@@ -181,7 +181,11 @@ def smoothProjection(points,edges, angleTheshold=10):
 def smoothCurve3Points(points, nodeIdx, uEdges, vEdges, angleThreshold):
     u = points[uEdges[1],:] - points[uEdges[0],:]
     v = points[vEdges[1],:] - points[vEdges[0],:]
-    theta = math.degrees(math.acos(np.dot(u,v)/(np.linalg.norm(u)*np.linalg.norm(v))))
+    argument = np.dot(u,v)/(np.linalg.norm(u)*np.linalg.norm(v))
+
+    # if argument<-1: argument=-1
+    # if argument>1: argument=1
+    theta = math.degrees(math.acos(argument))
 
     if theta > angleThreshold and theta < 90:
         # We need to define a vector projection, direction must be perpedicular to u for moving v towards u

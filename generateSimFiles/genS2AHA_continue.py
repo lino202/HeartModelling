@@ -37,14 +37,14 @@ for key in data['output']['ensight'].keys():
         tmp = data['output']['ensight'][key][key2]
         tmp = tmp.split('/')
         tmp[-3] = results_folder
-        tmp.insert(10, args.subfolder)
+        # tmp.insert(10, args.subfolder)
         tmp = '/'.join(tmp)
         data['output']['ensight'][key][key2] = tmp
 
 tmp = data['output']['cells state']
 tmp = tmp.split('/')
 tmp[-2] = results_folder
-tmp.insert(10, args.subfolder)
+# tmp.insert(10, args.subfolder)
 tmp = '/'.join(tmp)
 data['output']['cells state'] = tmp
 

@@ -25,12 +25,12 @@
             "program": "${workspaceFolder}/s4_interpolation.py",
             "console": "integratedTerminal",
             "args": [
-                "--dataPath1",           "E:/HeartModelling/Britt_ideal_ellipsoide/tetmesh_complete.vtk",
-                "--dataPath2",           "E:/HeartModelling/Britt_ideal_ellipsoide/only_part.vtk",
+                "--dataPath1",           "/mnt/d/Cinc2025/mesh_um.vtk",
+                "--dataPath2",           "/mnt/d/Cinc2025/3D_heart_387k_600um.vtk",
                "--interpType",           "rbf",
                "--neighbours",           "100",
-               "--nameValue",            "fibers_long",
-               "--outPath",              "E:/HeartModelling/Britt_ideal_ellipsoide/only_part_2.vtk",
+               "--nameValue",            "layers",
+               "--outPath",              "/mnt/d/Cinc2025/3D_heart_387k_600um.vtk",
             ] 
         },
 
@@ -41,7 +41,7 @@
             "program": "${workspaceFolder}/auxiliar/getShellandXDMF.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",    "/mnt/d/Cinc2025/mesh",
+                "--data_path",    "/mnt/d/Cinc2025/mm/mesh",
                 "--out_format",   "pvd"
             ] 
         },
@@ -53,7 +53,7 @@
             "program": "${workspaceFolder}/auxiliar/fromVtu2Obj.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",    "/mnt/d/Cinc2025/mesh"
+                "--data_path",    "/mnt/d/Cinc2025/mm/mesh"
             ] 
         },
         
@@ -81,19 +81,19 @@
             "program": "${workspaceFolder}/auxiliar/conductionSystem/genPurkInitNodes_1.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",           "/mnt/d/Paper3/Models/invivo/mi/cx/sample6_x/stim/cs",
+                "--data_path",           "/mnt/d/Cinc2025/mm/stim/cs",
                 
-                "--av_node",             "-25.7272","-80.8624805", "-10.1312665",
-                "--his_node",            "-27.7141","-83.3444","-13.9903",
+                "--av_node",             "47.037","56.0449", "72.1486",
+                "--his_node",            "47.037","56.0449", "67.1486",
 
-                "--rv_init_node",        "-31.4023","-88.7469","-16.5537",
-                "--rv_join_node",        "-34.287","-92.5892","-21.0941",
-                "--rvb",                 "-40.6466","-102.932","-31.8554",
+                "--rv_init_node",        "42.3859", "54.0299", "63.6435",
+                "--rv_join_node",        "39.4861", "52.2718", "51.5107",
+                "--rvb",                 "37.6181","52.4783","48.4646",
                 
-                "--lv_init_node",        "-28.6849","-82.9917","-20.9949",
-                "--lv_join_node",        "-33.5747","-87.4816","-27.5169",
-                "--lva",                 "-49.7811","-99.0351","-62.025",
-                "--lvp",                 "-56.6048","-79.7293","-66.8594",
+                "--lv_init_node",        "54.7533","59.1814","63.7553",
+                "--lv_join_node",        "54.2767","58.2847","55.1468",
+                "--lva",                 "59.3488","58.6005","29.3584",
+                "--lvp",                 "57.6104","64.8118","28.5592",
             ] 
         },
 
@@ -105,7 +105,7 @@
             "program": "${workspaceFolder}/auxiliar/conductionSystem/getInitBundle_2.py",
             "console": "integratedTerminal",
             "args": [
-                "--dataPath",    "/mnt/d/Paper3/Models/invivo/mi/cx/sample6_x",
+                "--dataPath",    "/mnt/d/Cinc2025/mm",
                 "--domainType",  "BiV"
             ] 
         },
@@ -118,13 +118,13 @@
             "program": "${workspaceFolder}/auxiliar/conductionSystem/createPurkinjeBranch_3.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",    "/mnt/d/Paper3/Models/invivo/mi/cx/sample6_x/stim/cs",
-                "--endnode_name", "lva_end",
+                "--data_path",    "/mnt/d/Cinc2025/mm/stim/cs",
+                "--endnode_name", "rvb_end",
                 "--length",       "5.",
                 "--seglength",    "0.5",
                 "--repulsion",    "0.1",
                 "--angle",        "0.2",
-                "--iterations",   "18"
+                "--iterations",   "22"
             ] 
         },
 
@@ -136,7 +136,7 @@
             "program": "${workspaceFolder}/auxiliar/conductionSystem/projectSubendo_5.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",           "D:/Paper3/Models/invivo/mi/cx/sample5",
+                "--data_path",           "/mnt/d/Cinc2025/mm",
                 "--cs_name",             "final",
                 "--out_name",            "cs_subendo",
                 "--endo_per",            "40",
@@ -149,7 +149,8 @@
                 "--lowMemoryDivision",   "10",
                 "--projectRV",
                 "--domainType",          "BiV",
-                "--debug_vtk"
+                "--project_intramyo",
+                // "--debug_vtk"
             ] 
         },
 
@@ -726,6 +727,41 @@
             "args": [
                 "--dataFolder",          "/mnt/d/Paper4/Models/sample4/EHT1/mesh",
                
+            ] 
+        },
+
+
+        // -------------------------------------CINC 2025 -----------------------------------------------
+
+        {
+            "name": "getStimNodesWithATfromCS",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/miscellaneous/getStimNodesWithATfromCS.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshCS",         "/mnt/d/Cinc2025/opencarp/cs/cs_myresults.vtk",
+                "--mesh",           "/mnt/d/Cinc2025/um/3D_heart_387k_600um.vtk",
+                "--radius",         "1000",
+            ] 
+        },
+
+
+        {
+            "name": "vtk2openCARP",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/opencarpUtils/vtk2openCARP.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshPath",         "/mnt/d/Cinc2025/um/3D_heart_400um_cinc.vtk",
+                "--spatialUnit",      "um",
+                "--cellType",         "hexahedron",
+                "--stimPointData",    "stim_nodes",
+                "--fibersPointData",  "rbm_60_minus60_60_minus60",
+                "--outFolder",        "/mnt/d/Cinc2025/opencarp/biv",
+                "--tend",             "3000"
+
             ] 
         },
 
