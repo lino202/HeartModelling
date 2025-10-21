@@ -4,7 +4,14 @@ This repository contains scripts for defining **ventricular heart models**, incl
 
 The code supports common input and output formats used in [3D Slicer](https://www.slicer.org/), [MeshLab](https://www.meshlab.net/), and [ParaView](https://www.paraview.org/) — open-source visualization tools typically used alongside these scripts to achieve advanced heart modeling workflows.
 
----
+
+## 🚀 Features
+
+- **Fiber Orientation** – Generation of myocardial fiber architecture using Laplacian-based or rule-based methods.  
+- **Tetrahedralization** – Conversion of surface meshes into high-quality volumetric tetrahedral meshes for simulation.  
+- **Ventricular Conduction System** – Creation of a physiologically realistic Purkinje and conduction network.  
+- **Ventricular Spatial Heterogeneities** – Definition of regional heterogeneities based on Laplacian fields.  
+- **Epicardial Patch Engraftment** – Integration of engineered heart tissue (EHT) patches with native ventricular geometry.  
 
 ## 🧩 Installation
 
