@@ -47,7 +47,7 @@ In general:
   ```sh
   python /path-to-script/script.py --help
   ```
-  Example scripts can be found under [`scripts/`](scripts/)
+  Example scripts can be found under [`scripts/`](scripts/), specially, check [`scripts/make_model.sh`](scripts/make_model.sh)
 - MATLAB scripts should be inspected directly in code to understand their parameters.
 
 ---

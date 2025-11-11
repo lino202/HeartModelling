@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}/ge_s1_getGEGeometry.py",
             "console": "integratedTerminal",
             "args": [
-                "--dataPath",           "D:/Paper3/Models/invivo/mi/cx/sample6_X",
+                "--dataPath",           "G:/Data/RM/Erica/DTI126V2/myresults/",
                 "--save", 
             ] 
         },
@@ -41,7 +41,7 @@
             "program": "${workspaceFolder}/auxiliar/getShellandXDMF.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",    "/mnt/d/Cinc2025/mm/mesh",
+                "--data_path",    "/mnt/g/Data/RM/Erica/DTI126V2/myresults/mesh",
                 "--out_format",   "pvd"
             ] 
         },
@@ -53,7 +53,7 @@
             "program": "${workspaceFolder}/auxiliar/fromVtu2Obj.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",    "/mnt/d/Cinc2025/mm/mesh"
+                "--data_path",    "/mnt/g/Data/RM/Erica/DTI126V2/myresults/mesh"
             ] 
         },
         
