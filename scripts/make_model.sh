@@ -116,6 +116,15 @@ python /mnt/d/Code/HeartModelling/s7_cleanScar.py \
 --meshPath     /path/to/folder/mesh_full_segmented.vtk \
 --outPath      /path/to/folder
 
+
+python /mnt/d/Code/HeartModelling/auxiliar/rbm/addFibers2Mesh.py \
+--dataPath            /path/to/folder/ \
+--mesh3DPath          /path/to/folder/mesh_mi_noscar.vtk \
+--fiberMeshName       BiV_fiber_60_minus60_60_minus60 \
+--dataPointName       60_minus60_60_minus60_noscar \
+--writeFibersElectra
+
+
 # CS --------------------------------------------------------------------------
 # For the CS generation, you will need to define the anatomical landmarks using genPurkInitNodes_1.py beforehand.
 # Then, the main bundle of the CS (without the Purkinje network) can be obtained with getInitBundle_2.py. Finally, the Purkinje
