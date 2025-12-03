@@ -1,4 +1,5 @@
-#This receiveis and set mesh and putted in an input meshed from which it was obtained in paraview.
+# This recieves a mesh and make a point or cell data with the setMesh which is a contained mesh in the primary mesh. Generally you will 
+# obtain this form paraview and can be use for example to define boundary conditions or material ids or stimulation regions.
  
 import argparse
 import meshio

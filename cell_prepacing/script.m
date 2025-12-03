@@ -2,16 +2,16 @@ clear all;
 clc;
 close all;
 
-data_path = 'E:/Paper3/Cell_sims/final/he/Stewart_no_stim/';
-experiment_name = 'stewart_rewritten_1000s_nostim_dt0001_Vm';
+data_path = 'G:/Data/RM/Erica/DTI126V2/myresults/Cell_sims/';
+experiment_name = 'ohara_endo_mi_CL1000ms_1500s_Vm';
 
 % matlab_scripts
-load(append(data_path, experiment_name, '.mat'));
+% load(append(data_path, experiment_name, '.mat'));
 % V = Vm;
 
 % eletra_cell
-% t = readtable(append(data_path, experiment_name, '.txt'), 'ReadVariableNames', false);
-% V = t.Var2;
+t = readtable(append(data_path, experiment_name, '.txt'), 'ReadVariableNames', false);
+V = t.Var2;
 % V = V(1:10:end);
 % time = t.Var1;
 
@@ -26,7 +26,7 @@ stimPeriod              = 1000;                               % Stimulus period 
 stimPeriod_samples      = (stimPeriod/dt);
 replevel                = 0.9;                                % repolarization level - APDX
 
-total_sim_time          = 1000; %s
+total_sim_time          = 1500; %s
 total_samples           = total_sim_time*1000/dt;
 
 V = V(1:total_samples)';
@@ -51,6 +51,6 @@ set(gca,'TickLabelInterpreter','latex','FontSize',14);
 set(gcf, 'PaperUnits', 'inches');
 x_width=9 ;y_width=9;
 set(gcf, 'PaperPosition', [0 0 x_width y_width]); %
-% saveas(gcf,append(data_path, experiment_name, '_APD',num2str(replevel*100), '.png'));
+saveas(gcf,append(data_path, experiment_name, '_APD',num2str(replevel*100), '.png'));
 
-% save(append(data_path, experiment_name, ".mat"), "time" , "V", '-v7.3');
+save(append(data_path, experiment_name, ".mat"), "time" , "V", '-v7.3');

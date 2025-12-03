@@ -81,19 +81,19 @@
             "program": "${workspaceFolder}/auxiliar/conductionSystem/genPurkInitNodes_1.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",           "/mnt/d/Cinc2025/mm/stim/cs",
+                "--data_path",           "/mnt/g/Data/RM/Erica/DTI126V2/myresults/stim/cs",
                 
-                "--av_node",             "47.037","56.0449", "72.1486",
-                "--his_node",            "47.037","56.0449", "67.1486",
+                "--av_node",             "41.83803688", "-15.7641785", "10.08236933",
+                "--his_node",            "44.4966","-19.3039", "7.75806",
 
-                "--rv_init_node",        "42.3859", "54.0299", "63.6435",
-                "--rv_join_node",        "39.4861", "52.2718", "51.5107",
-                "--rvb",                 "37.6181","52.4783","48.4646",
+                "--rv_init_node",        "47.7471", "-24.1448", "7.50553",
+                "--rv_join_node",        "51.7016", "-27.8304", "6.306",
+                "--rvb",                 "61.4216","-38.6282","-1.33887",
                 
-                "--lv_init_node",        "54.7533","59.1814","63.7553",
-                "--lv_join_node",        "54.2767","58.2847","55.1468",
-                "--lva",                 "59.3488","58.6005","29.3584",
-                "--lvp",                 "57.6104","64.8118","28.5592",
+                "--lv_init_node",        "47.833","-18.8585","4.30578",
+                "--lv_join_node",        "60.9386","-33.2329","-6.56644",
+                "--lva",                 "86.5019","-48.7568","-26.7356",
+                "--lvp",                 "68.0432","-42.5929","-56.3499",
             ] 
         },
 
@@ -105,7 +105,7 @@
             "program": "${workspaceFolder}/auxiliar/conductionSystem/getInitBundle_2.py",
             "console": "integratedTerminal",
             "args": [
-                "--dataPath",    "/mnt/d/Cinc2025/mm",
+                "--dataPath",    "/mnt/g/Data/RM/Erica/DTI126V2/myresults",
                 "--domainType",  "BiV"
             ] 
         },
@@ -118,13 +118,26 @@
             "program": "${workspaceFolder}/auxiliar/conductionSystem/createPurkinjeBranch_3.py",
             "console": "integratedTerminal",
             "args": [
-                "--data_path",    "/mnt/d/Cinc2025/mm/stim/cs",
-                "--endnode_name", "rvb_end",
+                "--data_path",    "/mnt/g/Data/RM/Erica/DTI126V2/myresults/stim/cs",
+                "--endnode_name", "lva_end",
                 "--length",       "5.",
                 "--seglength",    "0.5",
                 "--repulsion",    "0.1",
                 "--angle",        "0.2",
-                "--iterations",   "22"
+                "--iterations",   "19"
+            ] 
+        },
+
+
+        {
+            "name": "getCS_4",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/auxiliar/conductionSystem/getCS_4.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--data_path",    "/mnt/g/Data/RM/Erica/DTI126V2/myresults/stim/cs",
+                "--domainType", "BiV"
             ] 
         },
 
@@ -781,6 +794,41 @@
                 "--inSegmentNumbers",   "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", 
                 "--outSegmentNumbers",  "4", "5", "6", "1", "2", "3", "11", "12", "7", "8", "9", "10", "16", "13", "14", "15", "17",
                
+            ] 
+        },
+
+
+        // ---------------------------------------------ERICA -------------------------------------------------------------
+
+        {
+            "name": "generateMIRandomFibers",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/auxiliar/rbm/generateMIRandomFibers.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mesh",         "/mnt/g/Data/RM/Erica/DTI126V2/myresults/mesh_full_segmented.vtk",
+                "--meshHE",       "/mnt/g/Data/RM/Erica/DTI126V2/myresults/mesh_he.vtk",
+                "--fiberName",    "rbm_60_minus60_60_minus60",
+                "--outName",      "rbm_60_minus60_60_minus60_full_rand1"
+               
+            ] 
+        },
+
+        // ----------------------------------------MISCELLANEOUS ----------------------------------------------------------
+
+        {
+            "name": "addSet2Mesh",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/miscellaneous/addSet2Mesh.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--meshIn",    "D:/Code/examples_cocoro_new_features/mesh_3D_heart_600um_prueba.vtk",
+                "--meshSet",   "D:/Code/examples_cocoro_new_features/mesh_stim_group_1.vtu",
+                "--setName",   "stim_group_1",
+                "--outPath",   "D:/Code/examples_cocoro_new_features/mesh_3D_heart_600um_prueba.vtk",
+                "--setType",   "node"
             ] 
         },
 
