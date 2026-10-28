@@ -1,0 +1,429 @@
+echo "Create the mesh" --------------------------------------------------------------------------"
+
+#Segment images with 3DSLicer
+#Save the images as img.nii in the folder init
+#Save the labels as label_he_here_mi.nrrd with the labels in that order (healthy, remote healthy and scar) in the folder init
+#Save the meshes as vtk and obj. Healthy complete mesh as surface_mesh_orig, Remote Healthy mesh as remoteHealthy_mesh_orig and Scar mesh as scar_mesh_orig
+
+#Create uniform triangles with MeshLab
+
+#Smooth the whole mesh
+
+#Check meshes quality with Paraview
+ 
+#Create tetrahedron with TetGen
+#Use this E:\Jimena\Programas\Simulations\Maxi\HeartModelling\s3_genTetraMeshSurface.m
+# Enter surface_mesh_orig_remesh.obj and exist a tetmesh.poly
+#Check that the mesh is triangular
+#tetgen -q1.414 -V -m -k /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32/mesh/tetmesh.poly
+# /mnt/cephfs/software/bin/matlab2022b in the cluster
+#After using TetGen a tetmesh.1.vtk is created
+
+
+#Obtain mesh lenght and histogram
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/getEdgesSize.py \
+--data_path /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/mesh/tetmesh_extracoarse.1.vtk \
+--save
+
+
+#"Get scar and bz volume" --------------------------------------------------------------------------"
+
+python mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/computeVolumeCenters.py \
+--data_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_25/mesh/tetmesh_rough.1.vtk \
+--save_image
+
+
+echo "Create the scar and BZ" --------------------------------------------------------------------------"
+
+#Match the cloud points to scar, BZ and healthy tissue. 
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/ge_s1_getGEGeometry.py \
+--dataPath  /mnt/e/Jimena/HCULB/IHD/Segmentations/Cube --save  # help='save histogram with thresholds' \
+
+#Interpolation of points (scar, bz, healthy tissue and uncertain) for the volume. Creates the file in outPath with a field called layers_mi
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/s4_interpolation.py \
+--dataPath1   /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/mesh/mi_pointcloud.vtk \
+--dataPath2   /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/mesh/tetmesh_extracoarse.1.vtk \
+--interpType  nearest \
+--neighbours  100 \
+--nameValue   layers_mi \
+--outPath     /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/mesh
+
+#If there is no scar, you run it to get a point cloud of all "healthy" tissue
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/s4_interpolation.py \
+--dataPath2   /mnt/e/Jimena/HCULB/IHD/Segmentations/Cube/mesh/tetmesh.1.vtk \
+--interpType  nearest \
+--neighbours  100 \
+--nameValue   layers_mi \
+--outPath     /mnt/e/Jimena/HCULB/IHD/Segmentations/Cube/mesh
+
+
+
+
+#Create XDMF of the surface of volume 
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/auxiliar/getShellandXDMF.py \
+--data_path     /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/mesh \
+--out_format    xdmf \
+--in_format     vtk \
+--mesh_name     tetmesh_extracoarse.1 \
+--save_obj
+
+#Save the surfaces of LV endo, RV endo and epi in vtu format in paraview as vtu. Using the connectivity filter
+
+#Create the mesh with the surfaces lv endo and epi integrated
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/auxiliar/rbm/ldrb_s1_getFacetFunction.py \
+--data_path     /mnt/e/Jimena/HCULB/IHD/Segmentations/Cube \
+--mesh_name     tetmesh.1 \
+--domainType    LV \
+--nProcesses    8 \
+--chunksize     200 \
+--maxNumPoints  200
+
+
+#++++++++++++LAYERS+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#Get the continous values for transmurality. From RV. LV and from both. Creates the file laplacians in /layers
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/auxiliar/transmuralComposition/perrottiLaplaciansFast.py \
+--data_path /mnt/e/Jimena/HCULB/IHD/Segmentations/Cube \
+--mesh_name tetmesh.1
+
+
+#Create the gradient from apex to base. Adds the result to laplacians in /layers
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/auxiliar/transmuralComposition/apex2BaseGradient.py \
+--data_path /mnt/e/Jimena/HCULB/IHD/Segmentations/Cube \
+--mesh_name tetmesh.1 \
+--insert2Laplacians
+
+#Create the rotational gradient in files rotationalLV and/or rotationalRV in /layers. Is point Data
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/auxiliar/transmuralComposition/rotationalGradient.py \
+--data_path /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 \
+--mesh_name tetmesh_coarse.1 \
+--domainType BiV \
+--insert2Laplacians
+
+#Create the IDs in files (LV, RV and spetum) in /layers. Is point Data
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/auxiliar/transmuralComposition/labelVentricles.py \
+--data_path /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_40 \
+--mesh_name tetmesh.1 \
+--insert2Laplacians
+
+#Create the AHA segments in files in /layers. Is point Data
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/aha_segments/AHA_getSegments_JRDZC.py \
+--data_path /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 \
+--mesh_name tetmesh.1 \
+--domainType BiV \
+--filesInLapacians \
+--insert2Laplacians
+
+
+# Create the fibers directions in the directory /RBM_LDRB
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/auxiliar/rbm/ldrb_s2_getFibers.py \
+--data_path        /mnt/e/Jimena/HCULB/IHD/Segmentations/Cube \
+--addName         60_minus60_60_minus60 \
+--mesh_name tetmesh.1 \
+--domainType      BiV \
+--alpha_endo_lv   60 \
+--alpha_epi_lv    -60 \
+--alpha_endo_rv   60 \
+--alpha_epi_rv    -60
+
+
+
+# GET MESH WITH LAYERS LABELED +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#Create the layers endo, mid and epi within the mesh. It is pointData. Also joins the transmurality with scar tags in layers_scar. 
+#Creates the vtk file in outName in the general directory. Creates the mesh.vtk. add_FEC creates a field with the FEC layer in point data. The problem is that when it is converted to elemdata it chooses more elements so I add the FEC layer differently when transforming it to openCARP format
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/s5_perrottiEndoMidEpi.py \
+--data_path /mnt/e/Jimena/HCULB/IHD/Segmentations/Cube \
+--outName  mesh_apex_sinFEC \
+--mesh_name tetmesh.1 \
+--maxNumPoints  300  \
+--add_Apex2base \
+--type_FEC thin \
+--domainType LV \
+--add_FEC
+#--inCluster
+#--infAsHealthy
+
+
+##"Get stim points" +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+# Get the stim points fron the AHA segments from mesh AHA and saves it in meshIn
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/getPacingFromAHA.py \
+--meshAHA /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_25/layers/laplacians_tetmesh.1.vtk \
+--meshIn /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_25/mesh_apex.vtk \
+--outPath /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_25/stim/meshstim.vtk \
+--endoLV /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_25/mesh/tetmesh.1_lv_endo.vtu \
+--endoRV /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_25/mesh/tetmesh.1_rv_endo.vtu \
+--layer_mesh_field   layers \
+--layer_mesh_value 2 \
+--errasePointData
+
+
+#IMPORTANT: THIS CANNOT BE USED WHEN THE MESH_LAYER IS THE HEART BUT THE MESH WHERE YOU WANT TO ADD THE PACING POINTS IS THE TORSO
+#ALSO, IT ASUMES THAT THE LAYERS ARE POINT_DATA, NOT CELL_DATA
+
+
+# Get the stim points from input coordinates to mesh in specific layer (if desired). I used it for some coordinates Ana sent me. The file needs the coordinates of the stim points desired and then finds the closes points depending on the radious and the if you specify a layer it cuts it. It ends like a disk.
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/getPacingFromCoordinates.py \
+--mesh_path_use /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/mesh_extracoarse_apex_sinFEC.vtk \
+--unit_mesh   mm \
+--layer_mesh_field   layers_FECini \
+--layer_mesh_value 2 \
+--path_2_coordinates /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/LVstimulation2_um.txt \
+--unit_coordinates   um \
+--stimRadious 2.5 \
+--store_together 
+
+
+
+#"Get stim points from internal points" --------------------------------------------------------------------------"
+#If you want to find a pacing site that is in a specific layer
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/getPacingtoCoordinates.py \
+--meshIn   /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/mesh_coarse_apex_sinFEC.vtk \
+--unit_mesh mm \
+--pacingTag \
+--layer_mesh_field layers_apex \
+--layer_mesh_value 51 52 53 \
+--outName stim_51_52_53 \
+--outPath /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 
+
+
+#Get the pacing onto the mesh
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/getPacingFromCoordinates.py \
+--mesh_path_use /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32/mesh_apex_sinFEC_micrometers.vtk \
+--unit_mesh   um \
+--layer_mesh_field   layers_FECini \
+--layer_mesh_value 2 \
+--path_2_coordinates /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32/RVstimulation_mm.txt \
+--unit_coordinates   mm \
+--stimRadious 2.5 \
+--store_together
+
+
+
+
+echo "Join with meshes" --------------------------------------------------------------------------"
+#Join the mesh with the fibers in the mesh3dPath in the mesh.vtk mesh
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/auxiliar/rbm/addFibers2Mesh.py \
+--data_path		/mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 \
+--mesh3DPath		/mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/mesh_extracoarse_apex_sinFEC.vtk \
+--fiberMeshName		BiV_sheet_S_60_minus60_60_minus60_tetmesh_extracoarse.1 \
+--dataPointName		60_minus60_60_minus60_sheet_S
+
+
+
+++++ "Remove scar from mesh" +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#Remove Scar. Removes the elements 
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/removeScarMesh.py \
+--data_path /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32 \
+--mesh_name mesh.vtk \
+--out_name mesh_wo_scar.vtk \
+--data_label layers_scar \
+--removeLabel 33 43 53 \
+--keepLabel 23 \
+--type_remove_label point --save_empty_mesh
+
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/auxiliar/rbm/addFibers2Mesh.py \
+--data_path		/mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 \
+--mesh3DPath		/mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/mesh_coarse_apex_sinFEC.vtk \
+--fiberMeshName		BiV_fiber_60_minus60_60_minus60_tetmesh_coarse.1 \
+--dataPointName		60_minus60_60_minus60
+
+
++++++"Transform to openCARP files " +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#Transform to openCARP file, including modifying to micrometers and creating the elemData fron PointData to CellData
+#Creates the vtx files if added. Using add_FEC creates the FEC layer at last to choose just one element width
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/opencarpUtils/electra2openCARP.py \
+--file_path_fibers	    /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32/mesh_apex_sinFEC.vtk \
+--unit			    mm \
+--cellType	            tetra \
+--fibersPointData   	    rbm_60_minus60_60_minus60 \
+--outFolder	           /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32 \
+--elemData                 layers_scar_apex \
+--stimPointData            stim \
+--mesh_name  tetmesh.1  --add_FEC 
+
+
+
+#If you do not want to run electra2opercarp again but want to get again the vtx files
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/opencarpUtils/getvtxFile.py \
+--mesh_data_path /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_25/torso_final_micrometers_mesh_apex_not_resampled_merged.vtk \
+--outFolder /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_25
+
+
+
++++++++++++++ TRANSFORM/GET TORSO--------++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#Segment torsos in sagittal, axial and coronal
+#Join, smooth and clean
+
+#Transform surface mesh to micrometers to use in openCARP
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/opencarpUtils/transform2micrometers.py \
+--mesh_path	    /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32/Torso_3mm_micrometers_rough.obj \
+--unit          mm \
+--out_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32 \
+--cellType  triangle
+
+#Pass the rest of meshtool to create torso with mesh, already in micrometers
+#Join mesh to torso and transform to carp_txt
+
+
+#Remove scar from .elem, .pts and .lon and save again as .vtk. You can add a flag if you want to save as carp_txt also but the stim points need to be computed again
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/opencarpUtils/removeScaropenCARP.py \
+--data_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32 \
+--mesh_name   Torso_3mm_micrometers_mesh_apex_Ana \
+--label_remove  331 332 333 431 432 433 531 532 533 \
+--new_mesh_name Torso_3mm_micrometers_mesh_wo_scar_apex_Ana \
+--label_keep 231 232 233 \
+--cell_type tetra --saveOpenCARP
+#--save_empty_mesh
+
+
+#Get the labels of the ecg points  in new mesh, including the reference point
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/getPointstoMesh.py \
+--points_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 \
+--points_name  elec_file_src_torso_solo.pts \
+--points_file_names  elec_num_torso_solo.txt \
+--unit_points  um \
+--mesh_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 \
+--mesh_name torso_final_ML_micrometers_mesh_extracoarse_apex_sinFEC_not_resampled_merged.vtk \
+--unit_mesh um --store_together
+
+
+#"#########---------------------------STIM POINT TO TORSO -------------------------------------------------------------"
+
+#Input the heart mesh with the stim points and add them to the mesh with torso and also write the .vtx files
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/opencarpUtils/getPacingMesh2Torso.py \
+--torso_mesh_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/torso_final_ML_micrometers_mesh_extracoarse_apex_sinFEC_not_resampled_merged.vtk \
+--heart_mesh_path /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/mesh_extracoarse_apex_sinFEC_micrometers.vtk \
+--units_torso_mesh um \
+--units_heart_mesh um \
+--outFolder /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 --add_2_mesh
+
+
+
+IMP NOTE: I don't do the getpacingfromcoordinates because I need the tags in points and not in elem
+
+
+
+#"##############---------------EXTRAS------------------------------------------------------------"
+
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/emptyMeshTags.py \
+--data_path /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32 \
+--mesh_name mesh.vtk \
+--cellType tetra \
+--save_mat
+
+#Get nodes of specific section to use in igbextract and plot the APs for later. Get txt file
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/opencarpUtils/getPtsLabels.py \
+--mesh_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32  \
+--mesh_name   mesh_wo_scar_apex.vtk \
+--vm_path_input  /mnt/e/Jimena/HCULB/IHD/Simulations/MI_MRI_32 \
+--simulation_number  1N_Scar_elec_wo_scar \
+--data_label_compare  layers_scar_apex \
+--labels_compare  311 312 313 \
+--type_remove_label  point \
+--output_name  endo_healthy \
+
+#Create a file that has the labels of the desired filed of the mesh and their amount
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/getMeshLabels.py \
+--mesh_layer_name  elemTag \
+--mesh_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_32 \
+--mesh_name  Torso_3mm_micrometers_mesh_apex_merged.vtk \
+--type_layer  cell 
+
+#Get the number of elements and nodes
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/getNodesElementsQuantity.py \
+--mesh_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 \
+--mesh_name    torso_final_ML_micrometers_mesh_apex_not_resampled_merged \
+--mesh_format    vtk \
+--cell_type   tetra
+
+#Read a vtx file and add the stim points to the mesh
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/opencarpUtils/readVtxFile.py \
+--mesh_path /mnt/e/Jimena/OpenCARP/Temp_results/example_Clara_2 \
+--mesh_name KCL_torso5_medl400_lb \
+--vtx_name  LV1 LV2 LV3 LV4 RV1 RV2 RV3 \
+--vtx_out_name  Claras \
+--add_2_mesh   --store_together
+
+#"##############---------------GET AND PLOT PSEUDO ECG (IN THIS CASE FROM CLARA'S MESH)------------------------------------------------------------"
+#You can align the heart to match another torso
+#Get the tranformation matrix with align in meshlab
+#Transform matrix to match CLaras- Have to be in environment SimOpp
+#move mesh with paraview (transform) or meshlab (align). From meshlab you need the transformation matrix to use here
+python3 /mnt/e/Jimena/Programas/Simulations/Maxi/simOmPP/pECG/getInput4PECG.py \
+--meshPath /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/torso_final_ML_micrometers_mesh_extracoarse_apex_sinFEC_not_resampled_merged_woTorso.vtk \
+--transMatrix   /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/mesh/rotationMatrix_stay.txt \
+--saveAlignedPath  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/torso_final_ML_micrometers_mesh_coarse_apex_sinFEC_not_resampled_merged_woTorso_stay.vtk \
+--outPath  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/torso_final_ML_micrometers_mesh_extracoarse_apex_sinFEC_not_resampled_merged_woTorso_stay.mat
+
+//--saveElectrodesPath  G:/Data/RM/Erica/DTI126V2/myresults/ecg/electrodes_positions_mm.mat \             
+// "--addVs",
+// "--resPath",           "D:/Paper3/Simulations/invivo/he/sample1/results_fib_standard_cs_endo_tentusscher/tissue",
+// "--timeStart",         "08000",
+// "--timeEnd",           "10400",
+
+
+#If there is no transform matrix
+python3 /mnt/e/Jimena/Programas/Simulations/Maxi/simOmPP/pECG/getInput4PECG.py \
+--meshPath /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/torso_final_ML_micrometers_mesh_apex_not_resampled_merged_woTorso.vtk \
+--saveAlignedPath  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/torso_final_ML_micrometers_mesh_apex_not_resampled_merged_woTorso_stay.vtk \
+--outPath  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/torso_final_ML_micrometers_mesh_apex_not_resampled_merged_woTorso_stay.mat
+
+
+#save the simulation as time steps in .txt
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/miscellaneous/save_steps_sim.py \
+--mesh_path /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6/torso_final_ML_micrometers_mesh_coarse_apex_sinFEC_not_resampled_merged_woTorso  \
+--mesh_format    vtk \
+--simulation_path   /mnt/e/Jimena/HCULB/IHD/Simulations/MI_MRI_6 \
+--simulation_name  BD_dt20_FEClast_2.5stimpts_origGvalues_TT2INa_coarse \
+--simulation_ecg_format  igb \
+--file_name  vm  \
+--dt  1.0  \
+--step_ms  1 \
+--startTime_ms  0  \
+--endTime_ms   150
+
+
+
+#"##############---------------PLOT RESUTLS in PYTHON------------------------------------------------------------"
+
+#Plot and compute ecg from phie recovery file
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/opencarpUtils/plotECGPhie.py \
+--simulation_path    /mnt/e/Jimena/HCULB/IHD/Simulations/MI_MRI_6 \
+--simulation_name   MD_dt20_FEClast_2.5stimpts_origGvalues_TT2INa_21 \
+--simulation_ecg_format  igb \
+--electrode_file_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 \
+--electrode_file_name ECGPtsNames_torso_final_ML_micrometers_mesh_apex_sinFEC_not_resampled_merged.txt \
+--simulation_file_name phie_recovery 
+
+
+#Plot ecg already computed from .mat file
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/opencarpUtils/plotECGPhie.py \
+--simulation_path    /mnt/e/Jimena/HCULB/IHD/Simulations/MI_MRI_6 \
+--simulation_name   MD_dt20_FEClast_2.5stimpts_origGvalues_TT2INa_21 \
+--simulation_ecg_format  mat \
+--electrode_file_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 \
+--electrode_file_name ECGPtsNames_torso_final_ML_micrometers_mesh_apex_sinFEC_not_resampled_merged.txt \
+--simulation_file_name pECG_ClaraTorso \
+--pECG_computed 
+
+
+#"Get vm from torso " extract the heart to have the same order as the simulations. And see them in the meshalyzer
+python /mnt/e/Jimena/Programas/Simulations/Maxi/HeartModelling/opencarpUtils/extractHeartandVM.py \
+--mesh_path  /mnt/e/Jimena/HCULB/IHD/Segmentations/MI_MRI_6 \
+--mesh_name  torso_final_ML_micrometers_mesh_extracoarse_apex_sinFEC_not_resampled_merged \
+--label_remove  0 \
+--field_remove  elemTag \
+--simulation_path  /mnt/e/Jimena/HCULB/IHD/Simulations/MI_MRI_6 \
+--simulation_name  torso_not_sampled_healthy_150ms_dt10_gridout_pseudobidomain_thicker_mod \
+--simulation_ecg_format  igb \
+--file_phie_name  phie \
+--cell_type  tetra \
+--new_mesh_name  woTorso \
+--saveOpenCARP
+#--extract_vm
+
+
+
