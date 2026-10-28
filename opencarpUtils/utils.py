@@ -1,8 +1,11 @@
+
 import numpy as np
+import scipy.stats as stat
+import statistics
 
-meshioOCCellsMap = {"tetra": "Tt", "line": "Ln", "hexahedron": "Hx"}
+meshioOCCellsMap = {"tetra": "Tt", "line": "Ln"}
 
-def writeStimVtxFile(arr, outName, stimType="Intra"):
+def writeStimVtxFile(arr, outName, stimType):
     with open(outName, 'w') as f:
         f.write("{0:d}\n".format(arr.shape[0]))
         f.write("{}\n".format(stimType))                         #For now it seems ok to only have Intra
@@ -31,17 +34,47 @@ def writePointsFile(arr, outName):
             f.writelines(pts)
 
 
-def writeCellsFile(arr, outName, cellType="Tt", tags=1):
+# def writeCellsFile(arr, outName, cellType="Tt", tags=1):
+#         with open(outName, 'w') as f:
+#             f.write("{0:d}\n".format(arr.shape[0]))
+#             if cellType=="Tt":
+#                 cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d} {4:d} {5:d}\n".format(cellType, x[0], x[1], x[2], x[3], tags),list(arr)))
+#             elif cellType=="Ln":
+#                 cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d}\n".format(cellType, x[0], x[1], tags),list(arr)))
+#             else: raise ValueError("Wrong cell type")
+#             f.writelines(cells)
+
+def writeCellsFile(arr, outName, tags, cellType="Tt"): #Modified to add tags. #JRDZC 18/03/2025
         with open(outName, 'w') as f:
             f.write("{0:d}\n".format(arr.shape[0]))
             if cellType=="Tt":
-                cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d} {4:d} {5:d}\n".format(cellType, x[0], x[1], x[2], x[3], tags),list(arr)))
+                cells = list(map(lambda x,y: "{0:s} {1:d} {2:d} {3:d} {4:d} {5:d}\n".format(cellType, x[0], x[1], x[2], x[3], y),list(arr),list(np.array(tags))))
             elif cellType=="Ln":
-                cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d}\n".format(cellType, x[0], x[1], tags),list(arr)))
-            elif cellType=="Hx":
-                # cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d} {4:d} {5:d} {6:d} {7:d} {8:d} {9:d}\n".format(cellType, x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7], tags),list(arr)))
-                cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d} {4:d} {5:d} {6:d} {7:d} {8:d} {9:d}\n".format(cellType, x[7], x[6], x[5], x[4], x[3], x[0], x[1], x[2], tags),list(arr)))  #according to meshtool, opencarp wants the indexs in this format
+                cells = list(map(lambda x: "{0:s} {1:d} {2:d} {3:d}\n".format(cellType, x[0], x[1], int(tags[0])),list(arr)))
             else: raise ValueError("Wrong cell type")
             f.writelines(cells)
 
 
+def points2Elements(cells, pointTags): #JRDZC 18/03/2025
+    cellsTags_mid=pointTags[cells]
+    cellsTags=stat.mode(cellsTags_mid,1).mode
+    cellsTags_aux=np.round(cellsTags).astype(int)
+    return cellsTags_aux
+    # return cellsTags
+
+
+def elements2points(cells, cellTags):
+    cellTags=cellTags[0] #JRDZC 18/03/2025
+    points= np.unique(cells)
+    pointsTags=np.zeros(points.shape[0])
+
+    # for pp in points:
+    for idx, pp in enumerate(points):
+         indices = np.where(cells == pp)[0]
+        #  rows, cols = np.where(cells == pp)[0]
+         auxTags=cellTags[indices]
+
+         pointsTags[idx]=statistics.mode(auxTags.reshape(-1))
+         
+    return pointsTags
+# return cellsTags
