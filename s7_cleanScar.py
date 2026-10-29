@@ -1,5 +1,6 @@
-'''Remove scar elements based on the regions in /miscellaneous/regions.py. The tags are also saved. Fibers need to be added after.
+'''Remove scar elements based on the regions in /miscellaneous/regions.py
 '''
+
 import os  
 import argparse
 import numpy as np
