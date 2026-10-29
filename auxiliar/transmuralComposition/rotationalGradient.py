@@ -78,8 +78,13 @@ def rotationalGradient(normBasePlane,longAxisVector, pointCentroid, point2Use, p
         magnNormPoint=np.array([[0.000001]])
 
     
+
+
     # Angle between both normal vectors(plane towards the chosen point and plane towars the LV centroid)
-    ang_aux=np.arccos(dotP/(magnNormPoint*magnNormCentr)) 
+    cosVal = dotP / (magnNormPoint * magnNormCentr)
+    cosVal = np.clip(cosVal, -1.0, 1.0)
+    ang_aux = np.arccos(cosVal)
+    # ang_aux=np.arccos(dotP/(magnNormPoint*magnNormCentr)) 
     ang_aux_deg=ang_aux*180/np.pi  #Value in degrees
 
     # Have the values of the coefficient for the planes to see direction 
@@ -87,6 +92,10 @@ def rotationalGradient(normBasePlane,longAxisVector, pointCentroid, point2Use, p
     plane2Comp=np.sum(normBasePlane[0:3]*point2Comp)+normBasePlane[3]
     #Value for Chosen point
     planePoint=np.sum(normBasePlane[0:3]*point2Use)+normBasePlane[3]
+
+    if np.isnan(ang_aux):
+        print('NaN Error Rotational_LV:',indexPoint)
+
     
     if np.sign(planePoint)>0:
         rotationValue=ang_aux
@@ -100,6 +109,15 @@ def rotationalGradient(normBasePlane,longAxisVector, pointCentroid, point2Use, p
 
     else:
         print('Error Rotational_LV:',indexPoint)
+        print("Error Rotational: index {} , ang value {}, plane point {}".format(indexPoint, ang_aux, planePoint))
+        # if RVFlag:
+        #     print('Error Rotational_RV:',indexPoint)
+        # else:
+        #     print('Error Rotational_LV:',indexPoint)
+
+        # rotationValue=0
+        # rotationAngle=0
+
         rotationValue=np.array([[0]])
         rotationAngle=np.array([[0]])
 
@@ -162,7 +180,7 @@ def main():
     # --insert2Laplacians
 
 
-    filledMesh=meshio.read(os.path.join(args.data_path, "mesh", "mesh.xdmf"))
+    filledMesh=meshio.read(os.path.join(args.data_path, "mesh", "mesh_{}.xdmf".format(args.mesh_name)))
     filledMeshPoint=filledMesh.points
 
     LVEndoName = args.mesh_name + "_lv_endo.vtu"
@@ -325,7 +343,7 @@ def main():
         #                 print("Index",x)
 
         
-        resultsRV=np.array(resultsRV)
+        resultsRV=np.array(resultsRV) 
         resultsRV=resultsRV+np.array(abs(np.min(resultsRV)))
         # print(results)
         print([np.max(resultsRV), np.min(resultsRV)])
@@ -335,19 +353,20 @@ def main():
         #The equation is made by vectNormCentrRV and d2useRV
 
 
+    
 
     #Save the result mesh
     # filledMesh.write(os.path.join(args.data_path, "layers", "rotational.vtk"))  
 
     if args.insert2Laplacians:
-        mesh_laplacians = meshio.read(os.path.join(args.data_path,"layers", "laplacians.vtk"))
+        mesh_laplacians = meshio.read(os.path.join(args.data_path,"layers", "laplacians_{}.vtk".format(args.mesh_name)))
         mesh_laplacians.point_data['LVrotational'] = np.array(resultsLV)
         if args.domainType == "BiV":
             mesh_laplacians.point_data['RVrotational'] = np.array(resultsRV)
             
-        mesh_laplacians.write(os.path.join(args.data_path,"layers", "laplacians.vtk"))
+        mesh_laplacians.write(os.path.join(args.data_path,"layers", "laplacians_{}.vtk".format(args.mesh_name)))
     else:
-        filledMesh.write(os.path.join(args.data_path, "layers", "rotational.vtk")) 
+        filledMesh.write(os.path.join(args.data_path, "layers", "rotational{}.vtk".format(args.mesh_name))) 
 
     
 

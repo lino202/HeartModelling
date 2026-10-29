@@ -1,3 +1,6 @@
+#Obtain the transmurality values from endo to epi using the rvEndo, the lvEndo and using both. -1 values are endo and 1 values are for epi. 
+#The results ares obtained for points, not elements.
+
 """"Here we apply Regional segmentation of ventricular models to achieve
 repolarization dispersion in cardiac electrophysiology modeling
 L. E. Perotti1,2,3 , S. Krishnamoorthi1, N. P. Borgstrom2 ,
@@ -13,19 +16,20 @@ import meshio
 
 def main():
     parser = argparse.ArgumentParser(description="Options")
-    parser.add_argument('--dataPath',type=str, required=True, help='path to data')
+    parser.add_argument('--data_path',type=str, required=True, help='path to data')
+    parser.add_argument('--mesh_name',     type=str, required=True, help='name of the mesh')
     args = parser.parse_args()
 
-    outPath = os.path.join(args.dataPath, 'layers')
+    outPath = os.path.join(args.data_path, 'layers')
     if not os.path.isdir(outPath): os.mkdir(outPath)
 
     # Volume Mesh and FacetFunction reading
     mesh = df.Mesh()
-    with df.XDMFFile(os.path.join(args.dataPath, "mesh", "mesh.xdmf")) as xdmf:
+    with df.XDMFFile(os.path.join(args.data_path, "mesh", "mesh_{}.xdmf".format(args.mesh_name))) as xdmf:
         xdmf.read(mesh)
 
     ffun = df.MeshFunction("size_t", mesh, 2)
-    with df.XDMFFile(os.path.join(args.dataPath, "mesh", "ffun.xdmf")) as xdmf:
+    with df.XDMFFile(os.path.join(args.data_path, "mesh", "ffun_{}.xdmf".format(args.mesh_name))) as xdmf:
         xdmf.read(ffun)
 
     markers = ldrb.utils.default_markers()
@@ -94,7 +98,9 @@ def main():
     point_data['xv'] = solutions['xv'].vector().get_local()[idxs]
 
     mesh_new = meshio.Mesh(mesh.coordinates(), [("tetra", list(mesh.cells()))], point_data=point_data)
-    mesh_new.write(os.path.join(outPath, "laplacians.vtk"))
+    # mesh_new.write(os.path.join(outPath, "laplacians.vtk"))
+    mesh_new.write(os.path.join(outPath, "laplacians_{}.vtk".format(args.mesh_name)))
+    
 
 
 if __name__ == '__main__':
