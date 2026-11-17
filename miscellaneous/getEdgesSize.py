@@ -7,15 +7,19 @@ import time
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 def main():
 
     parser = argparse.ArgumentParser(description="Options")
-    parser.add_argument('--filePath',  type=str, required=True, help='path to data')
+    parser.add_argument('--data_path',  type=str, required=True, help='path to data')
     parser.add_argument('--save',action='store_true',  help='save histogram with edgelengths')
     args = parser.parse_args()
 
+    ht=os.path.split(args.data_path)
+    meshName=ht[1].split(".vtk")[0]
+
     reader = vtk.vtkUnstructuredGridReader()
-    reader.SetFileName(args.filePath)
+    reader.SetFileName(args.data_path)
     reader.Update()
     mesh    = reader.GetOutput()
 
@@ -31,10 +35,14 @@ def main():
     filter.Update()
     mesh = filter.GetOutput()
 
+    # from collections import Counter
+    # data = Counter(lengths)  # Returns all unique items and their counts
+    # data.most_common(1) 
+
     lengths = vtk.util.numpy_support.vtk_to_numpy(mesh.GetCellData().GetArray('Length'))
     print("The edges lengths are: Mean: {0:.6f}, Median: {1:.6f}, Min: {2:.6f}, Max: {3:.6f}".format(np.mean(lengths), np.median(lengths), np.min(lengths), np.max(lengths)))
 
-    #Histogram of edge lengths
+    #Histogram
     f, (ax_box, ax_hist) = plt.subplots(2, sharex=True, gridspec_kw={"height_ratios": (.15, .85)})
     f.suptitle('Edge lengths') #JRDZC Add 14/01/2025
     sns.boxplot(x=lengths, ax=ax_box,)
@@ -50,8 +58,8 @@ def main():
     sns.despine(ax=ax_hist)
     sns.despine(ax=ax_box, left=True)
     #Save plot
-    plt.savefig(os.path.join(ht[0], "edgelength.png"), dpi=400) if args.save else plt.show(block=True)
-
+    plt.savefig(os.path.join(ht[0],"edgelength_{}.png".format(meshName)), dpi=400) if args.save else plt.show(block=True)
+    
 
 if __name__ == '__main__':
     start = time.time()
